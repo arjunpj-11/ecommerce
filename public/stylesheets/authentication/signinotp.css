@@ -1,0 +1,262 @@
+/* Global Styles */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000; /* Set background color */
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    height: 100vh; /* Full viewport height */
+    font-family: Arial, sans-serif; /* Set font family */
+}
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+.login-container {
+    position: relative;
+    z-index: 2;
+}
+
+/* Login Container */
+.login-container {
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    height: 100%; /* Full height */
+}
+
+/* Login Box */
+.login-box {
+    display: flex;
+    flex-direction: row; /* Arrange children in a row */
+    background-color: #1e1e1e; /* Background color */
+    color: #fff; /* Text color */
+    border-radius: 10px; /* Rounded corners */
+    overflow: hidden; /* Hide overflow */
+    max-width: 700px; /* Max width */
+    width: 90%; /* Width */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Box shadow */
+    position: relative; /* Positioning context */
+    min-height: 400px; /* Minimum height */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+}
+
+/* Logo Section */
+.logo-section {
+    position: absolute; /* Absolute positioning */
+    top: 20px; /* Position from top */
+    left: 20px; /* Position from left */
+    z-index: 20; /* Ensure it stays above the image */
+}
+
+.logo-section img {
+    width: 50px; /* Set logo width */
+    height: auto; /* Maintain aspect ratio */
+}
+
+/* Image Section */
+.image-section {
+    flex: 1; /* Take up remaining space */
+    display: flex; /* Flexbox layout */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    overflow: hidden; /* Hide overflow */
+    height: 100%; /* Full height */
+    position: relative; /* Positioning context */
+}
+
+.image-section img {
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    object-fit: cover; /* Cover the area */
+    object-position: center; /* Center the image */
+}
+
+/* Form Section */
+.form-section {
+    flex: 1; /* Take up remaining space */
+    padding: 30px; /* Padding */
+    display: flex; /* Flexbox layout */
+    flex-direction: column; /* Arrange children in a column */
+    justify-content: center; /* Center content vertically */
+    height: 100%; /* Full height */
+}
+
+.form-section h2 {
+    text-align: center; /* Center text */
+    margin-bottom: 20px; /* Bottom margin */
+    font-size: 24px; /* Font size */
+    color: #fff; /* Text color */
+}
+
+.form-section input,
+.form-section button {
+    width: 100%; /* Full width */
+    padding: 10px; /* Padding */
+    margin: 10px 0; /* Vertical margin */
+    border: 1px solid #555; /* Border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 14px; /* Font size */
+    background-color: #333; /* Background color */
+    color: #fff; /* Text color */
+    box-sizing: border-box; /* Include padding and border in width */
+}
+
+.form-section button {
+    background-color: #D7A54E; /* Button background color */
+    color: white; /* Button text color */
+    border: none; /* No border */
+    cursor: pointer; /* Pointer cursor */
+    font-size: 16px; /* Font size */
+}
+
+.form-section button:hover {
+    background-color: #EBCB92; /* Button hover color */
+}
+
+.form-links {
+    margin-top: 15px; /* Top margin */
+    text-align: center; /* Center text */
+    font-size: 14px; /* Font size */
+}
+
+.form-links a {
+    text-decoration: none; /* No underline */
+    color: #D7A54E; /* Link color */
+    font-weight: bold; /* Bold text */
+}
+
+.form-links a:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+.timer {
+    font-size: 14px; /* Font size */
+    color: #555; /* Text color */
+    margin-left: 70px; /* Left margin */
+}
+
+.resend-otp {
+    color: #C4AA7B; /* Disabled State */
+    cursor: pointer; /* Pointer cursor */
+    font-weight: bold; /* Bold text */
+}
+
+.active {
+    color: #EBCB92; /* Active State */
+    cursor: not-allowed; /* Not allowed cursor */
+}
+
+.back-to-login {
+    font-weight: bold; /* Bold text */
+    color: #D7A54E; /* Text color */
+}
+
+.otp-sent-message {
+    text-align: center; /* Center text */
+    margin-bottom: 15px; /* Bottom margin */
+    font-size: 14px; /* Font size */
+    color: #D7A54E; /* Text color */
+}
+
+.otp-sent-message a {
+    text-decoration: none; /* No underline */
+    color: #EBCB92; /* Link color */
+    font-weight: bold; /* Bold text */
+}
+
+.otp-sent-message a:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+/* OTP Input Section */
+.otp-inputs {
+    display: flex; /* Flexbox layout */
+    justify-content: space-between; /* Space between inputs */
+}
+
+.otp-inputs input {
+    width: 40px; /* Input width */
+    text-align: center; /* Center text */
+    font-size: 18px; /* Font size */
+}
+
+/* For Chrome, Safari, Edge, Opera */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none; /* Remove spin buttons */
+    margin: 0; /* No margin */
+}
+
+/* For Edge (Optional) */
+input[type="number"] {
+    appearance: textfield; /* Textfield appearance */
+}
+
+.error-message {
+    color: red; /* Error message color */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .login-box {
+        flex-direction: column; /* Stack children vertically */
+    }
+
+    .image-section {
+        height: 250px; /* Set height */
+        display: none; /* Hide image section */
+    }
+    .image-section img {
+        object-position: top center; /* Position image */
+        height: 30vh; /* Set height */
+        display: none; /* Hide image */
+    }
+    .form-section input,
+    .form-section button {
+        padding: 8px; /* Padding */
+        font-size: 12px; /* Font size */
+    }
+
+    .form-section h2 {
+        font-size: 20px; /* Font size */
+    }
+
+    .social-login button {
+        font-size: 12px; /* Font size */
+        padding: 8px 12px; /* Padding */
+    }
+}
+
+@media (max-width: 480px) {
+    .image-section {
+        height: 200px; /* Set height */
+        display: none; /* Hide image section */
+    }
+    .image-section img {
+        object-position: top center; /* Position image */
+        height: 30vh; /* Set height */
+        display: none; /* Hide image */
+    }
+
+    .form-section input,
+    .form-section button {
+        padding: 6px; /* Padding */
+        font-size: 12px; /* Font size */
+    }
+
+    .form-section h2 {
+        font-size: 18px; /* Font size */
+    }
+
+    .social-login button {
+        font-size: 10px; /* Font size */
+        padding: 6px 10px; /* Padding */
+    }
+}

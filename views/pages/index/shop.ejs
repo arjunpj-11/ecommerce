@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - ARNI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheets/index/shop.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">ARNI</a>
+            <div class="nav-links">
+                <a href="/" class="active">Home</a>
+                <a href="/shop">Shop</a>
+                <% categoriesWithSubs.forEach(function(category) { %>
+                    <a href="/subcategories?main=<%= category._id %>" 
+                       data-category="true"
+                       data-categories="<%= JSON.stringify(categoriesWithSubs) %>">
+                        <%= category.mainCategoryName.split(' ')
+                            .map((word, index) => index === 0 ? 
+                                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : 
+                                word.toLowerCase())
+                            .join(' ') %>
+                    </a>
+                <% }); %>
+            </div>                
+            <div class="nav-right">
+                <% if (authentication) { %>
+                    <a href="/users/pI">
+                      <i class="fas fa-user-circle"></i> Profile
+                    </a>
+                <% } else { %>
+                    <a href="/auth/login">Login</a>
+                <% } %>                      
+                <a href="#" class="search-icon">🔍</a>
+                <a href="/users/cart" class="cart-icon">🛒</a>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Filters -->
+        <aside class="filters">
+            <div class="filter-section">
+                <h3 class="filter-title">Sort By</h3>
+                <select class="sort-dropdown">
+                    <option value="popularity">Popularity</option>
+                    <option value="price-low-high">Price: Low to High</option>
+                    <option value="price-high-low">Price: High to Low</option>
+                    <option value="rating">Average Rating</option>
+                    <option value="az">A - Z</option>
+                    <option value="za">Z - A</option>
+                </select>
+            </div>
+    
+            <div class="filter-section">
+                <h3 class="filter-title">Categories</h3>
+                <div class="filter-group">
+                    <% categoriesWithSubs.forEach(function(category) { %>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" name="category" value="<%= category._id %>"> <%= category.mainCategoryName.split(' ')
+                            .map((word, index) => index === 0 ? 
+                                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : 
+                                word.toLowerCase())
+                            .join(' ') %>'s Clothing
+                        </label>
+                    <% }); %>
+                </div>
+            </div>
+    
+            <div class="filter-section">
+                <h3 class="filter-title">Price Range</h3>
+                <div class="price-range">
+                    <input type="number" class="price-input" placeholder="Min" id="minPrice">
+                    <span>to</span>
+                    <input type="number" class="price-input" placeholder="Max" id="maxPrice">
+                </div>
+                <button class="apply-btn" style="margin-top: 1rem;">Apply</button>
+            </div>
+        </aside>
+        
+        <!-- Products Container -->
+        <div class="products-container">
+            <div class="product-grid" id="productGrid"></div>
+            <div class="loading-spinner" id="loadingSpinner"></div>
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About ARNI</h3>
+                    <p>Fashion for everyone</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <a href="/">Home</a>
+                    <a href="/shop">Shop</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: info@arni.com</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <div class="social-links">
+                        <a href="#">Instagram</a>
+                        <a href="#">Facebook</a>
+                        <a href="#">Twitter</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="/javascripts/index/shop.js"></script>
+</body>
+</html>

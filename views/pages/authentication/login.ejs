@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="stylesheet" href="/stylesheets/authentication/login.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <canvas id="backgroundCanvas"></canvas>
+  
+  <div class="login-container">
+    <div class="login-box">
+      <div class="logo-section">
+        <img src="/images/common/logo.png" alt="Logo">
+      </div>
+      <div class="image-section">
+        <img src="/images/authentication/signin image.jpg" alt="Login Image">
+      </div>
+      <div class="form-section">
+        <h2>Login</h2>
+        <form id="form">
+          <% if (emailError) { %>
+            <input type="text" name="emailOrPhone" placeholder="Email or Phone Number" id="emailOrPhone" value="<%= detail.emailOrPhone %>" required>
+            <p class="validation iValid" id="emailOrPhoneMessage"><%=emailError%></p>
+          <% } else { %>
+            <input type="text" name="emailOrPhone" placeholder="Email or Phone Number" id="emailOrPhone" value="<%= detail.emailOrPhone %>" required>
+            <p class="validation iValid" id="emailOrPhoneMessage"></p>
+          <% } %>
+        
+          <!-- Password Input -->
+          <div class="password-wrapper">
+            <input type="password" name="password" placeholder="Password" id="password" required>
+            <i class="fas fa-eye" id="togglePassword"></i>
+          </div>
+          <p class="validation iValid" id="passwordMessage"><%=error%></p>
+
+          <button type="submit">Login</button>
+        </form>
+        
+        <!-- Forgot Password and Sign Up Links -->
+        <div class="form-links">
+          <a href="/auth/forgetPassword" class="forgot-password">Forgot Password?</a>
+          <span> | </span>
+          <a href="/auth/signin" class="signup">Sign Up</a>
+        </div>
+        
+        <div class="social-login">
+          <p>Or sign up with</p>
+          <a href='/api/google/auth/google' class="btn"><button class="google">
+            <i class="fab fa-google"></i> Google
+          </button></a>
+          <a href="/api/facebook/auth/facebook" class="btn"><button class="facebook">
+            <i class="fab fa-facebook"></i> Facebook
+          </button></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/javascripts/authentication/login.js"></script>
+</body>
+</html>

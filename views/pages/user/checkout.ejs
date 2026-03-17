@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Page</title>
+    <link rel="stylesheet" href="/stylesheets/user/checkout.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+    
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">ARNI</a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/shop">Shop</a>
+                <% categoriesWithSubs.forEach(function(category) { %>
+                    <a href="/subcategories?main=<%= category._id %>" 
+                       data-category="true"
+                       data-categories="<%= JSON.stringify(categoriesWithSubs) %>">
+                        <%= category.mainCategoryName.split(' ')
+                            .map((word, index) => index === 0 ? 
+                                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : 
+                                word.toLowerCase())
+                            .join(' ') %>
+                    </a>
+                <% }); %>
+            </div>
+            <div class="nav-right">
+                <a href="/users/pI">
+                    <i class="fas fa-user-circle"></i> Profile
+                  </a>
+                <a href="/users/cart">🛒</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container1">
+        <div class="main-content">
+            <div class="card">
+                <h2>Your Cart</h2>
+                    <% items.forEach(item => { %>
+                        <div class="cart-item <%= !item.inStock ? 'out-of-stock-item' : '' %>" data-variant-id="<%= item.variantId %>">
+                            <img src="<%= item.images[0] %>" alt="<%= item.name %>" class="product-image">
+                            <div class="product-details">
+                                <h3>
+                                    <%= item.name %>
+                                </h3>
+                                <p>
+                                    Color: <span class="color-circle" style="background-color: <%= item.color %>;"></span>
+                                    Size: <span id="size"><%= item.size %></span>
+                                </p>
+                                
+                                <% if (!item.inStock) { %>
+                                <% } else if (item.availableStock < 5) { %>
+                                    <p class="stock-warning">Only <%= item.availableStock %> left in stock!</p>
+                                <% } %>
+                            </div>
+                            <div>₹<%= (item.discountPrice || item.price).toFixed(2) %></div>
+                            <div class="quantity-controls">
+                                <input type="text" value="<%= item.quantity %>" class="quantity-input" 
+                                       id="quantity-<%= item.variantId %>"
+                                       <%= !item.inStock ? 'disabled' : '' %>>
+                            </div>
+                        </div>
+                    <% }); %>
+            </div>
+
+            <div class="card">
+                <h2>Shipping Address</h2>
+                <div class="address-list">
+                    
+                </div>
+                <button class="btn btn-outline" onclick="showAddAddressModal()">Add New Address</button>
+            </div>
+
+            <div class="card">
+                <h2>Payment Method</h2>
+                <div class="payment-methods">
+                    <div class="payment-method" data-method="razorpay">
+                        <input type="radio" name="payment" value="razorpay" id="razorpay">
+                        <label for="razorpay">
+                            <h3>Pay Online</h3>
+                            <p>Credit/Debit Card, UPI, Net Banking & more</p>
+                            <img src="/razorpay-logo.png" alt="Razorpay" class="razorpay-logo">
+                        </label>
+                    </div>
+                    <div class="payment-method" data-method="cod">
+                        <input type="radio" value="cod" name="payment" id="cod">
+                        <label for="cod">
+                            <h3>Cash on Delivery</h3>
+                            <p>Pay when you receive your order</p>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary">
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span>₹<%= totalAmount.toFixed(2) %></span>
+            </div>
+            <div class="summary-row">
+                <span>Shipping fee</span>
+                <span>₹20.00</span>
+            </div>
+            <div class="summary-row">
+                <span>Discount</span>
+                <span id="couponStatus">₹<%= discount %></span>
+            </div>
+            <div class="summary-row">
+                <strong>TOTAL</strong>
+                <strong id="totalAmount">₹<%= (totalAmount + 20 - discount).toFixed(2) %></strong>
+            </div>
+            <button class="btn" id="placeOrderBtn" style="width: 100%; margin-top: 1rem;">Place Order</button>
+        </div>
+    </div>
+
+    <!-- Address Modal -->
+    <div id="addressModal" class="modal">
+        <div class="modal-content">
+            <h2>Add New Address</h2>
+            <form id="addAddressForm">
+                <input type="text" id="name" class="input-field" placeholder="Full Name" required>
+                <input type="text" id="street" class="input-field" placeholder="Street Address" required>
+                <input type="text" id="city" class="input-field" placeholder="City" required>
+                <input type="text" id="state" class="input-field" placeholder="State" required>
+                <input type="text" id="zip" class="input-field" placeholder="ZIP Code" required>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn">Save Address</button>
+                    <button type="button" class="btn btn-outline" onclick="closeAddressModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+      
+    <footer>
+        <div class="container2">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About ARNI</h3>
+                    <p>Fashion for everyone</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <a href="/">Home</a>
+                    <a href="/shop">Shop</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: info@arni.com</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <div class="social-links">
+                        <a href="#">Instagram</a>
+                        <a href="#">Facebook</a>
+                        <a href="#">Twitter</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="/javascripts/user/checkout.js"></script>
+</body>
+</html>

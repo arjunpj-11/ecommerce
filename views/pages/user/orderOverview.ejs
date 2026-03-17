@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order #<%= order.orderId %></title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/user/orderOverview.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+    
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">ARNI</a>
+            <div class="nav-right">
+                <a href="/users/pI">
+                    <i class="fas fa-user-circle"></i> Profile
+                </a>
+                <a href="/users/cart">🛒</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            <div class="order-header">
+                <div class="order-info">
+                    <h1 class="order-title">Order #<%= order.orderId %></h1>
+                    <div class="order-meta">
+                        <span>Placed on <%= new Date(order.orderDate).toLocaleDateString() %></span>
+                        <span>Expected Delivery: <%= new Date(order.orderDate.getTime() + 5*24*60*60*1000).toLocaleDateString() %></span>
+                        <span>Payment Method: <%= order.paymentMethod %></span>
+                    </div>
+                </div>
+                <span class="order-status"><%= order.status %></span>
+            </div>
+
+            <div class="order-grid">
+                <div class="main-content">
+                    <div class="tracking-section">
+                        <h2 class="section-title">Tracking Information</h2>
+                        <div class="tracking-timeline">
+                            <div class="timeline-line"></div>
+                            <% 
+                            const allStatuses = ['Pending', 'Processing', 'Shipped', 'Delivered'];
+                            const statusMessages = {
+                                'Pending': 'Order confirmed and pending processing',
+                                'Processing': 'Order is being processed',
+                                'Shipped': 'Order has been shipped',
+                                'Delivered': 'Order has been delivered'
+                            };
+                            
+                            const currentStatusIndex = allStatuses.indexOf(order.status);
+                            
+                            allStatuses.forEach((status, index) => {
+                                const isPast = index <= currentStatusIndex;
+                                const isCurrent = index === currentStatusIndex;
+                                
+                                if (status !== 'Cancelled') {
+                            %>
+                                <div class="timeline-item <%= isPast ? 'completed' : '' %> <%= isCurrent ? 'current' : '' %>">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-date">
+                                            <% if (isPast) { %>
+                                                <%= new Date(
+                                                    order.orderDate.getTime() + (index * 24 * 60 * 60 * 1000)
+                                                ).toLocaleString() %>
+                                            <% } %>
+                                        </div>
+                                        <p><%= status %> - <%= statusMessages[status] %></p>
+                                    </div>
+                                </div>
+                            <% 
+                                }
+                            }); 
+                            
+                            if (order.status === 'Cancelled') {
+                            %>
+                                <div class="timeline-item cancelled">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-date">
+                                            <%= new Date().toLocaleString() %>
+                                        </div>
+                                        <p>Cancelled - Order has been cancelled</p>
+                                        <% if (order.cancellationReason) { %>
+                                            <p class="cancellation-reason">Reason: <%= order.cancellationReason %></p>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-details">
+                    <h2 class="section-title">Order Details</h2>
+                    <div class="product-card">
+                        <img src="<%= order.image %>" alt="<%= order.name %>" class="product-image">
+                        <div class="product-info">
+                            <h3 class="product-title"><%= order.name %></h3>
+                            <div class="product-meta">
+                                <div class="meta-item">
+                                    <div class="meta-label">Size</div>
+                                    <div class="meta-value"><%= order.size %></div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-label">Quantity</div>
+                                    <div class="meta-value"><%= order.quantity %></div>
+                                </div>
+                            </div>
+
+                            <div class="price-details">
+                                <div class="price-row">
+                                    <span>Price</span>
+                                    <span>₹<%= order.price.toFixed(2) %></span>
+                                </div>
+                                <div class="price-row">
+                                    <span>Quantity</span>
+                                    <span><%= order.quantity %></span>
+                                </div>
+                                <div class="price-row">
+                                    <span>Shipping</span>
+                                    <span>$20.00</span>
+                                </div>
+                                <div class="price-row total-row">
+                                    <span>Total</span>
+                                    <span>₹<%= (order.price * order.quantity + 20).toFixed(2) %></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="delivery-info">
+                        <h3 class="section-title">Delivery Address</h3>
+                        <p class="delivery-address">
+                            <%= order.address.street %><br>
+                            <%= order.address.city %>, <%= order.address.state %> <%= order.address.postalCode %><br>
+                            <%= order.address.country %>
+                        </p>
+                    </div>
+
+                    <div class="action-buttons">
+                        <% if (order.paymentMethod === 'cod' && order.status !== 'Delivered' && order.status !== 'Refund Requested' && order.status !== 'Payment Failed' && order.status !== 'Cancelled' && order.status !== 'Returned') { %>
+                            <button class="btn btn-secondary" onclick="cancelOrder('<%= order.orderId %>')">Cancel Order</button>
+                        <% } else if (order.status === 'Payment Failed') { %>
+                            <button class="btn btn-warning" onclick="retryPayment('<%= order.orderId %>')">Retry Payment</button>
+                        <% } else if (order.status !== 'Cancelled' && order.status !== 'Refund Requested' && order.status !== 'Payment Failed' && order.status !== 'Returned' && order.previousStatus == 'null') { %>
+                            <button class="btn btn-primary" onclick="requestRefund('<%= order.orderId %>', '<%= order.paymentMethod %>')">Request Refund</button>
+                        <% } %>
+                    </div>
+
+<% if (order.status === 'Delivered') { %>
+    <div class="invoice-section">
+        <h3 class="section-title">Invoice</h3>
+        <a href="/users/orderOverview/<%= order._id %>/invoice" class="btn btn-primary">
+            <i class="fas fa-download"></i> Download Invoice
+        </a>
+    </div>
+<% } %>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About ARNI</h3>
+                <p>Fashion for everyone</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="/">Home</a>
+                <a href="/shop">Shop</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p>Email: info@arni.com</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#">Instagram</a>
+                    <a href="#">Facebook</a>
+                    <a href="#">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/javascripts/user/orderOverview.js"></script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!-- views/cart.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - ARNI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheets/user/cart.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+
+     <!-- Navbar -->
+     <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">ARNI</a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/shop">Shop</a>
+                <% categoriesWithSubs.forEach(function(category) { %>
+                    <a href="/subcategories?main=<%= category._id %>" 
+                       data-category="true"
+                       data-categories="<%= JSON.stringify(categoriesWithSubs) %>">
+                        <%= category.mainCategoryName.split(' ')
+                            .map((word, index) => index === 0 ? 
+                                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : 
+                                word.toLowerCase())
+                            .join(' ') %>
+                    </a>
+                <% }); %>
+            </div>
+            <div class="nav-right">
+                <a href="/users/pI">
+                    <i class="fas fa-user-circle"></i> Profile
+                </a>
+                <a href="/users/cart">🛒</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <% if (items.length === 0) { %>
+            <div class="empty-cart">
+                <h2 class="one">Your cart is empty</h2>
+                <a href="/shop" class="checkout-btn">Continue Shopping</a>
+            </div>
+        <% } else { %>
+            <% items.forEach(item => { %>
+                <div class="cart-item <%= !item.inStock ? 'out-of-stock-item' : '' %>" data-variant-id="<%= item.variantId %>">
+                    <img src="<%= item.images[0] %>" alt="<%= item.name %>" class="product-image">
+                    <div class="product-details">
+                        <h3>
+                            <%= item.name %>
+                            <a href="/overview/<%= item.variantId %>" class="overview-link">View Details</a>
+                        </h3>
+                        <p>
+                            Color: <span class="color-circle" style="background-color: <%= item.color %>;"></span>
+                            Size: <span id="size"><%= item.size %></span>
+                        </p>
+                        
+                        <% if (!item.inStock) { %>
+                            <p class="stock-error">
+                                Requested quantity not available. Only <%= item.availableStock %> in stock.
+                            </p>
+                        <% } else if (item.availableStock < 5) { %>
+                            <p class="stock-warning">Only <%= item.availableStock %> left in stock!</p>
+                        <% } %>
+                        
+                        <a href="#" class="remove-link" onclick="removeItem(event, '<%= item.variantId %>')">Remove</a>
+                    </div>
+                    <div class="item-price">₹<%= (item.discountPrice || item.price).toFixed(2) %></div>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" onclick="updateQuantity('<%= item.variantId %>', -1, '<%= item.size %>')"
+                                <%= !item.inStock ? 'disabled' : '' %>>-</button>
+                        <input type="text" value="<%= item.quantity %>" class="quantity-input" 
+                               id="quantity-<%= item.variantId %>"
+                               <%= !item.inStock ? 'disabled' : '' %>>
+                        <button class="quantity-btn" onclick="updateQuantity('<%= item.variantId %>', 1, '<%= item.size %>')"
+                                <%= !item.inStock ? 'disabled' : '' %>>+</button>
+                    </div>
+                </div>
+            <% }); %>
+
+            <div class="coupon-section">
+                <input type="text" placeholder="Enter voucher code" class="coupon-input" id="couponInput">
+                <button class="redeem-btn" onclick="applyCoupon()">Apply</button>
+                <button class="show-coupons-btn" onclick="toggleCoupons()">Show Available Coupons</button>
+                
+                <div class="coupon-suggestions" id="couponSuggestions">
+                    <h4>Available Coupons</h4>
+                    <% if (coupons && coupons.length > 0) { %>
+                        <% coupons.forEach(coupon => { %>
+                            <div class="coupon-item" onclick="selectCoupon('<%= coupon.couponCode %>')">
+                                <div class="coupon-code"><%= coupon.couponCode %></div>
+                                <div><%= coupon.couponName %></div>
+                                <div class="coupon-details">
+                                    ₹<%= coupon.discount %> off on orders above ₹<%= coupon.minAmount %>
+                                    <br>
+                                    <small>Valid until <%= new Date(coupon.validity).toLocaleDateString() %></small>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <div class="no-coupons">No active coupons available</div>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="summary">
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>₹<%= totalAmount.toFixed(2) %></span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping fee</span>
+                    <span>₹20.00</span>
+                </div>
+                <div class="summary-row">
+                    <span>Discount</span>
+                    <span id="couponStatus">No discount applied</span>
+                </div>
+                <div class="summary-row">
+                    <strong>TOTAL</strong>
+                    <strong id="totalAmount">₹<%= (totalAmount + 20).toFixed(2) %></strong>
+                </div>
+            </div>
+
+            <button class="checkout-btn" onclick="proceedToCheckout()">
+                Proceed to Checkout
+            </button>
+        <% } %>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About ARNI</h3>
+                <p>Fashion for everyone</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="/">Home</a>
+                <a href="/shop">Shop</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p>Email: info@arni.com</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#">Instagram</a>
+                    <a href="#">Facebook</a>
+                    <a href="#">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="/javascripts/user/cart.js"></script>
+</body>
+</html>

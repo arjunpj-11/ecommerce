@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banner Management</title>
+    <link rel="stylesheet" href="/stylesheets/admin/banner.css">
+   
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="hamburger-menu" id="hamburger-menu">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+
+    <!-- Overlay for when sidebar is open -->
+    <div class="overlay" id="overlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="logo">
+            <img src="/images/common/logo.png" alt="Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li><a href="/admin/products">Products</a></li>
+            <li><a href="/admin/maincategories">Category</a></li>
+            <li><a href="/admin/orders">Orders</a></li>
+            <li><a href="/admin/coupons" >Coupons</a></li>
+            <li><a href="/admin/sales" >Sales Report</a></li>
+            <li><a href="/admin/users">Users</a></li>
+            <li><a href="/admin/banner" class="active">Banner</a></li>
+        </ul>
+    </aside>
+
+    <div class="container">
+        <div class="preview-section">
+            <div class="section-header">
+                <h2 class="section-title">Banner Preview</h2>
+            </div>
+            <div class="banner-preview">
+                <div class="banner-content">
+                    <div class="banner-title"><%= banners[0]?.title || 'SPECIAL OFFER' %></div>
+                    <h2 class="banner-heading"><%= banners[0]?.heading || '30% OFF EVERYTHING' %></h2>
+                    <p class="banner-subtext"><%= banners[0]?.subtext || 'Limited time offer on our entire collection.' %></p>
+                    <button class="banner-button"><%= banners[0]?.buttonText || 'SHOP NOW' %></button>
+                </div>
+                <div class="nav-arrows">
+                    <button class="nav-arrow prev-banner">←</button>
+                    <button class="nav-arrow next-banner">→</button>
+                </div>
+            </div>
+            <div class="dots"></div>
+        </div>
+    
+        <div class="edit-section">
+            <div class="section-header">
+                <h2 class="section-title">Edit Banner</h2>
+                <div class="button-group">
+                    <button class="btn btn-outline" id="addBanner">Add Banner</button>
+                    <button class="btn btn-danger" id="deleteBanner">Delete Banner</button>
+                </div>
+            </div>
+            <div class="edit-form">
+                <form id="bannerForm">
+                    <input type="hidden" id="bannerId" name="bannerId">
+                    <div class="form-group">
+                        <label for="main-category">Category</label>
+                        <select id="main-category" name="mainCategory" required>
+                            <option value="">Select Category</option>
+                            <!-- Main Categories -->
+                            <optgroup label="Main Categories">
+                                <% mainCategories.forEach(function(category) { %>
+                                    <option value="main_<%= category._id %>"><%= category.mainCategoryName %></option>
+                                <% }); %>
+                            </optgroup>
+                            <!-- Sub Categories grouped by Main Categories -->
+                            <% mainCategories.forEach(function(main) { %>
+                                <optgroup label="<%= main.mainCategoryName %> - Sub Categories">
+                                    <% subCategories
+                                        .filter(sub => sub.mainCategory._id.toString() === main._id.toString())
+                                        .forEach(function(sub) { %>
+                                        <option value="sub_<%= sub._id %>"><%= sub.subCategoryName %></option>
+                                    <% }); %>
+                                </optgroup>
+                            <% }); %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="heading">Heading</label>
+                        <input type="text" id="heading" name="heading" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subtext">Subtext</label>
+                        <input type="text" id="subtext" name="subtext" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="buttonText">Button Text</label>
+                        <input type="text" id="buttonText" name="buttonText" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Banner Image</label>
+                        <div class="image-upload-container" id="imageUploadContainer">
+                            <div class="upload-icon">📁</div>
+                            <div class="upload-text">Drag and drop an image here or click to select</div>
+                            <div class="selected-file-name" id="selectedFileName"></div>
+                            <img src="" alt="Image preview" class="image-preview" id="imagePreview">
+                            <input type="file" class="file-input" id="imageInput" name="image" accept="image/*">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="saveChanges">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.all.min.js"></script>
+
+   <script src="/javascripts/admin/banner.js" ></script>
+
+       
+</body>
+</html>

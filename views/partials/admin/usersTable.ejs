@@ -1,0 +1,53 @@
+<% users.forEach((user) => { %>
+    <tr>
+        <td><%= user.username %></td>
+        <td><%= user.email %></td>
+        <td><%= user.phone %></td>
+        <td>
+            <span class="status 
+                <% if (user.status === 'Active') { %> active 
+                <% } else if (user.status === 'Inactive') { %> inactive 
+                <% } else if (user.status === 'Suspended') { %> blocked 
+                <% } %>">
+                <%= user.status %>
+            </span>
+        </td>
+        
+        <td><%= new Date(user.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) %></td>
+        <td>
+            <div class="action-buttons">
+                <% if (user.status !== 'Suspended') { %>
+                    <!-- Block Button -->
+                    <button class="action-btn block-user-btn" data-user-id="<%= user.id %>">🚷 Block</button>
+                    <div class="modal-overlay hide" id="blockUserModal">
+                        <div class="modal">
+                            <form id="blockUserForm" action="/admin/users/block" method="post">
+                                <div class="modal-header">
+                                    <h3 class="modal-title">Block User</h3>
+                                    <button type="button" class="close-modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="blockReason">Please provide a reason for blocking this user:</label>
+                                        <textarea id="blockReason" name="blockReason" placeholder="Enter reason here..." required></textarea>
+                                        <input type="hidden" class="id" name="id" value="<%= user._id %>">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="modal-btn cancel-btn">Cancel</button>
+                                    <button type="submit" class="modal-btn confirm-btn">Confirm Block</button>
+                                    
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                  <% } else { %>
+                    <!-- Unblock Button -->
+                    <button class="action-btn unblock-user-btn" data-user-id="<%= user.id %>">🔓 Unblock</button>
+                    <input type="hidden" class="id" name="id" value="<%= user._id %>">
+                    
+                  <% } %>                  
+            </div>
+        </td>
+    </tr>
+<% }); %>

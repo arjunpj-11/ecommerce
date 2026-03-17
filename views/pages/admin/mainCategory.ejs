@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Men's Categories - Admin Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/admin/mainCategory.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.css" rel="stylesheet">
+   
+</head>
+<body> 
+    <div class="loader-container ">
+        <svg class="loader active" viewBox="0 0 50 50">
+          <circle cx="25" cy="25" r="20"></circle>
+          <circle cx="25" cy="25" r="20"></circle>
+        </svg>
+    </div>
+  
+    <div class="container">
+        <div class="hamburger-menu" id="hamburger-menu">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    
+        <!-- Overlay for when sidebar is open -->
+        <div class="overlay" id="overlay"></div>
+    
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <img src="/images/common/logo.png" alt="Logo">
+            </div>
+            
+           
+            
+            <ul class="nav-links">
+                <li><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/products">Products</a></li>
+                <li><a href="/admin/maincategories" class="active">Category</a></li>
+                <li><a href="/admin/orders">Orders</a></li>
+                <li><a href="/admin/coupons">Coupons</a></li>
+                <li><a href="/admin/sales">Sales Report</a></li>
+                <li><a href="/admin/users">Users</a></li>
+                <li><a href="/admin/banner">Banner</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="header">
+                <h1 class="page-title">Categories</h1>
+                <button class="add-category-btn">+ Add Category</button>
+                <div id="catModalOverlay5" class="cat-modal__overlay active">
+                    <div class="cat-modal__container">
+                        <div class="cat-modal__header">
+                            <h2>Create Category</h2>
+                            <button class="cat-modal__close-btn" onclick="catModal.close()" id="catModalCloseBtn">✕</button>
+                        </div>
+                        <div class="cat-modal__content">
+                            <form id="catCreateForm" class="cat-form" >
+                                <div class="cat-form__group">
+                                    <label for="catNameInput" class="cat-form__label">Category Name</label>
+                                    <input type="text" id="Name" name="name" class="cat-form__input" required>
+                                    <p class="validation iValid" id="createMessage"></p>
+                                </div>
+                                <div class="cat-form__group">
+                                    <label for="catImageInput" class="cat-form__label">Category Image</label>
+                                    <input type="file" id="catImageInput"  class="cat-form__input" accept="image/*" required>
+                                </div>
+                                <div class="cat-crop__container">
+                                    <img id="catCropImage" class="cat-crop__image" src="" alt="Image for cropping">
+                                </div>
+                                <div class="cat-crop__preview" id="catCropPreview"></div>
+                                <input type="hidden" id="catCroppedData" name="croppedImage">
+                                <div class="cat-modal__btn-group">
+                                    <button type="button" class="cat-btn cat-btn--cancel" onclick="catModal.close()">Cancel</button>
+                                    <button type="submit" class="cat-btn cat-btn--submit">Create</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <table class="categories-table">
+                <thead>
+                    <tr>
+                        <th>Category Name</th>
+                        <th>Sub-Categories</th>
+                        <th>Status</th>
+                        <th>offer</th>
+                        <th>Add Offers</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    <!-- Repeat similar rows for other categories -->
+                </tbody>
+            </table>
+        </main>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script src="/javascripts/admin/mainCategory.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.all.min.js"></script>
+
+</body>
+</html>

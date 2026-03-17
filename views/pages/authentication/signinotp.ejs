@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enter OTP</title>
+  <link rel="stylesheet" href="/stylesheets/authentication/signinotp.css"> <!-- Link to CSS stylesheet -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> <!-- Link to Font Awesome -->
+</head>
+<body>
+  <canvas id="backgroundCanvas"></canvas>
+  <div class="login-container">
+    <div class="login-box">
+      <!-- Logo Section -->
+      <div class="logo-section">
+        <img src="/images/common/logo.png" alt="Logo"> <!-- Logo image -->
+      </div>
+
+      <!-- Left Image Section -->
+      <div class="image-section">
+        <img src="/images/authentication/signin image.jpg" alt="Login Image"> <!-- Login image -->
+      </div>
+
+      <!-- Form Section -->
+      <div class="form-section">
+        <h2>Enter OTP</h2> <!-- Heading -->
+
+        <!-- OTP Email Sent Message -->
+        <div class="otp-sent-message">
+            <% if (isNaN(value)) { %>
+                <p>We have sent an OTP to <%= value %></p> <!-- Display OTP sent message -->
+                <a href="/auth/signin" class="change-email">Change Email</a> <!-- Link to change email -->
+            <% } else { %>
+                <p>We have sent an OTP to <%= value %></p> <!-- Display OTP sent message -->
+                <a href="/auth/signin" class="change-email">Change Phone Number</a> <!-- Link to change phone number -->
+            <% } %>
+        </div>
+
+        <!-- Error Message -->
+        <% if (error) { %>
+            <div class="error-message">
+                <%= error %> <!-- Display error message -->
+            </div>
+        <% } %>
+
+        <!-- OTP Form -->
+        <form action="/auth/otp/verify-otp" method="post"> <!-- Form to verify OTP -->
+          <div class="otp-inputs">
+            <input type="number" id="otp1" maxlength="1" name="otp1" required> <!-- OTP input field -->
+            <input type="number" id="otp2" maxlength="1" name="otp2" required> <!-- OTP input field -->
+            <input type="number" id="otp3" maxlength="1" name="otp3" required> <!-- OTP input field -->
+            <input type="number" id="otp4" maxlength="1" name="otp4" required> <!-- OTP input field -->
+            <input type="number" id="otp5" maxlength="1" name="otp5" required> <!-- OTP input field -->
+            <input type="number" id="otp6" maxlength="1" name="otp6" required> <!-- OTP input field -->
+          </div>
+          <button type="submit">Verify OTP</button> <!-- Submit button -->
+        </form>
+
+        <!-- OTP-related Links -->
+        <div class="form-links">
+          <span>Didn't receive the OTP? </span>
+          <a onclick="resend()" id ="resendBtn" class="resend-otp" disabled>Resend OTP</a> <!-- Link to resend OTP -->
+          <span id="timer" class="timer"></span> <!-- Timer display -->
+        </div>
+        
+        <div class="form-links">
+          <a href="/auth/signin" class="back-to-login">Back to Login</a> <!-- Link to go back to login -->
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  <script src="/javascripts/authentication/signinotp.js"></script> <!-- Link to JavaScript file -->
+</body>
+</html>

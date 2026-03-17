@@ -1,0 +1,687 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #121212;
+    color: #ffffff;
+    min-height: 100vh;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+/* Updated navbar styles */
+/* Updated navbar styles */
+.navbar {
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    transition: background-color 0.3s ease;
+    padding: 1rem 2rem;
+}
+
+.navbar.scrolled {
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+}
+
+.nav-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #eab308;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a, .nav-right a {
+    color: #d1d5db;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.nav-links a:hover, .nav-right a:hover {
+    color: #eab308;
+}
+
+.nav-right {
+    display: flex;
+    gap: 1.5rem;
+}
+
+/* Main content layout */
+
+.main-content {
+    padding-top: 5rem;
+    display: flex;
+    gap: 2rem;
+    max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    min-height: calc(100vh - 4rem);
+    position: relative;
+}
+
+/* Filter sidebar */
+.filters {
+    width: 280px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    height: fit-content;
+
+    top: 6rem;
+    border: 1px solid rgba(234, 179, 8, 0.2);
+}
+
+.filter-section {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.filter-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.filter-title {
+    color: #eab308;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #d1d5db;
+    cursor: pointer;
+}
+
+.filter-checkbox input[type="checkbox"] {
+    accent-color: #eab308;
+}
+
+.price-range {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.price-input {
+    width: 80px;
+    padding: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(234, 179, 8, 0.2);
+    border-radius: 0.25rem;
+    color: white;
+}
+
+.apply-btn {
+    padding: 0.5rem 1rem;
+    background-color: #eab308;
+    color: black;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.apply-btn:hover {
+    background-color: #ca9703;
+}
+
+/* Product grid container */
+.products-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 4rem);
+}
+
+/* Search section */
+.search-section {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(234, 179, 8, 0.2);
+    top: 6rem;
+    z-index: 10;
+}
+
+
+.search-container {
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    padding: 1rem 3rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(234, 179, 8, 0.3);
+    border-radius: 0.75rem;
+    color: white;
+    font-size: 1rem;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #eab308;
+}
+
+/* Product grid styles remain mostly the same */
+
+.product-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.product-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.product-grid::-webkit-scrollbar-thumb {
+    background: rgba(234, 179, 8, 0.3);
+    border-radius: 4px;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    padding: 1rem;
+}
+
+.page-btn {
+    padding: 0.5rem 1rem;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(234, 179, 8, 0.2);
+    color: white;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-btn.active {
+    background-color: #eab308;
+    color: black;
+    border-color: #eab308;
+}
+
+.page-btn:hover:not(.active):not(:disabled) {
+    background-color: rgba(234, 179, 8, 0.2);
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.sort-dropdown {
+    padding: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(234, 179, 8, 0.2);
+    border-radius: 0.25rem;
+    color: white;
+    margin-bottom: 1rem;
+    width: 100%;
+    cursor: pointer;
+}
+
+.sort-dropdown option {
+    background-color: #121212;
+    color: white;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 1024px) {
+    .main-content {
+        padding: 1rem;
+    }
+
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+    }
+
+    .filters {
+        width: 100%;
+        position: static;
+    }
+
+    .nav-links {
+        display: none;
+    }
+}
+/* Footer */
+footer {
+background-color: rgba(0, 0, 0, 0.8);
+padding: 4rem 2rem;
+backdrop-filter: blur(8px);
+}
+
+.footer-content {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+gap: 2rem;
+}
+
+.footer-section h3 {
+color: #eab308;
+margin-bottom: 1rem;
+}
+
+.footer-section a {
+display: block;
+color: #d1d5db;
+text-decoration: none;
+margin-bottom: 0.5rem;
+transition: color 0.2s ease;
+}
+
+.footer-section a:hover {
+color: #eab308;
+}
+
+.social-links {
+display: flex;
+gap: 1rem;
+}
+
+@keyframes fadeInUp {
+from {
+opacity: 0;
+transform: translateY(20px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+@media (max-width: 768px) {
+.showcase-content {
+grid-template-columns: 1fr;
+}
+
+.nav-links, .nav-right {
+display: none;
+}
+
+.mobile-menu-btn {
+display: block;
+}
+
+.slide-title {
+font-size: 2.5rem;
+}
+}
+
+/* Product Grid Layout */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+    overflow-y:auto !important;
+}
+
+/* Card Link Wrapper */
+.product-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.product-card-link:hover {
+    transform: translateY(-10px);
+}
+
+/* Product Card Styling */
+.product-card {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.product-card-link:hover .product-card {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Image Container with 5:7 Aspect Ratio */
+.product-image-container {
+    position: relative;
+    width: 100%;
+    padding-top: 140%; /* 5:7 aspect ratio */
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.product-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.product-card-link:hover .product-image {
+    transform: scale(1.05);
+}
+
+/* Product Info Section */
+.product-info {
+    padding: 1.5rem;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.product-name {
+    color: #eab308;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Price Layout */
+.price-layout {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+/* Top price row */
+.price-row {
+    display: flex;
+    gap:12px;
+    align-items: center;
+}
+
+.discount-price {
+    color: #ffffff;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.original-price {
+    color: #888;
+    text-decoration: line-through;
+    font-size: 1rem;
+    margin-right: 0.5rem;
+}
+
+/* Bottom discount percentage */
+.discount-percentage {
+    color: #22c55e;
+    font-size: 1rem;
+    font-weight: 600;
+    align-self: flex-end;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    background-color: rgba(34, 197, 94, 0.1);
+}
+
+
+/* Suggestions dropdown */
+.suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.95);
+    border: 1px solid rgba(234, 179, 8, 0.3);
+    border-radius: 0.5rem;
+    margin-top: 0.5rem;
+    display: none;
+    z-index: 100;
+}
+
+.suggestion-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.suggestion-item:hover {
+    background-color: rgba(234, 179, 8, 0.1);
+}
+/* Enhanced Suggestions Styling */
+.suggestions {
+position: absolute;
+top: 100%;
+left: 0;
+right: 0;
+background-color: rgba(18, 18, 18, 0.95);
+border: 1px solid rgba(234, 179, 8, 0.2);
+border-radius: 0.75rem;
+margin-top: 0.5rem;
+backdrop-filter: blur(10px);
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+display: none;
+z-index: 1000;
+max-height: 400px;
+overflow-y: auto;
+}
+
+.suggestions-wrapper {
+padding: 1rem;
+}
+
+.suggestion-section {
+margin-bottom: 1.5rem;
+}
+
+.suggestion-section:last-child {
+margin-bottom: 0;
+}
+
+.suggestion-header {
+display: flex;
+align-items: center;
+gap: 0.5rem;
+color: #888;
+font-size: 0.875rem;
+margin-bottom: 0.75rem;
+padding-left: 0.5rem;
+}
+
+.suggestion-header i {
+color: #eab308;
+font-size: 0.75rem;
+}
+
+.suggestion-item {
+display: flex;
+align-items: center;
+gap: 0.75rem;
+padding: 0.75rem;
+cursor: pointer;
+border-radius: 0.5rem;
+transition: all 0.2s ease;
+}
+
+.suggestion-item:hover {
+background-color: rgba(234, 179, 8, 0.1);
+}
+
+.suggestion-item i {
+color: #666;
+font-size: 0.875rem;
+}
+
+.no-results {
+text-align: center;
+padding: 2rem;
+color: #888;
+}
+
+.no-results i {
+font-size: 1.5rem;
+margin-bottom: 1rem;
+color: #666;
+}
+
+.no-results p {
+margin-bottom: 0.5rem;
+color: #fff;
+}
+
+.no-results small {
+font-size: 0.875rem;
+}
+
+/* Scrollbar styling for suggestions */
+.suggestions::-webkit-scrollbar {
+width: 8px;
+}
+
+.suggestions::-webkit-scrollbar-track {
+background: rgba(255, 255, 255, 0.1);
+border-radius: 4px;
+}
+
+.suggestions::-webkit-scrollbar-thumb {
+background: rgba(234, 179, 8, 0.3);
+border-radius: 4px;
+}
+
+.suggestions::-webkit-scrollbar-thumb:hover {
+background: rgba(234, 179, 8, 0.5);
+}
+
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
+.offer-badge{
+    color: #22c55e;
+    font-size: 1rem;
+    font-weight: 600;
+    align-self: flex-end;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    background-color: rgba(34, 197, 94, 0.1);
+}
+.product-meta{
+    display:flex;
+    gap:5px;
+    margin-top:5px;
+}
+/* Custom Scrollbar Styles */
+/* For Webkit browsers (Chrome, Safari, etc.) */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+    background-color: #121212;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(234, 179, 8, 0.3);
+    border-radius: 6px;
+    border: 3px solid #121212;
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(234, 179, 8, 0.5);
+}
+
+::-webkit-scrollbar-corner {
+    background: #121212;
+}
+
+/* For Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(234, 179, 8, 0.3) rgba(0, 0, 0, 0.3);
+}
+
+/* For elements with custom scrollbars */
+.custom-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(234, 179, 8, 0.3) rgba(0, 0, 0, 0.3);
+}
+
+.custom-scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+    background: rgba(234, 179, 8, 0.3);
+    border-radius: 4px;
+    border: 2px solid #121212;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(234, 179, 8, 0.5);
+}

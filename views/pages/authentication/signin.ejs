@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="/stylesheets/authentication/signin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+  <canvas id="backgroundCanvas"></canvas>
+  <div class="login-container">
+    <div class="login-box">
+      <!-- Logo Section -->
+      <div class="logo-section">
+        <img src="/images/common/logo.png" alt="Logo">
+      </div>
+
+      <!-- Image Section -->
+      <div class="image-section">
+        <img src="/images/authentication/signin image.jpg" alt="Sign Up Image">
+      </div>
+
+      <!-- Form Section -->
+      <div class="form-section">
+        <h2>Sign Up</h2>
+        <form id="form">
+          <!-- Name Input -->
+          <input type="text" name="name" placeholder="Full Name" required class="" value="<%= detail.username %>" id="fullName">
+          <p class="validation iValid" id="fullNameMessage"></p>
+
+          <!-- Email Input -->
+          <input type="text" name="emailOrPhone" placeholder="Email or Phone Number" id="emailOrPhone" class="" value="<%= detail.emailOrPhone %>" required>
+          <p class="validation iValid" id="emailOrPhoneMessage"></p>
+
+          <!-- Password Input -->
+          <div class="password-wrapper">
+            <input type="password" name="password" placeholder="Password" id="password" required>
+            <i class="fas fa-eye" id="togglePassword"></i>
+          </div>
+          <p class="validation iValid" id="passwordMessage"></p>
+
+          <!-- Confirm Password Input -->
+          <div class="password-wrapper">
+            <input type="password" name="confirm-password" placeholder="Confirm Password" id="passwordConfirm" required>
+            <i class="fas fa-eye" id="togglePasswordConfirm"></i>
+          </div>
+          <p class="validation iValid" id="passwordConfirmMessage"></p>
+
+          <!-- Password Criteria Checklist -->
+          <div class="password-criteria">
+            <p>Password must meet the following criteria:</p>
+            <ul>
+              <li id="criteria-length">At least 8 characters</li>
+              <li id="criteria-uppercase">At least one uppercase letter</li>
+              <li id="criteria-lowercase">At least one lowercase letter</li>
+              <li id="criteria-number">At least one number</li>
+              <li id="criteria-special">At least one special character</li>
+            </ul>
+          </div>
+
+          <div id="recaptcha-container"></div>
+
+          <!-- Submit Button -->
+          <button type="submit">Sign Up</button>
+        </form>
+
+        <!-- Terms & Privacy Links -->
+        <div class="form-links">
+          <span>By signing up, you agree to our</span>
+          <a href="/auth/terms">Terms of Service</a>
+          <span>and</span>
+          <a href="/auth/privacy">Privacy Policy</a>
+        </div>
+
+        <!-- Social Login Buttons -->
+        <div class="social-login">
+          <p>Or sign up with</p>
+          <a href='/api/google/auth/google' class="btn"><button class="google">
+            <i class="fab fa-google"></i> Google
+          </button></a>
+          <a href="/api/facebook/auth/facebook" class="btn"><button class="facebook">
+            <i class="fab fa-facebook"></i> Facebook
+          </button></a>
+        </div>
+
+        <!-- Link to Login Page -->
+        <div class="login-link">
+          <p>Already have an account? <a href="/auth/login">Log in here</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/javascripts/authentication/signin.js"></script>
+</body>
+</html>

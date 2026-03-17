@@ -1,0 +1,124 @@
+<!-- views/pages/admin/dashboard.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/stylesheets/admin/dashboard.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <meta name="theme-color" content="#111827">
+</head>
+<body>
+    <!-- Hamburger Toggle Button -->
+    <button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
+    
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="/images/common/logo.png" alt="Company Logo">
+            </div>
+            
+           
+            
+            <ul class="nav-links">
+                <li><a href="/admin/dashboard" class="active">Dashboard</a></li>
+                <li><a href="/admin/products">Products</a></li>
+                <li><a href="/admin/maincategories">Category</a></li>
+                <li><a href="/admin/orders">Orders</a></li>
+                <li><a href="/admin/coupons">Coupons</a></li>
+                <li><a href="/admin/sales">Sales Report</a></li>
+                <li><a href="/admin/users">Users</a></li>
+                <li><a href="/admin/banner">Banner</a></li>
+            </ul>
+            
+            <div class="logout-container">
+                <a href="#" class="logout-btn" id="logoutBtn">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Sales</h3>
+                    <div class="value">₹<%= totalSales.toFixed(3) %></div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Products</h3>
+                    <div class="value"><%= totalProducts %></div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Customers</h3>
+                    <div class="value"><%= count %></div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Orders</h3>
+                    <div class="value"><%= totalOrders %></div>
+                </div>
+            </div>
+
+            <!-- Time Frame Selector -->
+            <div class="chart-controls">
+                <select id="timeframe-select" class="timeframe-select" aria-label="Select time frame">
+                    <option value="day">Daily</option>
+                    <option value="month" selected>Monthly</option>
+                    <option value="year">Yearly</option>
+                </select>
+            </div>
+
+           <!-- Sales Chart -->
+<div class="chart-section">
+    <div class="chart-container">
+        <canvas id="salesChart" aria-label="Sales Chart" role="img"></canvas>
+    </div>
+</div>
+
+            <!-- Categories & Items Section -->
+            <div class="categories-grid">
+                <!-- Top Categories -->
+                <div class="category-section">
+                    <h2>Top Categories</h2>
+                    <div id="top-categories-container">
+                        <!-- Categories will be loaded dynamically -->
+                        <div class="no-data">Loading categories...</div>
+                    </div>
+                </div>
+
+                <!-- Most Sold Items -->
+                <div class="most-sold">
+                    <h2>Most Sold Items</h2>
+                    <% if (mostSoldItems.length === 0 || (mostSoldItems.length === 1 && mostSoldItems[0].name === 'No products sold yet')) { %>
+                        <div class="no-data">
+                            <p>No products have been sold yet</p>
+                        </div>
+                    <% } else { %>
+                        <% mostSoldItems.forEach(item => { %>
+                            <div class="item">
+                                <div class="item-header">
+                                    <div class="item-info">
+                                        <img src="<%= item.image %>" alt="<%= item.name %>" class="item-image" loading="lazy">
+                                        <div class="item-details">
+                                            <p class="item-name"><%= item.name %></p>
+                                            <span class="item-count"><%= item.count %> sold</span>
+                                        </div>
+                                    </div>
+                                    <span class="percentage"><%= item.percentage %>%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="fill" style="width: <%= item.percentage %>%"></div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="/javascripts/admin/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= product.name %> - ARNI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheets/index/overview.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+    
+    <div class="content">
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="#" class="logo">ARNI</a>
+                <div class="nav-links">
+                    <a href="/" class="active">Home</a>
+                    <a href="/shop">Shop</a>
+                    <% categoriesWithSubs.forEach(function(category) { %>
+                        <a href="/subcategories?main=<%= category._id %>" 
+                           data-category="true"
+                           data-categories="<%= JSON.stringify(categoriesWithSubs) %>">
+                            <%= category.mainCategoryName.split(' ')
+                                .map((word, index) => index === 0 ? 
+                                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : 
+                                    word.toLowerCase())
+                                .join(' ') %>
+                        </a>
+                    <% }); %>
+                </div>                
+                <div class="nav-right">
+                    <% if (authentication) { %>
+                        <a href="/users/pI">
+                          <i class="fas fa-user-circle"></i> Profile
+                        </a>
+                    <% } else { %>
+                        <a href="/auth/login">Login</a>
+                    <% } %>                      
+                    <a href="/users/cart" class="cart-icon">🛒</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="product-container">
+            <div class="product-gallery">
+                <div class="thumbnail-column">
+                    <% variant.images.forEach((image, index) => { %>
+                        <img src="<%= image %>" 
+                             alt="Product thumbnail <%= index + 1 %>" 
+                             class="thumbnail <%= index === 0 ? 'active' : '' %>" 
+                             data-full="<%= image %>">
+                    <% }); %>
+                </div>
+                <div class="main-image-container">
+                    <img src="<%= variant.images[0] %>" 
+                         alt="<%= product.name %> main image" 
+                         class="main-image">
+                    <div class="image-overlay">
+                        <button class="zoom-btn"><i class="fas fa-search-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-info">
+                <div class="product-header">
+                    <div class="wishlist-section">
+                        <button class="wishlist-btn" aria-label="Add to wishlist">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+                    <h1><%= product.name %></h1>
+                
+                    
+                    <div class="rating-section">
+                        <div class="stars">
+                            <% for(let i = 1; i <= 5; i++) { %>
+                                <% if(i <= Math.floor(product.review)) { %>
+                                    <i class="fas fa-star"></i> <!-- Filled star -->
+                                <% } else if(i <= Math.ceil(product.review) && product.review % 1 !== 0) { %>
+                                    <i class="fas fa-star-half-alt"></i> <!-- Half-filled star -->
+                                <% } else { %>
+                                    <i class="far fa-star"></i> <!-- Empty star -->
+                                <% } %>
+                            <% } %>
+                            
+                            
+                        </div>
+                        <span class="review-count"><%= product.review%>(128 reviews)</span>
+                    </div>
+                   
+                    <p class="price">
+                        <span class="current-price">₹<%= product.discountPrice %></span>
+                        <% if (product.price !== product.discountPrice) { %>
+                            <span class="original-price">₹<%= product.price %></span>
+                            <span class="discount-percentage">
+                                (<%= Math.round((1 - product.discountPrice/product.price) * 100) %>% off)
+                            </span>
+                        <% } %>
+                    </p>
+                    <div class="stock-info">
+                        <i class="fas fa-box"></i>
+                        <% const totalStock = Object.values(variant.sizes).reduce((a, b) => a + b, 0) %>
+                        <span class="stock-count"><%= totalStock %></span> items in stock
+                        <span class="stock-status 
+                        <% 
+                          if (totalStock == 0) { 
+                            'low'; 
+                          } else if (totalStock < 30) { 
+                            'medium'; 
+                          } else { 
+                            'high'; 
+                          } 
+                        %>">
+                      
+                            <%= totalStock ==0 ? 'Low Stock' : totalStock <= 30 ? 'Limited Stock' : 'In Stock' %>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="product-description">
+                    <p><%= product.description %></p>
+                </div>
+
+                <div class="variant-section">
+                    <h3>Size</h3>
+                    <div class="size-options">
+                        <% Object.entries(variant.sizes).forEach(([size, count]) => { %>
+                            <button class="size-btn <%= count === 0 ? 'out-of-stock' : '' %>" 
+                                    data-size="<%= size %>">
+                                <%= size %>
+                            </button>
+                        <% }); %>
+                    </div>
+                </div>
+
+                <div class="variant-section">
+                    <h3>Color</h3>
+                    <div class="color-options">
+                        <% allVariants.forEach(v => { %>
+                            <button class="color-btn <%= v._id.toString() === variant._id.toString() ? 'active' : '' %>"
+                                style="background-color: <%= v.color %>;"
+                                    data-variant-id="<%= v._id %>"
+                                    data-color="<%= v.tags[0] %>">
+                            </button>
+                        <% }); %>
+                    </div>
+                </div>
+
+                <div class="purchase-section">
+                    <div class="quantity-section">
+                        <button class="quantity-btn minus"><i class="fas fa-minus"></i></button>
+                        <input type="number" id="quantity" class="quantity-input" value="1" min="1">
+                        <button class="quantity-btn plus"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <button class="add-to-cart" id="add-to-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <section class="related-products">
+            <h2>You May Also Like</h2>
+            <div class="products-slider">
+                <div class="products-grid">
+                    <% relatedProducts.forEach(product => { %>
+                        <a href="/overview/<%= product._id %>" class="product-card-link">
+                            <div class="product-card">
+                                <div class="product-image-container">
+                                    <img src="<%= product.images %>" alt="<%= product.productDetails.name %>" class="product-image">
+                                </div>
+                                <div class="product-info">
+                                    <h3 class="product-name"><%= product.productDetails.name %></h3>
+                                    <div class="price-layout">
+                                        <div class="price-row">
+                                            <span class="discount-price">₹<%= product.productDetails.discountPrice %></span>
+                                            <% if (product.productDetails.price !== product.productDetails.discountPrice) { %>
+                                                <span class="original-price">₹<%= product.productDetails.price %></span>
+                                            <% } %>
+                                        </div>
+                                        <% if (product.productDetails.price !== product.productDetails.discountPrice) { %>
+                                            <span class="discount-percentage">
+                                                (<%= Math.round((1 - product.productDetails.discountPrice / product.productDetails.price) * 100) %>% off)
+                                            </span>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    <% }); %>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About ARNI</h3>
+                    <p>Fashion for everyone</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <a href="/">Home</a>
+                    <a href="/shop">Shop</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: info@arni.com</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <div class="social-links">
+                        <a href="#">Instagram</a>
+                        <a href="#">Facebook</a>
+                        <a href="#">Twitter</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/javascripts/index/overview.js"></script>
+</body>
+</html>

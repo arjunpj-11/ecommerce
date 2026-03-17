@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Already in Use</title>
+     <link rel="stylesheet" href="/stylesheets/authentication/already.css">
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+    <div class="container">
+        <% if (isNaN(value)) { %>
+            <h1>Email Already in Use</h1>
+            <p>This email address is already associated with an account.</p>
+            <a href="/auth/login"><button class="btn">Go to Login</button></a>
+        <% } else { %>
+            <h1>Phone MUmber in Use</h1>
+        <p>This email address is already associated with an account.</p>
+        <a href="/auth/login"><button class="btn">Go to Login</button></a>
+        <% } %>
+        
+    </div>
+</body>
+</html>

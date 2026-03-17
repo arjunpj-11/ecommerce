@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARNI - Dark Fashion</title>
+    <link rel="stylesheet" href="/stylesheets/index/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+    
+    <div class="content">
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="#" class="logo">ARNI</a>
+                <div class="nav-links">
+                    <a href="/" class="active">Home</a>
+                    <a href="/shop">Shop</a>
+                    <% categoriesWithSubs.forEach(function(category) { %>
+                        <a href="/subcategories?main=<%= category._id %>" 
+                           data-category="true"
+                           data-categories="<%= JSON.stringify(categoriesWithSubs) %>">
+                            <%= category.mainCategoryName.split(' ')
+                                .map((word, index) => index === 0 ? 
+                                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : 
+                                    word.toLowerCase())
+                                .join(' ') %>
+                        </a>
+                    <% }); %>
+                </div>                
+                <div class="nav-right">
+                    <% if (authentication) { %>
+                        <a href="/users/pI">
+                          <i class="fas fa-user-circle"></i> Profile
+                        </a>
+                    <% } else { %>
+                        <a href="/auth/login">Login</a>
+                    <% } %>                      
+                    <a href="#" class="search-icon">🔍</a>
+                    <a href="/users/cart" class="cart-icon">🛒</a>
+                </div>
+            </div>
+        </nav>
+
+
+        <section class="featured-products">
+            <div class="content">
+                <div class="container">
+                    <div class="section-title">
+                        <h2><%= title.toUpperCase()%></h2>
+                        <p>Explore our collection</p>
+                    </div>
+                    
+                    <div class="subcategories-grid">
+                        <% if (subcategories.length === 0) { %>
+                            <div class="no-products-icon">🔍</div>
+                <h2>No subcategories Found</h2>
+                <p>Under Maintenance</p>
+                        <% } %>
+                        
+                        <% subcategories.forEach(function(subcategory) { %>
+                            <a href="/products?sub=<%= subcategory._id %>" class="subcategory-card">
+                                <div class="image-container">
+                                    <img 
+                                        src="<%= subcategory.image %>" 
+                                        alt="<%= subcategory.subCategoryName %>" 
+                                        class="subcategory-image"
+                                    >
+                                </div>
+                                <div class="subcategory-info">
+                                    <h3 class="subcategory-name">
+                                        <%= subcategory.subCategoryName %>
+                                    </h3>
+                                    <% if (subcategory.offerPercentage > 0) { %>
+                                        <div class="offer-badge1">
+                                            <%= subcategory.offerPercentage %>% OFF
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </a>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3>About ARNI</h3>
+                        <p>Fashion for everyone</p>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Quick Links</h3>
+                        <a href="/">Home</a>
+                        <a href="/shop">Shop</a>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Contact Us</h3>
+                        <p>Email: info@arni.com</p>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Follow Us</h3>
+                        <div class="social-links">
+                            <a href="#">Instagram</a>
+                            <a href="#">Facebook</a>
+                            <a href="#">Twitter</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/javascripts/index/subcategories.js"></script>
+</body>
+</html>

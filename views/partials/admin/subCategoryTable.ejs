@@ -1,0 +1,99 @@
+<%  subCategories.forEach(category => { %>
+    <tr>
+      <td>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <img class="category-image" src="<%= category.image %>">
+          <div>
+            <div><%= category.subCategoryName %></div>
+          </div>
+        </div>
+      </td>
+      <td>
+  
+        <% 
+        let productCount = 0; // Default count to 0
+      
+        // Check if products array exists and if the first item's _id is null
+        if (products.length === 1 && products[0]._id === null) {
+          productCount = 0; // Empty product collection case
+        } else {
+          const product = products.find(obj => obj._id?.toString() === category._id?.toString());
+  productCount = product ? product.count : 0;
+  
+        }
+      %>
+        <%= productCount %>
+      </td>
+      <td class="<%= category.status === 'active' ? 'statusActive' : 'statusInactive' %>">
+        <%= category.status %>
+    </td>
+      <td><%= category.offerPercentage %> %</td>
+      <td>
+        <button class="add-offer">Add Offer</button>
+        <div class="add-offer-container active">
+            <button class="add-offer-close-btn">✖</button>
+            <h2 class="add-offer-title">Add Offer</h2>
+            <form class="add-offer-form" >
+              <div class="add-offer-group">
+                <label for="add-offer-input ">Offer</label>
+                <input type="number"  min="0" max="100" id="add-offer-input" class="" name="offer" placeholder="Enter offer details" required>
+                <p class="offerError"></p>
+                <input type="hidden" id="myHiddenInput" name="id" value="<%= category._id %>">
+  
+              </div>
+             <button type="submit" class="add-offer-btn">Confirm</button>
+            </form>
+        </div>
+      </td>
+      <td>
+        <div class="action-buttons">
+          <button class="action-btn edit">✏️</button>
+          <div id="edtModalOverlay " class="edt-modal__overlay active ">
+            <div class="edt-modal__container">
+                <div class="edt-modal__header">
+                    <h2>Edit Category</h2>
+                    <button class="edt-modal__close-btn" onclick="edtModal.close()" id="edtModalCloseBtn">✕</button>
+                </div>
+                <div class="edt-modal__content">
+                    <form id="edtCreateForm" class="edt-form">
+                        <div class="edt-form__group">
+                            <label for="edtNameInput" class="edt-form__label">Category Name</label>
+                            <input type="text" id="Name" name="name" class="edt-form__input" value="<%= category.subCategoryName %>"  required>
+                        </div>
+                        <div class="edt-form__group">
+                            <label for="edtMaincategoryInput" class="edt-form__label">Main Category</label>
+                            <!-- <select id="categories" name="category" class="edt-form__input">
+                                <% mainCategories.forEach((name) => { %>
+                                    <option value="<%= name.id %>"><%= name.mainCategoryName %></option>
+                                  <% }); %>
+                                  
+                            </select> -->
+                        </div>
+                        <div class="edt-form__group">
+                            <label for="edtImageInput" class="edt-form__label">Category Image</label>
+                            <input type="file" id="edtImageInput"  class="edt-form__input" accept="image/*" >
+                        </div>
+                        <div class="edt-crop__container">
+                            <img id="edtCropImage" class="edt-crop__image" src="<%= category.image %>" alt="Image for cropping">
+                        </div>
+                        <div class="edt-crop__preview" id="edtCropPreview"></div>
+                        <input type="hidden" id="edtCroppedData" name="croppedImage">
+                        <input type="hidden" id="Id" class="id" name="id" value="<%= category._id %>">
+                        <div class="cat-modal__btn-group">
+                            <button type="submit" class="edt-btn cat-btn--submit">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <% if (category.status === 'active') { %>
+          <button class="action-btn makeInactive">🔴</button>
+      <% } else { %>
+        <button class="action-btn makeActive">🟢</button>
+      <% } %>
+      <button class="action-btn permanentDelete">🗑️</button>
+      <a href="/admin/products?id=<%= category._id %>"><button class="action-btn ">Let's Go ➡️</button></a>
+        </div>
+      </td>
+    </tr>
+  <% }); %>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARNI - Profile Pages</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
+    <link rel="stylesheet" href="/stylesheets/user/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+    
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">ARNI</a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/shop">Shop</a>
+                <% categoriesWithSubs.forEach(function(category) { %>
+                    <a href="/subcategories?main=<%= category._id %>" 
+                       data-category="true"
+                       data-categories="<%= JSON.stringify(categoriesWithSubs) %>">
+                        <%= category.mainCategoryName.split(' ')
+                            .map((word, index) => index === 0 ? 
+                                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : 
+                                word.toLowerCase())
+                            .join(' ') %>
+                    </a>
+                <% }); %>
+            </div>
+            <div class="nav-right">
+                <a href="/users/pI">
+                    <i class="fas fa-user-circle"></i> Profile
+                </a>
+                <a href="/users/cart">🛒</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="profile-header">
+                    <div class="profile-image-container">
+                        <img src="https://res.cloudinary.com/dlosst2x3/image/upload/c_crop,w_300,h_280,g_auto/v1738936379/DALL_E_2025-02-07_19.18.16_-_A_cute_chibi-style_avatar_of_a_friendly_character_waving_and_saying__Hi___in_a_speech_bubble._The_character_has_a_modern__stylish_design_with_a_dark_t-removebg-preview_pgwkzl.png" alt="Profile">
+                    </div>
+                    <div>
+                        <p style="color: #eab308; font-size: 0.875rem;">Hello,</p>
+                    </div>
+                </div>
+                
+                <div class="nav-buttons">
+                    <a class="nav-button" href="/users/pI" data-page="personal">👤 Personal Information</a>
+                    <a class="nav-button" href="/users/order" data-page="orders">📦 My Orders</a>
+                    <a class="nav-button active" href="/users/wishlist" data-page="wishlist">♥ My Wishlists</a>
+                    <a class="nav-button" href="/users/adr" data-page="addresses">📍 Manage Addresses</a>
+                    <a class="nav-button" href="/users/wallet" data-page="wallet">💰 Wallet</a>
+                    <form action="/users/logout" method="POST">
+                        <button type="submit" class="nav-button" id="logoutBtn">🚪 Log Out</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <div class="page active" id="wishlist">
+                    <h2 class="page-header">My Wishlist</h2>
+                    <div class="wishlist-grid">
+                        <% if (wishlistItems && wishlistItems.length > 0) { %>
+                            <% wishlistItems.forEach(item => { %>
+                                <div class="wishlist-item" data-variant-id="<%= item.variantId._id %>">
+                                    <div class="wishlist-image">
+                                        <img src="<%= item.variantId.images[0] %>" alt="<%= item.product.name %>">
+                                    </div>
+                                    <div class="wishlist-content">
+                                        <div class="wishlist-title"><%= item.product.name %></div>
+                                        <div class="wishlist-price">₹<%= item.product.price.toLocaleString() %></div>
+                                        <div class="wishlist-actions">
+                                            <button class="wishlist-button remove-wishlist">Remove</button>
+                                            <a href="/overview/<%= item.variantId._id %>" class="wishlist-button">more details</a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <div class="empty-wishlist">
+                                <p>Your wishlist is empty</p>
+                                <a href="/shop" class="shop-now-btn">Shop Now</a>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About ARNI</h3>
+                <p>Fashion for everyone</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="/">Home</a>
+            <a href="/shop">Shop</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p>Email: info@arni.com</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#">Instagram</a>
+                    <a href="#">Facebook</a>
+                    <a href="#">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script src="/js/background.js"></script>
+    <script src="/javascripts/user/wishlist.js"></script>
+</body>
+</html>

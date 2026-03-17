@@ -1,0 +1,349 @@
+/* Global Styles */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000; /* Pure black background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    overflow: hidden; /* Prevent scrolling */
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.login-container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+/* Login Box */
+.login-box {
+    display: flex;
+    flex-direction: row;
+    color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    max-width: 700px;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    max-height: 90vh; /* Limit maximum height */
+    backdrop-filter: blur(10px); /* Apply blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Add a subtle border for depth */
+}
+
+/* Logo Section */
+.logo-section {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+}
+
+.logo-section img {
+    width: 40px;
+    height: auto;
+}
+
+/* Image Section */
+.image-section {
+    flex: 1;
+    background: #000; /* Fallback to pure black if the image fails to load */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align items at the top */
+    overflow: hidden;
+    position: relative;
+}
+
+.image-section img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure the image covers the area */
+    object-position: top center; /* Focus on the top of the image (e.g., the face) */
+}
+
+/* Form Section */
+.form-section {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: rgba(37, 37, 37, 0.8); /* Slightly lighter gray with transparency */
+    height: 100%; /* Ensure the form takes full height */
+    backdrop-filter: blur(5px); /* Add a subtle blur to the form section */
+    overflow-y: auto; /* Add scroll if content is too tall */
+}
+
+/* Form Header */
+.form-section h2 {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 24px;
+    color: #fff;
+}
+
+/* Input Fields */
+.form-section input,
+.form-section button {
+    width: 100%;
+    padding: 10px;
+    margin: 0 0 15px 0; /* Consistent margin */
+    border: 1px solid rgba(85, 85, 85, 0.5); /* Semi-transparent border */
+    border-radius: 5px;
+    font-size: 14px; /* Set a consistent font size for both elements */
+    background-color: rgba(51, 51, 51, 0.8); /* Semi-transparent background */
+    color: #fff;
+    box-sizing: border-box; /* Ensure padding and borders are included in width */
+}
+
+.form-section button {
+    background-color: #D7A54E;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px; /* Adjust margin if necessary */
+}
+
+.form-section button:hover {
+    background-color: #EBCB92;
+}
+
+/* Form Links (Forgot Password & Sign Up) */
+.form-links {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.form-links a {
+    text-decoration: none;
+    color: #D7A54E;
+    font-weight: bold;
+}
+
+.form-links a:hover {
+    text-decoration: underline;
+}
+
+.form-links span {
+    margin: 0 5px;
+    color: #fff;
+}
+
+/* Social Login Buttons */
+.social-login {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.social-login p {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.social-login button {
+    margin: 5px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.social-login .google {
+    background-color: #db4437;
+    color: #fff;
+}
+
+.social-login .facebook {
+    background-color: #4267b2;
+    color: #fff;
+}
+
+.social-login button i {
+    font-size: 16px;
+}
+
+.btn {
+    text-decoration: none;
+}
+
+/* Validation Messages */
+.iAfter {
+    border: 2px solid red !important;
+}
+
+.validation {
+    margin-top: 0;
+    margin-left: 5px;
+    font-size: 12px; /* Adjust font size of validation messages */
+}
+
+.iValid {
+    color: red !important;
+}
+
+/* Password Wrapper */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 35px; /* Add space on the right side to accommodate the eye icon */
+}
+
+.password-wrapper i {
+    position: absolute;
+    right: 10px; /* Adjust the position of the eye icon inside the input field */
+    top: 50%;
+    transform: translateY(-50%); /* Vertically center the icon */
+    cursor: pointer;
+    color: #aaa;
+}
+
+.password-wrapper i:hover {
+    color: #D7A54E; /* Change color on hover */
+}
+
+/* Enhanced Responsive Design */
+@media (max-width: 768px) {
+    .login-box {
+        flex-direction: column; /* Stack the image on top and form below */
+        max-height: 85vh; /* Slightly reduce max height on tablets */
+    }
+
+    .image-section {
+        display: none; /* Remove image section on tablets and smaller devices */
+    }
+
+    .form-section {
+        width: 100%;
+    }
+    
+    .form-section h2 {
+        font-size: 20px; /* Smaller font size for header */
+        margin-bottom: 12px;
+    }
+    
+    .form-section input,
+    .form-section button {
+        padding: 8px; /* Reduce padding for smaller screens */
+        margin-bottom: 12px;
+    }
+
+    .social-login {
+        margin-top: 15px;
+    }
+    
+    .social-login button {
+        font-size: 12px; /* Smaller text for social buttons */
+        padding: 8px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 10px;
+    }
+    
+    .login-box {
+        max-height: 80vh; /* Further reduce max height on mobile */
+    }
+    
+    .form-section {
+        padding: 15px;
+    }
+    
+    .form-section h2 {
+        font-size: 18px; /* Smaller font size for header */
+        margin-bottom: 10px;
+    }
+    
+    .form-section input,
+    .form-section button {
+        padding: 8px; /* Less padding */
+        margin-bottom: 10px;
+    }
+    
+    .form-links {
+        margin-top: 10px;
+        font-size: 12px;
+    }
+    
+    .social-login {
+        margin-top: 12px;
+    }
+    
+    .social-login p {
+        font-size: 12px;
+    }
+    
+    .social-login button {
+        font-size: 11px; /* Smaller text size */
+        padding: 6px 10px;
+        margin: 3px;
+    }
+}
+
+/* For very small screens */
+@media (max-height: 550px) {
+    .login-box {
+        max-height: 95vh; /* Allow more height on very small screens */
+    }
+    
+    .form-section {
+        padding: 10px;
+    }
+    
+    .form-section h2 {
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+    
+    .form-section input,
+    .form-section button {
+        padding: 6px;
+        margin-bottom: 8px;
+        font-size: 12px;
+    }
+    
+    .form-links {
+        margin-top: 8px;
+        font-size: 11px;
+    }
+    
+    .social-login {
+        margin-top: 8px;
+    }
+    
+    .social-login p {
+        margin-bottom: 6px;
+        font-size: 11px;
+    }
+}

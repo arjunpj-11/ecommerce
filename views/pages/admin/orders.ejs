@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+    <link rel="stylesheet" href="/stylesheets/admin/orders.css">
+</head>
+<body>
+    <div class="container">
+        <div class="hamburger-menu" id="hamburger-menu">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    
+        <!-- Overlay for when sidebar is open -->
+        <div class="overlay" id="overlay"></div>
+    
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <img src="/images/common/logo.png" alt="Logo">
+            </div>
+            
+            
+            <ul class="nav-links">
+                <li><a href="/admin/dashboard" >Dashboard</a></li>
+                <li><a href="/admin/products">Products</a></li>
+                <li><a href="/admin/maincategories">Category</a></li>
+                <li><a href="/admin/orders" class="active">Orders</a></li>
+                <li><a href="/admin/coupons">Coupons</a></li>
+                <li><a href="/admin/sales">Sales Report</a></li>
+                <li><a href="/admin/users">Users</a></li>
+                <li><a href="/admin/banner">Banner</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>Orders</h1>
+            </div>
+
+            <div class="status-tabs">
+                <button class="status-tab active" data-status="All">All Status</button>
+                <button class="status-tab" data-status="Processing">Processing</button>
+                <button class="status-tab" data-status="Shipped">Shipped</button>
+                <button class="status-tab" data-status="Delivered">Delivered</button>
+                <button class="status-tab" data-status="Cancelled">Cancelled</button>
+            </div>
+
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Sl No</th>
+                        <th>Customer</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                        <th>Order Date</th>
+                        <th>Payment</th>
+                        <th>Address</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.all.min.js"></script>
+    <script src="/javascripts/admin/orders.js"></script>
+  
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARNI - Dark Fashion</title>
+    <link rel="stylesheet" href="/stylesheets/index/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+    
+    <div class="content">
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="/" class="logo">ARNI</a>
+                <div class="nav-links">
+                    <a href="/" class="active">Home</a>
+                    <a href="/shop">Shop</a>
+                    <% categoriesWithSubs.forEach(function(category) { %>
+                        <a href="/subcategories?main=<%= category._id %>" 
+                           data-category="true"
+                           data-categories="<%= JSON.stringify(categoriesWithSubs) %>">
+                            <%= category.mainCategoryName.split(' ')
+                                .map((word, index) => index === 0 ? 
+                                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : 
+                                    word.toLowerCase())
+                                .join(' ') %>
+                        </a>
+                    <% }); %>
+                </div>                
+                <div class="nav-right">
+                    <% if (authentication) { %>
+                        <a href="/users/pI">
+                          <i class="fas fa-user-circle"></i> Profile
+                        </a>
+                    <% } else { %>
+                        <a href="/auth/login">Login</a>
+                    <% } %>                      
+                    <a href="#" class="search-icon">🔍</a>
+                    <a href="/users/cart" class="cart-icon">🛒</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="hero-slider">
+            <div class="slider-container">
+                <% banners.forEach(function(banner, index) { %>
+                    <div class="slide <%= banner.categoryType.toLowerCase() %>"
+                         data-banner='<%= JSON.stringify({
+                             imageUrl: banner.imageUrl,
+                             categoryType: banner.categoryType,
+                             categoryId: banner.categoryId
+                         }) %>'
+                         data-index="<%= index %>">
+                        <div class="slide-content">
+                            <div class="slide-tag"><%= banner.title %></div>
+                            <h1 class="slide-title"><%= banner.heading %></h1>
+                            <p class="slide-description"><%= banner.subtext %></p>
+                            <a href="<%= banner.categoryType === 'MainCategory' ? 
+                                `/subcategories?main=${banner.categoryId}` : 
+                                `/products?sub=${banner.categoryId}` %>" 
+                               class="shop-now-btn">
+                                <%= banner.buttonText %>
+                            </a>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+            
+            <button class="slider-arrow prev" aria-label="Previous slide">❮</button>
+            <button class="slider-arrow next" aria-label="Next slide">❯</button>
+            
+            <div class="slider-controls">
+                <% banners.forEach(function(banner, index) { %>
+                    <div class="slider-dot <%= index === 0 ? 'active' : '' %>" 
+                         data-index="<%= index %>"
+                         role="button"
+                         aria-label="Go to slide <%= index + 1 %>"></div>
+                <% }); %>
+            </div>
+        </div>
+
+        <section class="categories-section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>TOP CATEGORIES</h2>
+                    <p>Explore our popular categories</p>
+                </div>
+                <div class="categories">
+                    <% topCategories.forEach(function(category) { %>
+                        <div class="category" data-category-id="<%= category._id %>">
+                            <img src="<%= category.image %>" 
+                                 alt="<%= category.mainCategoryName %>">
+                            <div class="category-label">
+                                <SPan><%= category.mainCategoryName %></SPan>
+                                <% if (category.offerPercentage > 0) { %>
+                                    <span class="offer-badge5">
+                                        <%= category.offerPercentage %>% OFF
+                                    </span>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        </section>
+
+        <section class="featured-products">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Best Sellers</h2>
+                    <p>Our most popular items</p>
+                </div>
+                <div class="product-grid">
+                    <% topSoldItems.forEach(function(product) { %>
+                        <a href="/overview/<%= product.variantId%>" class="product-card-link">
+                            <div class="product-card">
+                                <div class="product-image-container">
+                                    <img src="<%= product.displayImage %>" 
+                                         alt="<%= product.name %>" 
+                                         class="product-image">
+                                </div>
+                                <div class="product-info">
+                                    <h3 class="product-name"><%= product.name %></h3>
+                                    <div class="price-layout">
+                                        <div class="price-row">
+                                            <span class="discount-price">₹<%= product.discountPrice %></span>
+                                            <% if ( product.price  > product.discountPrice) { %>
+                                                <span class="original-price">₹<%= product.price %></span>
+                                            <% } %>
+                                        </div>
+                                        <% if ( product.price  > product.discountPrice) { %>
+                                            <span class="discount-percentage">
+                                                <%= Math.round((1 - product.discountPrice/ product.price ) * 100) %>% off
+                                            </span>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    <% }); %>
+                    
+                </div>
+            </div>
+        </section>
+     
+
+     
+        <footer>
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3>About ARNI</h3>
+                        <p>Fashion for everyone</p>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Quick Links</h3>
+                        <a href="/">Home</a>
+            <a href="/shop">Shop</a>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Contact Us</h3>
+                        <p>Email: info@arni.com</p>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Follow Us</h3>
+                        <div class="social-links">
+                            <a href="#">Instagram</a>
+                            <a href="#">Facebook</a>
+                            <a href="#">Twitter</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="/javascripts/index/home.js"></script>
+</body>
+</html>

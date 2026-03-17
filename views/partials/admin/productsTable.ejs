@@ -1,0 +1,119 @@
+
+        <% products.forEach(product => { %>
+          <tr>
+            <td>
+              <div class="product-info">
+                <img src="<%= product.displayImage || '/api/placeholder/40/40' %>" alt="<%= product.name %>" class="product-image">
+                <span class="product-name truncate-text"><%= product.name %></span>
+              </div>
+            </td>
+            <td><span class="id-text"><%= product.productId %></span></td>
+            <td><%= product.price %></td>
+            <td><%= product.discountPrice %></td>
+            <td>
+              <span class="status-badge <%= product.status === 'active' ? 'active' : 'inactive' %>">
+                <%= product.status %>
+              </span>
+            </td>
+            <td class="desc-col"><div class="truncate-text description-text"><%= product.description %></div></td>
+            <td>
+              <div class="action-buttons">
+                <button class="action-btn edit-product-btn" title="Edit">✏️</button>
+                <% if (product.status === 'active') { %>
+                  <button class="action-btn makeInactive" title="Deactivate">🔴</button>
+                <% } else { %>
+                  <button class="action-btn makeActive" title="Activate">🟢</button>
+                <% } %>
+                <button class="action-btn delete-product-btn permanentDelete" title="Delete">🗑️</button>
+                <a href="/admin/variant?id=<%= product._id %>" class="action-link">
+                  <button class="action-btn" title="View Details">➡️</button>
+                </a>
+              </div>
+              
+              <!-- Edit Modal (Hidden by default) -->
+              <div class="cat-modal__overlay active">
+                <div class="cat-modal__container">
+                  <div class="cat-modal__header">
+                    <h2>Edit Product</h2>
+                    <button class="cat-modal__close-btn">&times;</button>
+                  </div>
+                  <div class="cat-modal__content">
+                    <form class="cat-form">
+                      <input type="hidden" class="id" value="<%= product._id %>">
+                      <div class="cat-form__group">
+                        <label for="productName">Product Name</label>
+                        <input type="text" id="productName" class="cat-form__input" value="<%= product.name %>" required>
+                      </div>
+                      <div class="cat-form__group">
+                        <label for="description">Description</label>
+                        <textarea id="description" class="cat-form__input" required><%= product.description %></textarea>
+                      </div>
+                      <div class="cat-form__group">
+                        <label for="price">Price</label>
+                        <input type="number" id="price" class="cat-form__input" value="<%= product.price %>" required>
+                      </div>
+                      <div class="cat-modal__btn-group">
+                        <button type="button" class="cat-btn cat-btn--cancel">Cancel</button>
+                        <button type="submit" class="cat-btn cat-btn--submit">Save</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        <% }); %>
+        
+        <!-- Pagination Section -->
+        <% if (totalPages > 1) { %>
+          <tr>
+            <td colspan="7">
+              <div class="pagination" id="pagination-container">
+                <% if (currentPage > 1) { %>
+                  <button class="pagination-btn prev-btn" data-page="<%= currentPage - 1 %>">◀</button>
+                <% } %>
+                
+                <% if (currentPage = 1) { %>
+                  <button class="pagination-btn" data-page="1">1</button>
+                  <% if (currentPage > 3) { %>
+                    <span class="pagination-ellipsis">...</span>
+                  <% } %>
+                <% } %>
+                
+                <% pages.forEach(page => { %>
+                  <button class="pagination-btn <%= page === currentPage ? 'active' : '' %>" data-page="<%= page %>"><%= page %></button>
+                <% }); %>
+                
+                <% if (currentPage < totalPages - 1) { %>
+                  <% if (currentPage < totalPages - 2) { %>
+                    <span class="pagination-ellipsis">...</span>
+                  <% } %>
+                  <button class="pagination-btn" data-page="<%= totalPages %>"><%= totalPages %></button>
+                <% } %>
+                
+                <% if (currentPage < totalPages) { %>
+                  <button class="pagination-btn next-btn" data-page="<%= currentPage + 1 %>">▶</button>
+                <% } %>
+              </div>
+            </td>
+          </tr>
+        <% } %>
+        
+        <!-- No Products Message -->
+        <% if (products.length === 0) { %>
+          <tr>
+            <td colspan="7" class="empty-message">
+              No products found<% if (searchQuery) { %> for "<%= searchQuery %>"<% } %>
+            </td>
+          </tr>
+        <% } %>
+        
+        <!-- Search Results Count -->
+        <% if (products.length > 0 && searchQuery) { %>
+          <tr>
+            <td colspan="7" class="search-results">
+              Found <%= totalProducts %> result<%= totalProducts !== 1 ? 's' : '' %> for "<%= searchQuery %>"
+            </td>
+          </tr>
+        <% } %>
+ 

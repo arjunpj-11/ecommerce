@@ -1,0 +1,466 @@
+   /* Global Styles */
+   * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    position: relative;
+  }
+
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  /* Login Container */
+  .login-container {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  /* Login Box */
+  .login-box {
+    display: flex;
+    flex-direction: row;
+    color: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    max-width: 900px;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    position: relative;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(37, 37, 37, 0.7);
+    max-height: 100vh;
+  }
+
+  /* Logo Section */
+  .logo-section {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+  }
+
+  .logo-section img {
+    width: 50px;
+    height: auto;
+  }
+
+  /* Image Section */
+  .image-section {
+    flex: 1;
+    background: #000;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .image-section img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.3s ease;
+  }
+
+  /* Form Section */
+  .form-section {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #252525;
+    overflow-y: auto;
+    max-height: 100vh;
+  }
+
+  /* Form Header */
+  .form-section h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  /* Input Fields */
+  .form-section input,
+  .form-section button {
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    border: 1px solid #444;
+    border-radius: 8px;
+    font-size: 15px;
+    background-color: #333;
+    color: #fff;
+    transition: all 0.3s ease;
+  }
+
+  .form-section input:focus {
+    outline: none;
+    border-color: #D7A54E;
+    box-shadow: 0 0 0 2px rgba(215, 165, 78, 0.2);
+  }
+
+  .form-section button {
+    background-color: #D7A54E;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+  }
+
+  .form-section button:hover {
+    background-color: #EBCB92;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(215, 165, 78, 0.3);
+  }
+
+  .form-section button:active {
+    transform: translateY(0);
+  }
+
+  /* Form Links (Terms & Privacy) */
+  .form-links {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #aaa;
+  }
+
+  .form-links a {
+    text-decoration: none;
+    color: #D7A54E;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+
+  .form-links a:hover {
+    color: #EBCB92;
+    text-decoration: underline;
+  }
+
+  .form-links span {
+    margin: 0 3px;
+    color: #aaa;
+  }
+
+  /* Social Login Buttons */
+  .social-login {
+    margin-top: 25px;
+    text-align: center;
+  }
+
+  .social-login p {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #aaa;
+  }
+
+  .social-login button {
+    margin: 5px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+  }
+
+  .social-login .google {
+    background-color: #db4437;
+    color: #fff;
+  }
+
+  .social-login .facebook {
+    background-color: #4267b2;
+    color: #fff;
+  }
+
+  .social-login button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .social-login button i {
+    font-size: 18px;
+  }
+
+  /* Link to Login Page */
+  .login-link {
+    margin-top: 25px;
+    text-align: center;
+    font-size: 15px;
+    color: #aaa;
+  }
+
+  .login-link a {
+    text-decoration: none;
+    color: #D7A54E;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+
+  .login-link a:hover {
+    color: #EBCB92;
+    text-decoration: underline;
+  }
+
+  /* Password Wrapper */
+  .password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .password-wrapper input {
+    width: 100%;
+    padding-right: 45px;
+    margin-bottom: 0;
+  }
+
+  .password-wrapper i {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #aaa;
+    transition: color 0.3s;
+  }
+
+  .password-wrapper i:hover {
+    color: #D7A54E;
+  }
+
+  /* Validation Messages */
+  .iAfter {
+    border: 2px solid #ff4444 !important;
+  }
+
+  .validation {
+    margin-top: -8px;
+    margin-bottom: 12px;
+    margin-left: 5px;
+    font-size: 13px;
+    transition: all 0.3s ease;
+  }
+
+  .iValid {
+    color: #ff4444 !important;
+  }
+
+  /* Password Criteria Checklist */
+  .password-criteria {
+    margin-top: 5px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #aaa;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.3s ease, max-height 0.3s ease;
+    background-color: rgba(50, 50, 50, 0.7);
+    border-radius: 8px;
+    padding: 0 15px;
+  }
+
+  .password-criteria.visible {
+    opacity: 1;
+    max-height: 230px;
+    padding: 15px;
+  }
+
+  .password-criteria p {
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .password-criteria ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .password-criteria li {
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+  }
+
+  .password-criteria li::before {
+    content: '✗';
+    color: #ff4444;
+    margin-right: 10px;
+    font-weight: bold;
+  }
+
+  .password-criteria li.valid::before {
+    content: '✓';
+    color: #00C851;
+  }
+
+  .btn {
+    text-decoration: none !important;
+    display: inline-block;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 992px) {
+    .login-box {
+      max-width: 800px;
+    }
+    
+    .form-section {
+      padding: 30px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .login-box {
+      flex-direction: column;
+      max-width: 500px;
+    }
+    
+    .image-section {
+      display: none; /* Hide image section on smaller screens */
+    }
+    
+    .form-section {
+      padding: 30px 25px;
+      max-height: 100vh;
+      overflow-y: auto;
+    }
+    
+    .form-section h2 {
+      font-size: 24px;
+      margin-bottom: 25px;
+    }
+    
+    .logo-section {
+      top: 15px;
+      left: 15px;
+    }
+    
+    .logo-section img {
+      width: 40px;
+    }
+    
+    .login-box {
+      height: auto;
+      max-height: 100vh;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .login-container {
+      padding: 15px;
+      align-items: flex-start;
+    }
+    
+    .login-box {
+      border-radius: 12px;
+      height: auto;
+      max-height: calc(100vh - 30px); /* Accounting for container padding */
+      overflow-y: auto;
+    }
+    
+    .form-section {
+      padding: 25px 20px;
+    }
+    
+    .form-section h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+    
+    .form-section input,
+    .form-section button {
+      padding: 12px 14px;
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+    
+    .password-wrapper {
+      margin-bottom: 14px;
+    }
+    
+    .password-wrapper i {
+      right: 14px;
+    }
+    
+    .social-login button {
+      padding: 10px 15px;
+      font-size: 14px;
+    }
+    
+    .form-links, .login-link {
+      font-size: 13px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .form-section {
+      padding: 20px 15px;
+    }
+    
+    .social-login {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .social-login .btn {
+      width: 100%;
+    }
+    
+    .social-login button {
+      width: 100%;
+      margin: 5px 0;
+    }
+  }
+
+  @media (max-height: 700px) {
+    .login-box {
+      margin: 0;
+      max-height: 100vh;
+      overflow-y: auto;
+    }
+    
+    .image-section {
+      display: none; /* Always hide image on short screens */
+    }
+  }

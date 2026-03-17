@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <link rel="stylesheet" href="/stylesheets/admin/variant.css">
+</head>
+<body>
+<div class="container">
+    <!-- Hamburger menu for mobile -->
+    <div class="hamburger-menu" id="hamburger-menu">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+
+    <!-- Overlay for when sidebar is open -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo">
+            <img src="/images/common/logo.png" alt="Logo">
+        </div>
+        <div class="sidebar-header">
+            <div class="admin-info">
+                <div class="admin-avatar"></div>
+                <span>Admin</span>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li><a href="/admin/products" class="active">Products</a></li>
+            <li><a href="/admin/maincategories">Category</a></li>
+            <li><a href="/admin/orders">Orders</a></li>
+            <li><a href="/admin/coupons" >Coupons</a></li>
+            <li><a href="/admin/sales" >Sales Report</a></li>
+            <li><a href="/admin/users">Users</a></li>
+            <li><a href="/admin/banner">Banner</a></li>
+        </ul>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <h1 class="page-title">Variants</h1>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <tbody id="tbody">
+                    <tr> <td></td><div id="add-variantsContainer"></div><td></td></tr>
+                    <button type="button" class="add-variant" id="add-addVariant">+ Add Color Variant</button>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<!-- Templates (no change) -->
+<template id="add-colorPickerModalTemplate">
+    <!-- (unchanged template content) -->
+</template>
+
+<template id="add-editModalTemplate">
+    <div class="add-modal">
+        <div class="add-modal-content">
+            <div class="add-modal-header">
+                <h2>Edit Image</h2>
+                <button type="button" class="add-modal-close" id="add-modalClose">×</button>
+            </div>
+            <form id="add-uploadForm">
+                <div class="add-form-group">
+                    <label>Choose Image</label>
+                    <input type="file" id="add-imageInput" accept="image/*">
+                </div>
+                <div id="add-cropContainer">
+                    <div id="add-cropArea"></div>
+                </div>
+                <div id="add-cropPreview" class="add-crop-preview" style="display:none;">
+                    <div class="add-preview-mini-boxes">
+                        <div class="add-preview-mini">
+                            <img id="add-previewMini" src="" alt="Preview">
+                        </div>
+                    </div>
+                    <div class="add-preview-large">
+                        <img id="add-previewLarge" src="" alt="Preview">
+                    </div>
+                </div>
+                <div class="add-button-group">
+                    <button type="button" class="add-btn add-btn-secondary" id="add-cancelBtn">Cancel</button>
+                    <button type="submit" class="add-btn add-btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</template>
+
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+<script src="/javascripts/admin/variant.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.all.min.js"></script>
+
+<!-- Hamburger Menu Script -->
+
+</body>
+</html>
