@@ -61,7 +61,7 @@ project-root/
 ⚙️ Installation & Setup
 
 1. Clone Repository
-git clone https://github.com/your-username/your-repo-name.git
+git clone https://github.com/arjunpj-11/ecommerce
 cd your-repo-name
 2. Install Dependencies
 npm install
