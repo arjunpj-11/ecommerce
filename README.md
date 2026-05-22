@@ -1,142 +1,168 @@
-🛒 Full Stack E-Commerce Web Application
+# 🛒 Full Stack E-Commerce Web Application
 
-A complete E-Commerce Web Application built using Node.js, Express (Generator), MongoDB, and EJS, featuring advanced admin controls, coupon system, and a full user shopping experience including secure online payments.
+A complete e-commerce web application built with Node.js, Express, MongoDB, and EJS — featuring advanced admin controls, a coupon system, Razorpay payment integration, and a full user shopping experience.
 
-🚀 Features
+---
 
+## 🚀 Features
 
+### 👤 User Side
+- 🔐 User registration & login
+- 🏠 Home page with featured products
+- 🔍 Product search functionality
+- 🗂️ Browse by categories & subcategories
+- 📦 Product listing & detailed product view
+- 🛒 Cart management (add / update / remove)
+- 💳 Secure checkout & payment integration
+- 💰 Razorpay payment gateway
+- 🎟️ Apply coupons & discounts
+- 📍 Address management
+- 📦 Order management (My Orders)
+- 👤 User profile management
+- 💼 Wallet system
+- 🔁 Order cancellation & returns
 
-👤 User Side
+### 🛠️ Admin Side
+- 🔐 Admin authentication
+- 📊 Dashboard with sales analytics
+- 👥 User management
+- 📦 Order management
+- 🛍️ Product & variant management
+- 🏷️ Category & subcategory management
+- 🎟️ Coupon management
+- 🎨 Banner management
+- 📊 Sales & offer management
 
-🔐 User Registration & Login
-🏠 Home page with featured products
-🔍 Product search functionality
-🗂️ Browse by categories & subcategories
-📦 Product listing & detailed product view
-🛒 Cart management (add/update/remove items)
-💳 Secure checkout & payment integration
-💰 Razorpay payment gateway integration
-🎟️ Apply coupons/discounts
-📍 Address management
-📦 Order management (My Orders)
-👤 User profile management
-💼 Wallet system
-🔁 Order cancellation / return (if implemented)
+---
 
+## 🧠 Tech Stack
 
+| Layer | Technology |
+|-------|-----------|
+| Backend | Node.js + Express.js (Express Generator) |
+| Frontend | EJS (Embedded JavaScript Templates) |
+| Database | MongoDB |
+| Payment | Razorpay |
+| Authentication | Session-based |
 
-🛠️ Admin Side
+---
 
-🔐 Admin authentication
-📊 Dashboard (sales analytics & overview)
-👥 User management
-📦 Order management
-🛍️ Product management
-📐 Product variant management
-🏷️ Category management
-🧩 Subcategory management
-🎟️ Coupon management
-🎨 Banner management
-📊 Sales & offer management
+## 📁 Project Structure
 
-🧠 Tech Stack
-
-Backend: Node.js + Express.js (Express Generator)
-Frontend: EJS (Embedded JavaScript Templates)
-Database: MongoDB
-Payment Gateway: Razorpay
-Authentication: Session-based authentication
-
-📁 Project Structure (Express Generator)
-
+```
 project-root/
-│
-├── bin/              # Server startup file (www)
-├── routes/           # Route definitions
-├── controllers/      # Business logic
-├── models/           # Database schemas
-├── views/            # EJS templates
-├── public/           # Static assets (CSS, JS, images)
-├── config/           # Configuration files (DB, etc.)
-├── app.js            # Main application file
+├── bin/           # Server startup (www)
+├── routes/        # Route definitions
+├── controllers/   # Business logic
+├── models/        # MongoDB schemas
+├── views/         # EJS templates
+├── public/        # Static assets (CSS, JS, images)
+├── config/        # DB & app configuration
+├── app.js         # Main application file
 ├── package.json
 └── README.md
+```
 
-⚙️ Installation & Setup
+---
 
-1. Clone Repository
+## ⚙️ Installation & Setup
+
+### 1. Clone the repository
+```bash
 git clone https://github.com/arjunpj-11/ecommerce
-cd your-repo-name
-2. Install Dependencies
+cd ecommerce
+```
+
+### 2. Install dependencies
+```bash
 npm install
-3. Environment Variables
+```
 
-Create a .env file in the root directory:
+### 3. Configure environment variables
 
+Create a `.env` file in the root directory:
+
+```env
 MONGO_URI=your_mongodb_connection_string
 SESSION_SECRET=your_secret_key
-
 RAZORPAY_KEY_ID=your_key_id
 RAZORPAY_SECRET=your_secret_key
-
 PORT=3000
-4. Run the Application
+```
+
+### 4. Start the application
+```bash
 npm start
+```
 
-App will run at:
-👉 http://localhost:3000
+Visit 👉 **http://localhost:3000**
 
-🔄 Application Workflow
+---
 
-🧑‍💻 User Flow
-Register/Login
-Browse or search products
-Add items to cart
-Apply coupon (optional)
-Checkout & make payment
-Place order
-Track/manage orders
+## 🔄 Application Workflow
 
-🧑‍💼 Admin Flow
-Login to admin dashboard
-Manage products, categories, and variants
-Create and manage coupons
-Monitor users and orders
-Analyze sales data
+### 🧑‍💻 User Flow
+1. Register / Login
+2. Browse or search products
+3. Add items to cart
+4. Apply coupon (optional)
+5. Checkout & make payment via Razorpay
+6. Place order & track / manage orders
 
-✨ Key Highlights
+### 🧑‍💼 Admin Flow
+1. Login to admin dashboard
+2. Manage products, categories, and variants
+3. Create and manage coupons & banners
+4. Monitor users and orders
+5. Analyze sales data
 
-🧩 Structured using Express Generator (MVC pattern)
-🛍️ Complete e-commerce workflow
-💳 Razorpay payment integration
-🎟️ Coupon & discount system
-📊 Advanced admin dashboard
-⚡ Server-side rendering with EJS
-📦 Scalable and modular architecture
-🔮 Future Enhancements
-⭐ Product reviews & ratings
-🔔 Real-time notifications
-📦 Live order tracking
-📱 Fully responsive UI (mobile optimization)
-🌐 REST API for React/Next.js frontend
-🧾 Invoice generation
-📸 Screenshots
+---
 
-Add screenshots of your application here
+## ✨ Key Highlights
 
-🤝 Contributing
+- 🧩 MVC pattern via Express Generator
+- 🛍️ Complete end-to-end e-commerce workflow
+- 💳 Razorpay payment integration
+- 🎟️ Coupon & discount system
+- 📊 Advanced admin dashboard
+- ⚡ Server-side rendering with EJS
+- 📦 Scalable and modular architecture
 
-Contributions are welcome! Feel free to fork this repository and submit pull requests.
+---
 
-📜 License
+## 🔮 Future Enhancements
 
-This project is licensed under the MIT License.
+- [ ] Product reviews & ratings
+- [ ] Real-time notifications
+- [ ] Live order tracking
+- [ ] Fully responsive mobile UI
+- [ ] REST API for React / Next.js frontend
+- [ ] Invoice generation
 
-👨‍💻 Author
+---
 
-Arjun PJ
-GitHub: https://github.com/arjunpj-11
+## 📸 Screenshots
 
-🙌 Acknowledgment
+> Add screenshots of your application here
 
-This project was developed as a full-stack implementation of a real-world e-commerce platform to understand scalable architecture, payment integration, and admin management systems.
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to fork this repository and submit a pull request.
+
+---
+
+## 📜 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## 👨‍💻 Author
+
+**Arjun PJ** — [github.com/arjunpj-11](https://github.com/arjunpj-11)
+
+---
+
+> 💡 Built as a full-stack implementation of a real-world e-commerce platform to explore scalable architecture, payment integration, and admin management systems.
