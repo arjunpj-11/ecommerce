@@ -1,170 +1,372 @@
+<%
+  const safeCategories = typeof categoriesWithSubs !== 'undefined' && Array.isArray(categoriesWithSubs)
+    ? categoriesWithSubs
+    : [];
+
+  const safeItems = typeof items !== 'undefined' && Array.isArray(items)
+    ? items
+    : [];
+
+  const safeTotalAmount = typeof totalAmount !== 'undefined'
+    ? Number(totalAmount)
+    : 0;
+
+  const safeDiscount = typeof discount !== 'undefined'
+    ? Number(discount)
+    : 0;
+
+  const grandTotal = safeTotalAmount + 20 - safeDiscount;
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout Page</title>
-    <link rel="stylesheet" href="/stylesheets/user/checkout.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Checkout - ARNI</title>
+
+  <link rel="stylesheet" href="/stylesheets/user/checkout.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
+
 <body>
-    <canvas id="backgroundCanvas"></canvas>
-    
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="#" class="logo">ARNI</a>
-            <div class="nav-links">
-                <a href="/">Home</a>
-                <a href="/shop">Shop</a>
-                <% categoriesWithSubs.forEach(function(category) { %>
-                    <a href="/subcategories?main=<%= category._id %>" 
-                       data-category="true"
-                       data-categories="<%= JSON.stringify(categoriesWithSubs) %>">
-                        <%= category.mainCategoryName.split(' ')
-                            .map((word, index) => index === 0 ? 
-                                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : 
-                                word.toLowerCase())
-                            .join(' ') %>
-                    </a>
-                <% }); %>
-            </div>
-            <div class="nav-right">
-                <a href="/users/pI">
-                    <i class="fas fa-user-circle"></i> Profile
-                  </a>
-                <a href="/users/cart">🛒</a>
-            </div>
-        </div>
+  <canvas id="backgroundCanvas"></canvas>
+
+  <header class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="/" class="logo">ARNI</a>
+
+      <nav class="nav-links" id="navLinks">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/shop" class="nav-link">Shop</a>
+
+        <% if (safeCategories.length > 0) { %>
+          <a href="/shop" class="nav-link has-dropdown" data-category="true">
+            Categories
+            <i class="fas fa-chevron-down dropdown-arrow"></i>
+          </a>
+        <% } %>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="icon-btn search-toggle" type="button" aria-label="Search">
+          <i class="fas fa-search"></i>
+        </button>
+
+        <a href="/users/cart" class="icon-btn" aria-label="Cart">
+          <i class="fas fa-shopping-bag"></i>
+        </a>
+
+        <a href="/users/pI" class="icon-btn profile-btn" aria-label="Profile">
+          <i class="fas fa-user"></i>
+        </a>
+
+        <button class="hamburger" id="hamburger" type="button" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="search-overlay" id="searchOverlay">
+      <form class="search-form" action="/search" method="GET">
+        <input
+          type="text"
+          name="search"
+          placeholder="Search for products, styles, brands..."
+          class="search-input"
+        />
+
+        <button type="submit" class="search-submit" aria-label="Submit search">
+          <i class="fas fa-search"></i>
+        </button>
+
+        <button type="button" class="search-close" id="searchClose" aria-label="Close search">
+          <i class="fas fa-times"></i>
+        </button>
+      </form>
+    </div>
+  </header>
+
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <aside class="mobile-drawer" id="mobileDrawer">
+    <button class="drawer-close" id="drawerClose" type="button" aria-label="Close menu">
+      <i class="fas fa-times"></i>
+    </button>
+
+    <div class="drawer-logo">ARNI</div>
+
+    <nav class="drawer-nav">
+      <a href="/">Home</a>
+      <a href="/shop">Shop</a>
+      <a href="/users/cart">Cart</a>
+      <a href="/users/pI">Profile</a>
+
+      <% safeCategories.forEach(function(category) { %>
+        <a href="/subcategories?main=<%= category._id %>">
+          <%= category.mainCategoryName %>
+        </a>
+      <% }); %>
     </nav>
+  </aside>
 
-    <div class="container1">
-        <div class="main-content">
-            <div class="card">
-                <h2>Your Cart</h2>
-                    <% items.forEach(item => { %>
-                        <div class="cart-item <%= !item.inStock ? 'out-of-stock-item' : '' %>" data-variant-id="<%= item.variantId %>">
-                            <img src="<%= item.images[0] %>" alt="<%= item.name %>" class="product-image">
-                            <div class="product-details">
-                                <h3>
-                                    <%= item.name %>
-                                </h3>
-                                <p>
-                                    Color: <span class="color-circle" style="background-color: <%= item.color %>;"></span>
-                                    Size: <span id="size"><%= item.size %></span>
-                                </p>
-                                
-                                <% if (!item.inStock) { %>
-                                <% } else if (item.availableStock < 5) { %>
-                                    <p class="stock-warning">Only <%= item.availableStock %> left in stock!</p>
-                                <% } %>
-                            </div>
-                            <div>₹<%= (item.discountPrice || item.price).toFixed(2) %></div>
-                            <div class="quantity-controls">
-                                <input type="text" value="<%= item.quantity %>" class="quantity-input" 
-                                       id="quantity-<%= item.variantId %>"
-                                       <%= !item.inStock ? 'disabled' : '' %>>
-                            </div>
-                        </div>
-                    <% }); %>
+  <main class="checkout-page">
+    <section class="checkout-hero">
+      <p class="section-eyebrow">Secure Checkout</p>
+      <h1>Complete Your Order</h1>
+      <p>Review your cart, select a shipping address, choose payment, and place your order securely.</p>
+    </section>
+
+    <section class="checkout-layout">
+      <div class="checkout-main">
+        <section class="card cart-card">
+          <div class="card-header">
+            <div>
+              <p class="card-eyebrow">Step 1</p>
+              <h2>Your Cart</h2>
             </div>
 
-            <div class="card">
-                <h2>Shipping Address</h2>
-                <div class="address-list">
-                    
-                </div>
-                <button class="btn btn-outline" onclick="showAddAddressModal()">Add New Address</button>
+            <a href="/users/cart" class="small-link">
+              Edit Cart
+              <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+
+          <% if (safeItems.length === 0) { %>
+            <div class="empty-state">
+              <i class="fas fa-shopping-bag"></i>
+              <h3>Your cart is empty</h3>
+              <p>Add products before checking out.</p>
+              <a href="/shop" class="btn-primary">Continue Shopping</a>
+            </div>
+          <% } else { %>
+            <div class="checkout-items">
+              <% safeItems.forEach(item => { %>
+                <article
+                  class="cart-item <%= !item.inStock ? 'out-of-stock-item' : '' %>"
+                  data-variant-id="<%= item.variantId %>"
+                >
+                  <a href="/overview/<%= item.variantId %>" class="product-image-wrap">
+                    <img
+                      src="<%= item.images && item.images[0] ? item.images[0] : '/images/common/placeholder.png' %>"
+                      alt="<%= item.name %>"
+                      class="product-image"
+                      loading="lazy"
+                    />
+                  </a>
+
+                  <div class="product-details">
+                    <h3><%= item.name %></h3>
+
+                    <p class="product-meta">
+                      <span>
+                        Color:
+                        <span
+                          class="color-circle"
+                          data-color-value="<%= item.color || '#d1d5db' %>"
+                        ></span>
+                      </span>
+
+                      <span>
+                        Size:
+                        <strong id="size"><%= item.size %></strong>
+                      </span>
+                    </p>
+
+                    <% if (!item.inStock) { %>
+                      <p class="stock-error">
+                        <i class="fas fa-triangle-exclamation"></i>
+                        This item is currently out of stock.
+                      </p>
+                    <% } else if (item.availableStock < 5) { %>
+                      <p class="stock-warning">
+                        <i class="fas fa-clock"></i>
+                        Only <%= item.availableStock %> left in stock!
+                      </p>
+                    <% } %>
+                  </div>
+
+                  <div class="item-price">
+                    ₹<%= Number(item.discountPrice || item.price).toFixed(2) %>
+                  </div>
+
+                  <div class="quantity-controls">
+                    <span class="quantity-label">Qty</span>
+                    <input
+                      type="text"
+                      value="<%= item.quantity %>"
+                      class="quantity-input"
+                      id="quantity-<%= item.variantId %>"
+                      readonly
+                      <%= !item.inStock ? 'disabled' : '' %>
+                    />
+                  </div>
+                </article>
+              <% }); %>
+            </div>
+          <% } %>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <p class="card-eyebrow">Step 2</p>
+              <h2>Shipping Address</h2>
+            </div>
+          </div>
+
+          <div class="address-list"></div>
+
+          <button class="btn-outline add-address-btn" type="button" onclick="showAddAddressModal()">
+            <i class="fas fa-plus"></i>
+            Add New Address
+          </button>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <p class="card-eyebrow">Step 3</p>
+              <h2>Payment Method</h2>
+            </div>
+          </div>
+
+          <div class="payment-methods">
+            <div class="payment-method" data-method="razorpay">
+              <input type="radio" name="payment" value="razorpay" id="razorpay" />
+
+              <label for="razorpay">
+                <span class="payment-icon">
+                  <i class="fas fa-credit-card"></i>
+                </span>
+
+                <span>
+                  <h3>Pay Online</h3>
+                  <p>Credit/Debit Card, UPI, Net Banking and more</p>
+                </span>
+              </label>
             </div>
 
-            <div class="card">
-                <h2>Payment Method</h2>
-                <div class="payment-methods">
-                    <div class="payment-method" data-method="razorpay">
-                        <input type="radio" name="payment" value="razorpay" id="razorpay">
-                        <label for="razorpay">
-                            <h3>Pay Online</h3>
-                            <p>Credit/Debit Card, UPI, Net Banking & more</p>
-                            <img src="/razorpay-logo.png" alt="Razorpay" class="razorpay-logo">
-                        </label>
-                    </div>
-                    <div class="payment-method" data-method="cod">
-                        <input type="radio" value="cod" name="payment" id="cod">
-                        <label for="cod">
-                            <h3>Cash on Delivery</h3>
-                            <p>Pay when you receive your order</p>
-                        </label>
-                    </div>
-                </div>
+            <div class="payment-method" data-method="cod">
+              <input type="radio" value="cod" name="payment" id="cod" />
+
+              <label for="cod">
+                <span class="payment-icon">
+                  <i class="fas fa-money-bill-wave"></i>
+                </span>
+
+                <span>
+                  <h3>Cash on Delivery</h3>
+                  <p>Pay when you receive your order</p>
+                </span>
+              </label>
             </div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="summary">
+        <h2>Order Summary</h2>
+
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>₹<%= safeTotalAmount.toFixed(2) %></span>
         </div>
 
-        <div class="summary">
-            <div class="summary-row">
-                <span>Subtotal</span>
-                <span>₹<%= totalAmount.toFixed(2) %></span>
-            </div>
-            <div class="summary-row">
-                <span>Shipping fee</span>
-                <span>₹20.00</span>
-            </div>
-            <div class="summary-row">
-                <span>Discount</span>
-                <span id="couponStatus">₹<%= discount %></span>
-            </div>
-            <div class="summary-row">
-                <strong>TOTAL</strong>
-                <strong id="totalAmount">₹<%= (totalAmount + 20 - discount).toFixed(2) %></strong>
-            </div>
-            <button class="btn" id="placeOrderBtn" style="width: 100%; margin-top: 1rem;">Place Order</button>
+        <div class="summary-row">
+          <span>Shipping fee</span>
+          <span>₹20.00</span>
         </div>
+
+        <div class="summary-row">
+          <span>Discount</span>
+          <span id="couponStatus">₹<%= safeDiscount.toFixed(2) %></span>
+        </div>
+
+        <div class="summary-row total-row">
+          <strong>Total</strong>
+          <strong id="totalAmount">₹<%= grandTotal.toFixed(2) %></strong>
+        </div>
+
+        <button class="btn-primary place-order-btn" id="placeOrderBtn" type="button">
+          Place Order
+          <i class="fas fa-arrow-right"></i>
+        </button>
+
+        <p class="checkout-note">
+          <i class="fas fa-shield-halved"></i>
+          Secure checkout powered by ARNI.
+        </p>
+      </aside>
+    </section>
+  </main>
+
+  <div id="addressModal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <button class="modal-close" type="button" onclick="closeAddressModal()" aria-label="Close modal">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <p class="card-eyebrow">New Address</p>
+      <h2>Add New Address</h2>
+
+      <form id="addAddressForm">
+        <input type="text" id="name" class="input-field" placeholder="Full Name" required />
+        <input type="text" id="street" class="input-field" placeholder="Street Address" required />
+        <input type="text" id="city" class="input-field" placeholder="City" required />
+        <input type="text" id="state" class="input-field" placeholder="State" required />
+        <input type="text" id="zip" class="input-field" placeholder="ZIP Code" required />
+
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">
+            Save Address
+          </button>
+
+          <button type="button" class="btn-outline" onclick="closeAddressModal()">
+            Cancel
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
 
-    <!-- Address Modal -->
-    <div id="addressModal" class="modal">
-        <div class="modal-content">
-            <h2>Add New Address</h2>
-            <form id="addAddressForm">
-                <input type="text" id="name" class="input-field" placeholder="Full Name" required>
-                <input type="text" id="street" class="input-field" placeholder="Street Address" required>
-                <input type="text" id="city" class="input-field" placeholder="City" required>
-                <input type="text" id="state" class="input-field" placeholder="State" required>
-                <input type="text" id="zip" class="input-field" placeholder="ZIP Code" required>
-                <div style="display: flex; gap: 1rem;">
-                    <button type="submit" class="btn">Save Address</button>
-                    <button type="button" class="btn btn-outline" onclick="closeAddressModal()">Cancel</button>
-                </div>
-            </form>
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section footer-brand">
+        <h3>ARNI</h3>
+        <p>Fashion for everyone. Curated with intention.</p>
+      </div>
+
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <a href="/">Home</a>
+        <a href="/shop">Shop</a>
+        <a href="/users/cart">Cart</a>
+      </div>
+
+      <div class="footer-section">
+        <h3>Contact Us</h3>
+        <p>Email: info@arni.com</p>
+      </div>
+
+      <div class="footer-section">
+        <h3>Follow Us</h3>
+        <div class="social-links">
+          <a href="#">Instagram</a>
+          <a href="#">Facebook</a>
+          <a href="#">Twitter</a>
         </div>
+      </div>
     </div>
+  </footer>
 
-      
-    <footer>
-        <div class="container2">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>About ARNI</h3>
-                    <p>Fashion for everyone</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <a href="/">Home</a>
-                    <a href="/shop">Shop</a>
-                </div>
-                <div class="footer-section">
-                    <h3>Contact Us</h3>
-                    <p>Email: info@arni.com</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Follow Us</h3>
-                    <div class="social-links">
-                        <a href="#">Instagram</a>
-                        <a href="#">Facebook</a>
-                        <a href="#">Twitter</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-    <script src="/javascripts/user/checkout.js"></script>
+  <script id="arni-categories-data" type="application/json">
+    <%- JSON.stringify(safeCategories || []) %>
+  </script>
+
+  <script src="/javascripts/user/checkout.js"></script>
 </body>
 </html>

@@ -1,131 +1,338 @@
+<%
+  const safeCategories = typeof categoriesWithSubs !== 'undefined' && Array.isArray(categoriesWithSubs)
+    ? categoriesWithSubs
+    : [];
+
+  const safeUser = typeof user !== 'undefined' && user
+    ? user
+    : {};
+
+  const safeWallet = typeof wallet !== 'undefined' && wallet
+    ? wallet
+    : {
+        balance: 0,
+        transactions: []
+      };
+
+  const safeTransactions = Array.isArray(safeWallet.transactions)
+    ? safeWallet.transactions
+    : [];
+
+  const profileImage =
+    safeUser.profileImage ||
+    safeUser.avatarUrl ||
+    safeUser.image ||
+    '/images/avatars/avatar-1.png';
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARNI - Profile Pages</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
-    <link rel="stylesheet" href="/stylesheets/user/profile.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Wallet - ARNI</title>
+
+  <link rel="stylesheet" href="/stylesheets/user/profile.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
+
 <body>
-    <canvas id="backgroundCanvas"></canvas>
-    
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="#" class="logo">ARNI</a>
-            <div class="nav-links">
-                <a href="/">Home</a>
-                <a href="/shop">Shop</a>
-                <% categoriesWithSubs.forEach(function(category) { %>
-                    <a href="/subcategories?main=<%= category._id %>" 
-                       data-category="true"
-                       data-categories="<%= JSON.stringify(categoriesWithSubs) %>">
-                        <%= category.mainCategoryName.split(' ')
-                            .map((word, index) => index === 0 ? 
-                                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : 
-                                word.toLowerCase())
-                            .join(' ') %>
-                    </a>
-                <% }); %>
-            </div>
-            <div class="nav-right">
-                <a href="/users/pI">
-                    <i class="fas fa-user-circle"></i> Profile
-                  </a>
-                <a href="/users/cart">🛒</a>
-            </div>
-        </div>
-    </nav>
+  <canvas id="backgroundCanvas"></canvas>
 
-    <div class="container">
-        <div class="main-content">
-            <div class="sidebar">
-                <div class="profile-header">
-                    <div class="profile-image-container">
-                        <img src="https://res.cloudinary.com/dlosst2x3/image/upload/c_crop,w_300,h_280,g_auto/v1738936379/DALL_E_2025-02-07_19.18.16_-_A_cute_chibi-style_avatar_of_a_friendly_character_waving_and_saying__Hi___in_a_speech_bubble._The_character_has_a_modern__stylish_design_with_a_dark_t-removebg-preview_pgwkzl.png" alt="Profile">
-                    </div>
-                    <div>
-                        <p style="color: #eab308; font-size: 0.875rem;">Hello,</p>
-                    </div>
-                </div>
-                
-                <div class="nav-buttons">
-                    <a class="nav-button" href= "/users/pI" data-page="personal">
-                        👤 Personal Information
-                </a>
-                    <a class="nav-button"  href= "/users/order" data-page="orders">
-                        📦 My Orders
-                    </a>
-                    <a class="nav-button" href= "/users/wishlist" data-page="wishlist">
-                        ♥ My Wishlists
-                    </a>
-                    <a class="nav-button" href= "/users/adr" data-page="addresses">
-                        📍 Manage Addresses
-                    </a>
-                    <a class="nav-button    active" href= "/users/wallet" data-page="wallet">
-                        💰 Wallet
-                    </a>
-                    <form action="/users/logout" method="POST">
-                        <button type="submit" class="nav-button" id="logoutBtn">
-                            🚪 Log Out
-                        </button>
-                    </form>
-                </div>
-            </div>
+  <header class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="/" class="logo">ARNI</a>
 
+      <nav class="nav-links" id="navLinks">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/shop" class="nav-link">Shop</a>
 
-            <div class="content-area">
-                <div class="page active" id="wallet">
-                    <h2 class="page-header">Wallet</h2>
-                    <div class="wallet-balance">Balance: ₹<%= wallet.balance.toFixed(2) %></div>
-                    <h3 style="margin-bottom: 1rem;">Transactions</h3>
-                    <div class="transactions">
-                        <% wallet.transactions.sort((a, b) => b.timestamp - a.timestamp).forEach(transaction => { %>
-                            <div class="transaction-card">
-                                <p class="transaction-type <%= transaction.type %>"><%= transaction.type %></p>
-                                <p class="transaction-info">Reason: <%= transaction.reason %></p>
-                                <p class="transaction-info">Amount: ₹<%= transaction.amount.toFixed(2) %></p>
-                                <p class="transaction-info">Date: <%= transaction.timestamp.toLocaleString() %></p>
-                            </div>
-                        <% }) %>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <% if (safeCategories.length > 0) { %>
+          <a href="/shop" class="nav-link has-dropdown" data-category="true">
+            Categories
+            <i class="fas fa-chevron-down dropdown-arrow"></i>
+          </a>
+        <% } %>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="icon-btn search-toggle" type="button" aria-label="Search">
+          <i class="fas fa-search"></i>
+        </button>
+
+        <a href="/users/cart" class="icon-btn" aria-label="Cart">
+          <i class="fas fa-shopping-bag"></i>
+        </a>
+
+        <a href="/users/pI" class="icon-btn profile-btn active" aria-label="Profile">
+          <i class="fas fa-user"></i>
+        </a>
+
+        <button class="hamburger" id="hamburger" type="button" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
     </div>
 
-                   
+    <div class="search-overlay" id="searchOverlay">
+      <form class="search-form" action="/search" method="GET">
+        <input
+          type="text"
+          name="search"
+          placeholder="Search for products, styles, brands..."
+          class="search-input"
+        />
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>About ARNI</h3>
-                <p>Fashion for everyone</p>
-            </div>
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <a href="/">Home</a>
-            <a href="/shop">Shop</a>
-            </div>
-            <div class="footer-section">
-                <h3>Contact Us</h3>
-                <p>Email: info@arni.com</p>
-            </div>
-            <div class="footer-section">
-                <h3>Follow Us</h3>
-                <div class="social-links">
-                    <a href="#">Instagram</a>
-                    <a href="#">Facebook</a>
-                    <a href="#">Twitter</a>
-                </div>
-            </div>
+        <button type="submit" class="search-submit" aria-label="Submit search">
+          <i class="fas fa-search"></i>
+        </button>
+
+        <button type="button" class="search-close" id="searchClose" aria-label="Close search">
+          <i class="fas fa-times"></i>
+        </button>
+      </form>
+    </div>
+  </header>
+
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <aside class="mobile-drawer" id="mobileDrawer">
+    <button class="drawer-close" id="drawerClose" type="button" aria-label="Close menu">
+      <i class="fas fa-times"></i>
+    </button>
+
+    <div class="drawer-logo">ARNI</div>
+
+    <nav class="drawer-nav">
+      <a href="/">Home</a>
+      <a href="/shop">Shop</a>
+      <a href="/users/cart">Cart</a>
+      <a href="/users/pI">Profile</a>
+
+      <% safeCategories.forEach(function(category) { %>
+        <a href="/subcategories?main=<%= category._id %>">
+          <%= category.mainCategoryName %>
+        </a>
+      <% }); %>
+    </nav>
+  </aside>
+
+  <main class="profile-page">
+    <section class="profile-hero reveal">
+      <p class="section-eyebrow">My Account</p>
+      <h1>Wallet</h1>
+      <p>Manage your ARNI wallet balance, add money, and review every wallet transaction in one place.</p>
+    </section>
+
+    <section class="profile-layout">
+      <aside class="sidebar reveal">
+        <div class="profile-card">
+          <div class="profile-image-container">
+            <img
+              src="<%= profileImage %>"
+              alt="<%= safeUser.username || 'User' %>"
+              class="profile-image"
+            />
+          </div>
+
+          <p class="hello-text">Hello,</p>
+          <h2><%= safeUser.username || 'ARNI User' %></h2>
+          <p class="profile-subtitle">Track your wallet balance and recent activity.</p>
         </div>
-    </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-    <script src="/javascripts/user/wallet.js"></script>
+        <nav class="account-nav">
+          <a class="account-nav-link" href="/users/pI" data-page="personal">
+            <i class="fas fa-user"></i>
+            Personal Information
+          </a>
+
+          <a class="account-nav-link" href="/users/order" data-page="orders">
+            <i class="fas fa-box"></i>
+            My Orders
+          </a>
+
+          <a class="account-nav-link" href="/users/wishlist" data-page="wishlist">
+            <i class="fas fa-heart"></i>
+            My Wishlist
+          </a>
+
+          <a class="account-nav-link" href="/users/adr" data-page="addresses">
+            <i class="fas fa-location-dot"></i>
+            Manage Addresses
+          </a>
+
+          <a class="account-nav-link active" href="/users/wallet" data-page="wallet">
+            <i class="fas fa-wallet"></i>
+            Wallet
+          </a>
+
+          <form action="/users/logout" method="POST">
+            <button type="submit" class="account-nav-link logout-btn" id="logoutBtn">
+              <i class="fas fa-right-from-bracket"></i>
+              Log Out
+            </button>
+          </form>
+        </nav>
+      </aside>
+
+      <section class="content-area reveal">
+        <div class="page active" id="wallet">
+          <div class="page-header">
+            <div>
+              <p class="card-eyebrow">Wallet Overview</p>
+              <h2>Your Wallet</h2>
+            </div>
+
+            <a href="/shop" class="edit-button">
+              <i class="fas fa-bag-shopping"></i>
+              Shop Now
+            </a>
+          </div>
+
+          <div class="wallet-overview-grid">
+            <article class="wallet-balance-card">
+              <div class="wallet-balance-icon">
+                <i class="fas fa-wallet"></i>
+              </div>
+
+              <p class="wallet-label">Available Balance</p>
+              <h3>₹<%= Number(safeWallet.balance || 0).toFixed(2) %></h3>
+              <p class="wallet-subtext">Use this balance for faster checkout and refunds.</p>
+            </article>
+
+            <article class="wallet-add-card">
+              <div class="wallet-add-header">
+                <div>
+                  <p class="card-eyebrow">Add Money</p>
+                  <h3>Top up wallet</h3>
+                </div>
+
+                <div class="wallet-mini-icon">
+                  <i class="fas fa-plus"></i>
+                </div>
+              </div>
+
+              <div class="wallet-form-group">
+                <label for="amount">Amount</label>
+                <div class="wallet-amount-input">
+                  <span>₹</span>
+                  <input
+                    type="number"
+                    id="amount"
+                    min="1"
+                    step="1"
+                    placeholder="Enter amount"
+                  />
+                </div>
+              </div>
+
+              <button class="btn-primary wallet-add-button" type="button" onclick="addMoneyToWallet()">
+                <i class="fas fa-circle-plus"></i>
+                Add Money
+              </button>
+            </article>
+          </div>
+
+          <div class="wallet-section-header">
+            <div>
+              <p class="card-eyebrow">Activity</p>
+              <h3>Transactions</h3>
+            </div>
+
+            <span class="wallet-count">
+              <%= safeTransactions.length %> Total
+            </span>
+          </div>
+
+          <% if (safeTransactions.length === 0) { %>
+            <div class="empty-address-state empty-wallet-state">
+              <div class="empty-icon">
+                <i class="fas fa-receipt"></i>
+              </div>
+
+              <h3>No transactions yet</h3>
+              <p>Your wallet credits, debits, refunds, and payments will appear here.</p>
+            </div>
+          <% } else { %>
+            <div class="transactions">
+              <% safeTransactions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach(transaction => {
+                const transactionType = transaction.type || 'credit';
+                const transactionDate = transaction.timestamp
+                  ? new Date(transaction.timestamp).toLocaleString()
+                  : 'N/A';
+              %>
+                <article class="transaction-card reveal">
+                  <div class="transaction-icon <%= transactionType %>">
+                    <% if (transactionType === 'credit') { %>
+                      <i class="fas fa-arrow-down"></i>
+                    <% } else { %>
+                      <i class="fas fa-arrow-up"></i>
+                    <% } %>
+                  </div>
+
+                  <div class="transaction-main">
+                    <p class="transaction-type <%= transactionType %>">
+                      <%= transactionType %>
+                    </p>
+
+                    <h4><%= transaction.reason || 'Wallet Transaction' %></h4>
+                    <p class="transaction-date">
+                      <i class="fas fa-clock"></i>
+                      <%= transactionDate %>
+                    </p>
+                  </div>
+
+                  <div class="transaction-amount <%= transactionType %>">
+                    <%= transactionType === 'credit' ? '+' : '-' %>₹<%= Number(transaction.amount || 0).toFixed(2) %>
+                  </div>
+                </article>
+              <% }) %>
+            </div>
+          <% } %>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section footer-brand">
+        <h3>ARNI</h3>
+        <p>Fashion for everyone. Curated with intention.</p>
+      </div>
+
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <a href="/">Home</a>
+        <a href="/shop">Shop</a>
+        <a href="/users/cart">Cart</a>
+      </div>
+
+      <div class="footer-section">
+        <h3>Contact Us</h3>
+        <p>Email: info@arni.com</p>
+      </div>
+
+      <div class="footer-section">
+        <h3>Follow Us</h3>
+        <div class="social-links">
+          <a href="#">Instagram</a>
+          <a href="#">Facebook</a>
+          <a href="#">Twitter</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script id="arni-categories-data" type="application/json">
+    <%- JSON.stringify(safeCategories || []) %>
+  </script>
+
+  <script src="/javascripts/user/wallet.js"></script>
 </body>
 </html>
