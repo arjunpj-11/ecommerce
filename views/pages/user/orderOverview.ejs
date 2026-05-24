@@ -1,202 +1,471 @@
+<%
+  const safeCategories = typeof categoriesWithSubs !== 'undefined' && Array.isArray(categoriesWithSubs)
+    ? categoriesWithSubs
+    : [];
+
+  const safeOrder = typeof order !== 'undefined' && order
+    ? order
+    : {};
+
+  const safeUser = typeof user !== 'undefined' && user
+    ? user
+    : {};
+
+  const profileImage =
+    safeUser.profileImage ||
+    safeUser.avatarUrl ||
+    safeUser.image ||
+    '/images/avatars/avatar-1.png';
+
+  const orderDate = safeOrder.orderDate
+    ? new Date(safeOrder.orderDate)
+    : new Date();
+
+  const expectedDeliveryDate = new Date(orderDate.getTime() + 5 * 24 * 60 * 60 * 1000);
+
+  const orderStatus = safeOrder.status || 'Pending';
+
+  const allStatuses = ['Pending', 'Processing', 'Shipped', 'Delivered'];
+
+  const statusMessages = {
+    Pending: 'Order confirmed and pending processing',
+    Processing: 'Order is being processed',
+    Shipped: 'Order has been shipped',
+    Delivered: 'Order has been delivered'
+  };
+
+  const currentStatusIndex = allStatuses.indexOf(orderStatus);
+
+  const productTotal = Number(safeOrder.price || 0) * Number(safeOrder.quantity || 1);
+  const shippingCharge = 20;
+  const finalTotal = productTotal + shippingCharge;
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order #<%= order.orderId %></title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/stylesheets/user/orderOverview.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Order #<%= safeOrder.orderId || '' %> - ARNI</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/stylesheets/user/profile.css" />
+  <link rel="stylesheet" href="/stylesheets/user/orderOverview.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
+
 <body>
-    <canvas id="backgroundCanvas"></canvas>
-    
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="/" class="logo">ARNI</a>
-            <div class="nav-right">
-                <a href="/users/pI">
-                    <i class="fas fa-user-circle"></i> Profile
-                </a>
-                <a href="/users/cart">🛒</a>
-            </div>
-        </div>
-    </nav>
+  <canvas id="backgroundCanvas"></canvas>
 
-    <main>
-        <div class="container">
-            <div class="order-header">
-                <div class="order-info">
-                    <h1 class="order-title">Order #<%= order.orderId %></h1>
-                    <div class="order-meta">
-                        <span>Placed on <%= new Date(order.orderDate).toLocaleDateString() %></span>
-                        <span>Expected Delivery: <%= new Date(order.orderDate.getTime() + 5*24*60*60*1000).toLocaleDateString() %></span>
-                        <span>Payment Method: <%= order.paymentMethod %></span>
-                    </div>
-                </div>
-                <span class="order-status"><%= order.status %></span>
-            </div>
+  <header class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="/" class="logo">ARNI</a>
 
-            <div class="order-grid">
-                <div class="main-content">
-                    <div class="tracking-section">
-                        <h2 class="section-title">Tracking Information</h2>
-                        <div class="tracking-timeline">
-                            <div class="timeline-line"></div>
-                            <% 
-                            const allStatuses = ['Pending', 'Processing', 'Shipped', 'Delivered'];
-                            const statusMessages = {
-                                'Pending': 'Order confirmed and pending processing',
-                                'Processing': 'Order is being processed',
-                                'Shipped': 'Order has been shipped',
-                                'Delivered': 'Order has been delivered'
-                            };
-                            
-                            const currentStatusIndex = allStatuses.indexOf(order.status);
-                            
-                            allStatuses.forEach((status, index) => {
-                                const isPast = index <= currentStatusIndex;
-                                const isCurrent = index === currentStatusIndex;
-                                
-                                if (status !== 'Cancelled') {
-                            %>
-                                <div class="timeline-item <%= isPast ? 'completed' : '' %> <%= isCurrent ? 'current' : '' %>">
-                                    <div class="timeline-dot"></div>
-                                    <div class="timeline-content">
-                                        <div class="timeline-date">
-                                            <% if (isPast) { %>
-                                                <%= new Date(
-                                                    order.orderDate.getTime() + (index * 24 * 60 * 60 * 1000)
-                                                ).toLocaleString() %>
-                                            <% } %>
-                                        </div>
-                                        <p><%= status %> - <%= statusMessages[status] %></p>
-                                    </div>
-                                </div>
-                            <% 
-                                }
-                            }); 
-                            
-                            if (order.status === 'Cancelled') {
-                            %>
-                                <div class="timeline-item cancelled">
-                                    <div class="timeline-dot"></div>
-                                    <div class="timeline-content">
-                                        <div class="timeline-date">
-                                            <%= new Date().toLocaleString() %>
-                                        </div>
-                                        <p>Cancelled - Order has been cancelled</p>
-                                        <% if (order.cancellationReason) { %>
-                                            <p class="cancellation-reason">Reason: <%= order.cancellationReason %></p>
-                                        <% } %>
-                                    </div>
-                                </div>
-                            <% } %>
-                        </div>
-                    </div>
-                </div>
+      <nav class="nav-links" id="navLinks">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/shop" class="nav-link">Shop</a>
 
-                <div class="order-details">
-                    <h2 class="section-title">Order Details</h2>
-                    <div class="product-card">
-                        <img src="<%= order.image %>" alt="<%= order.name %>" class="product-image">
-                        <div class="product-info">
-                            <h3 class="product-title"><%= order.name %></h3>
-                            <div class="product-meta">
-                                <div class="meta-item">
-                                    <div class="meta-label">Size</div>
-                                    <div class="meta-value"><%= order.size %></div>
-                                </div>
-                                <div class="meta-item">
-                                    <div class="meta-label">Quantity</div>
-                                    <div class="meta-value"><%= order.quantity %></div>
-                                </div>
-                            </div>
+        <% if (safeCategories.length > 0) { %>
+          <a href="/shop" class="nav-link has-dropdown" data-category="true">
+            Categories
+            <i class="fas fa-chevron-down dropdown-arrow"></i>
+          </a>
+        <% } %>
+      </nav>
 
-                            <div class="price-details">
-                                <div class="price-row">
-                                    <span>Price</span>
-                                    <span>₹<%= order.price.toFixed(2) %></span>
-                                </div>
-                                <div class="price-row">
-                                    <span>Quantity</span>
-                                    <span><%= order.quantity %></span>
-                                </div>
-                                <div class="price-row">
-                                    <span>Shipping</span>
-                                    <span>$20.00</span>
-                                </div>
-                                <div class="price-row total-row">
-                                    <span>Total</span>
-                                    <span>₹<%= (order.price * order.quantity + 20).toFixed(2) %></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+      <div class="nav-actions">
+        <button class="icon-btn search-toggle" type="button" aria-label="Search">
+          <i class="fas fa-search"></i>
+        </button>
 
-                    <div class="delivery-info">
-                        <h3 class="section-title">Delivery Address</h3>
-                        <p class="delivery-address">
-                            <%= order.address.street %><br>
-                            <%= order.address.city %>, <%= order.address.state %> <%= order.address.postalCode %><br>
-                            <%= order.address.country %>
-                        </p>
-                    </div>
-
-                    <div class="action-buttons">
-                        <% if (order.paymentMethod === 'cod' && order.status !== 'Delivered' && order.status !== 'Refund Requested' && order.status !== 'Payment Failed' && order.status !== 'Cancelled' && order.status !== 'Returned') { %>
-                            <button class="btn btn-secondary" onclick="cancelOrder('<%= order.orderId %>')">Cancel Order</button>
-                        <% } else if (order.status === 'Payment Failed') { %>
-                            <button class="btn btn-warning" onclick="retryPayment('<%= order.orderId %>')">Retry Payment</button>
-                        <% } else if (order.status !== 'Cancelled' && order.status !== 'Refund Requested' && order.status !== 'Payment Failed' && order.status !== 'Returned' && order.previousStatus == 'null') { %>
-                            <button class="btn btn-primary" onclick="requestRefund('<%= order.orderId %>', '<%= order.paymentMethod %>')">Request Refund</button>
-                        <% } %>
-                    </div>
-
-<% if (order.status === 'Delivered') { %>
-    <div class="invoice-section">
-        <h3 class="section-title">Invoice</h3>
-        <a href="/users/orderOverview/<%= order._id %>/invoice" class="btn btn-primary">
-            <i class="fas fa-download"></i> Download Invoice
+        <a href="/users/cart" class="icon-btn" aria-label="Cart">
+          <i class="fas fa-shopping-bag"></i>
         </a>
+
+        <a href="/users/pI" class="icon-btn profile-btn active" aria-label="Profile">
+          <i class="fas fa-user"></i>
+        </a>
+
+        <button class="hamburger" id="hamburger" type="button" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
     </div>
-<% } %>
-                </div>
-            </div>
-        </div>
-    </main>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>About ARNI</h3>
-                <p>Fashion for everyone</p>
-            </div>
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <a href="/">Home</a>
-                <a href="/shop">Shop</a>
-            </div>
-            <div class="footer-section">
-                <h3>Contact Us</h3>
-                <p>Email: info@arni.com</p>
-            </div>
-            <div class="footer-section">
-                <h3>Follow Us</h3>
-                <div class="social-links">
-                    <a href="#">Instagram</a>
-                    <a href="#">Facebook</a>
-                    <a href="#">Twitter</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <div class="search-overlay" id="searchOverlay">
+      <form class="search-form" action="/search" method="GET">
+        <input
+          type="text"
+          name="search"
+          placeholder="Search for products, styles, brands..."
+          class="search-input"
+        />
 
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="/javascripts/user/orderOverview.js"></script>
+        <button type="submit" class="search-submit" aria-label="Submit search">
+          <i class="fas fa-search"></i>
+        </button>
+
+        <button type="button" class="search-close" id="searchClose" aria-label="Close search">
+          <i class="fas fa-times"></i>
+        </button>
+      </form>
+    </div>
+  </header>
+
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <aside class="mobile-drawer" id="mobileDrawer">
+    <button class="drawer-close" id="drawerClose" type="button" aria-label="Close menu">
+      <i class="fas fa-times"></i>
+    </button>
+
+    <div class="drawer-logo">ARNI</div>
+
+    <nav class="drawer-nav">
+      <a href="/">Home</a>
+      <a href="/shop">Shop</a>
+      <a href="/users/cart">Cart</a>
+      <a href="/users/pI">Profile</a>
+
+      <% safeCategories.forEach(function(category) { %>
+        <a href="/subcategories?main=<%= category._id %>">
+          <%= category.mainCategoryName %>
+        </a>
+      <% }); %>
+    </nav>
+  </aside>
+
+  <main class="profile-page order-overview-page">
+    <section class="profile-hero reveal">
+      <p class="section-eyebrow">Order Details</p>
+      <h1>Order #<%= safeOrder.orderId || 'Details' %></h1>
+      <p>Track your order status, review payment details, manage refund requests, and download your invoice.</p>
+    </section>
+
+    <section class="profile-layout">
+      <aside class="sidebar reveal">
+        <div class="profile-card">
+          <div class="profile-image-container">
+            <img
+              src="<%= profileImage %>"
+              alt="<%= safeUser.username || 'User' %>"
+              class="profile-image"
+            />
+          </div>
+
+          <p class="hello-text">Hello,</p>
+          <h2><%= safeUser.username || 'ARNI User' %></h2>
+          <p class="profile-subtitle">You are viewing one of your recent orders.</p>
+        </div>
+
+        <nav class="account-nav">
+          <a class="account-nav-link" href="/users/pI" data-page="personal">
+            <i class="fas fa-user"></i>
+            Personal Information
+          </a>
+
+          <a class="account-nav-link active" href="/users/order" data-page="orders">
+            <i class="fas fa-box"></i>
+            My Orders
+          </a>
+
+          <a class="account-nav-link" href="/users/wishlist" data-page="wishlist">
+            <i class="fas fa-heart"></i>
+            My Wishlist
+          </a>
+
+          <a class="account-nav-link" href="/users/adr" data-page="addresses">
+            <i class="fas fa-location-dot"></i>
+            Manage Addresses
+          </a>
+
+          <a class="account-nav-link" href="/users/wallet" data-page="wallet">
+            <i class="fas fa-wallet"></i>
+            Wallet
+          </a>
+
+          <form action="/users/logout" method="POST">
+            <button type="submit" class="account-nav-link logout-btn" id="logoutBtn">
+              <i class="fas fa-right-from-bracket"></i>
+              Log Out
+            </button>
+          </form>
+        </nav>
+      </aside>
+
+      <section class="content-area reveal">
+        <div class="page active" id="orderOverview">
+          <div class="page-header">
+            <div>
+              <p class="card-eyebrow">Overview</p>
+              <h2>Order Summary</h2>
+            </div>
+
+            <a href="/users/order" class="edit-button">
+              <i class="fas fa-arrow-left"></i>
+              Back to Orders
+            </a>
+          </div>
+
+          <div class="order-overview-header">
+            <div class="order-overview-info">
+              <div class="order-id-row">
+                <h3 class="order-title">Order #<%= safeOrder.orderId || '' %></h3>
+
+                <button class="copy-order-btn" type="button" onclick="copyOrderId()">
+                  <i class="fas fa-copy"></i>
+                  Copy
+                </button>
+              </div>
+
+              <div class="order-meta-grid">
+                <div class="order-meta-card">
+                  <span>Placed On</span>
+                  <strong><%= orderDate.toLocaleDateString() %></strong>
+                </div>
+
+                <div class="order-meta-card">
+                  <span>Expected Delivery</span>
+                  <strong><%= expectedDeliveryDate.toLocaleDateString() %></strong>
+                </div>
+
+                <div class="order-meta-card">
+                  <span>Payment Method</span>
+                  <strong><%= safeOrder.paymentMethod || 'N/A' %></strong>
+                </div>
+              </div>
+            </div>
+
+            <span class="overview-status status-<%= String(orderStatus).toLowerCase().replace(/\s+/g, '-') %>">
+              <%= orderStatus %>
+            </span>
+          </div>
+
+          <div class="order-overview-grid">
+            <section class="tracking-section">
+              <div class="section-heading">
+                <div>
+                  <p class="card-eyebrow">Tracking</p>
+                  <h3>Tracking Information</h3>
+                </div>
+
+                <div class="tracking-icon">
+                  <i class="fas fa-truck-fast"></i>
+                </div>
+              </div>
+
+              <div class="tracking-timeline">
+                <div class="timeline-line"></div>
+
+                <% if (orderStatus === 'Cancelled') { %>
+                  <div class="timeline-item cancelled current">
+                    <div class="timeline-dot"></div>
+
+                    <div class="timeline-content">
+                      <div class="timeline-date"><%= new Date().toLocaleString() %></div>
+                      <h4>Cancelled</h4>
+                      <p>Order has been cancelled.</p>
+
+                      <% if (safeOrder.cancellationReason) { %>
+                        <p class="cancellation-reason">
+                          Reason: <%= safeOrder.cancellationReason %>
+                        </p>
+                      <% } %>
+                    </div>
+                  </div>
+                <% } else { %>
+                  <% allStatuses.forEach((status, index) => {
+                    const isPast = currentStatusIndex >= 0 && index <= currentStatusIndex;
+                    const isCurrent = currentStatusIndex >= 0 && index === currentStatusIndex;
+                  %>
+                    <div class="timeline-item <%= isPast ? 'completed' : '' %> <%= isCurrent ? 'current' : '' %>">
+                      <div class="timeline-dot"></div>
+
+                      <div class="timeline-content">
+                        <div class="timeline-date">
+                          <% if (isPast) { %>
+                            <%= new Date(orderDate.getTime() + index * 24 * 60 * 60 * 1000).toLocaleString() %>
+                          <% } else { %>
+                            Pending update
+                          <% } %>
+                        </div>
+
+                        <h4><%= status %></h4>
+                        <p><%= statusMessages[status] %></p>
+                      </div>
+                    </div>
+                  <% }); %>
+                <% } %>
+              </div>
+            </section>
+
+            <aside class="order-details-panel">
+              <div class="section-heading">
+                <div>
+                  <p class="card-eyebrow">Product</p>
+                  <h3>Order Details</h3>
+                </div>
+
+                <div class="tracking-icon">
+                  <i class="fas fa-box-open"></i>
+                </div>
+              </div>
+
+              <article class="overview-product-card">
+                <div class="overview-product-image">
+                  <img src="<%= safeOrder.image %>" alt="<%= safeOrder.name || 'Product' %>" />
+                </div>
+
+                <div class="overview-product-info">
+                  <h4><%= safeOrder.name || 'Product Name' %></h4>
+
+                  <div class="product-meta-grid">
+                    <div class="meta-item">
+                      <span>Size</span>
+                      <strong><%= safeOrder.size || 'N/A' %></strong>
+                    </div>
+
+                    <div class="meta-item">
+                      <span>Quantity</span>
+                      <strong><%= safeOrder.quantity || 1 %></strong>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <div class="price-details">
+                <div class="price-row">
+                  <span>Price</span>
+                  <strong>₹<%= Number(safeOrder.price || 0).toFixed(2) %></strong>
+                </div>
+
+                <div class="price-row">
+                  <span>Quantity</span>
+                  <strong><%= safeOrder.quantity || 1 %></strong>
+                </div>
+
+                <div class="price-row">
+                  <span>Shipping</span>
+                  <strong>₹<%= shippingCharge.toFixed(2) %></strong>
+                </div>
+
+                <div class="price-row total-row">
+                  <span>Total</span>
+                  <strong>₹<%= finalTotal.toFixed(2) %></strong>
+                </div>
+              </div>
+
+              <% if (safeOrder.address) { %>
+                <div class="delivery-info">
+                  <div class="delivery-icon">
+                    <i class="fas fa-location-dot"></i>
+                  </div>
+
+                  <div>
+                    <h4>Delivery Address</h4>
+
+                    <p class="delivery-address">
+                      <%= safeOrder.address.street %><br />
+                      <%= safeOrder.address.city %>, <%= safeOrder.address.state %> <%= safeOrder.address.postalCode %><br />
+                      <%= safeOrder.address.country %>
+                    </p>
+                  </div>
+                </div>
+              <% } %>
+
+              <div class="action-buttons">
+                <% if (
+                  safeOrder.paymentMethod === 'cod' &&
+                  safeOrder.status !== 'Delivered' &&
+                  safeOrder.status !== 'Refund Requested' &&
+                  safeOrder.status !== 'Payment Failed' &&
+                  safeOrder.status !== 'Cancelled' &&
+                  safeOrder.status !== 'Returned'
+                ) { %>
+                  <button class="btn-danger-theme" type="button" onclick="cancelOrder('<%= safeOrder.orderId %>')">
+                    <i class="fas fa-ban"></i>
+                    Cancel Order
+                  </button>
+                <% } else if (safeOrder.status === 'Payment Failed') { %>
+                  <button class="btn-primary" type="button" onclick="retryPayment('<%= safeOrder.orderId %>')">
+                    <i class="fas fa-rotate-right"></i>
+                    Retry Payment
+                  </button>
+                <% } else if (
+                  safeOrder.status !== 'Cancelled' &&
+                  safeOrder.status !== 'Refund Requested' &&
+                  safeOrder.status !== 'Payment Failed' &&
+                  safeOrder.status !== 'Returned' &&
+                  safeOrder.previousStatus == 'null'
+                ) { %>
+                  <button class="btn-primary" type="button" onclick="requestRefund('<%= safeOrder.orderId %>', '<%= safeOrder.paymentMethod %>')">
+                    <i class="fas fa-money-bill-transfer"></i>
+                    Request Refund
+                  </button>
+                <% } %>
+              </div>
+
+              <% if (safeOrder.status === 'Delivered') { %>
+                <div class="invoice-section">
+                  <div>
+                    <p class="card-eyebrow">Invoice</p>
+                    <h4>Download Invoice</h4>
+                  </div>
+
+                  <a href="/users/orderOverview/<%= safeOrder._id %>/invoice" class="btn-primary invoice-btn">
+                    <i class="fas fa-download"></i>
+                    Download
+                  </a>
+                </div>
+              <% } %>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section footer-brand">
+        <h3>ARNI</h3>
+        <p>Fashion for everyone. Curated with intention.</p>
+      </div>
+
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <a href="/">Home</a>
+        <a href="/shop">Shop</a>
+        <a href="/users/cart">Cart</a>
+      </div>
+
+      <div class="footer-section">
+        <h3>Contact Us</h3>
+        <p>Email: info@arni.com</p>
+      </div>
+
+      <div class="footer-section">
+        <h3>Follow Us</h3>
+        <div class="social-links">
+          <a href="#">Instagram</a>
+          <a href="#">Facebook</a>
+          <a href="#">Twitter</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script id="arni-categories-data" type="application/json">
+    <%- JSON.stringify(safeCategories || []) %>
+  </script>
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="/javascripts/user/orderOverview.js"></script>
 </body>
 </html>

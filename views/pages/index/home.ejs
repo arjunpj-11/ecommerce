@@ -3,178 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARNI - Dark Fashion</title>
-    <link rel="stylesheet" href="/stylesheets/index/home.css">
+    <title>ARNI — Modern Fashion Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheets/index/home.css">
 </head>
 <body>
-    <canvas id="backgroundCanvas"></canvas>
-    
-    <div class="content">
-        <nav class="navbar">
-            <div class="nav-container">
-                <a href="/" class="logo">ARNI</a>
-                <div class="nav-links">
-                    <a href="/" class="active">Home</a>
-                    <a href="/shop">Shop</a>
-                    <% categoriesWithSubs.forEach(function(category) { %>
-                        <a href="/subcategories?main=<%= category._id %>" 
-                           data-category="true"
-                           data-categories="<%= JSON.stringify(categoriesWithSubs) %>">
-                            <%= category.mainCategoryName.split(' ')
-                                .map((word, index) => index === 0 ? 
-                                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : 
-                                    word.toLowerCase())
-                                .join(' ') %>
-                        </a>
-                    <% }); %>
-                </div>                
-                <div class="nav-right">
-                    <% if (authentication) { %>
-                        <a href="/users/pI">
-                          <i class="fas fa-user-circle"></i> Profile
-                        </a>
-                    <% } else { %>
-                        <a href="/auth/login">Login</a>
-                    <% } %>                      
-                    <a href="#" class="search-icon">🔍</a>
-                    <a href="/users/cart" class="cart-icon">🛒</a>
-                </div>
-            </div>
-        </nav>
+    <%
+        const safeBanners = typeof banners !== 'undefined' && Array.isArray(banners) ? banners : [];
+        const safeCategories = typeof categoriesWithSubs !== 'undefined' && Array.isArray(categoriesWithSubs) ? categoriesWithSubs : [];
+        const safeTopCategories = typeof topCategories !== 'undefined' && Array.isArray(topCategories) ? topCategories : [];
+        const safeTopSoldItems = typeof topSoldItems !== 'undefined' && Array.isArray(topSoldItems) ? topSoldItems : [];
+    %>
 
-        <div class="hero-slider">
-            <div class="slider-container">
-                <% banners.forEach(function(banner, index) { %>
-                    <div class="slide <%= banner.categoryType.toLowerCase() %>"
-                         data-banner='<%= JSON.stringify({
-                             imageUrl: banner.imageUrl,
-                             categoryType: banner.categoryType,
-                             categoryId: banner.categoryId
-                         }) %>'
-                         data-index="<%= index %>">
-                        <div class="slide-content">
-                            <div class="slide-tag"><%= banner.title %></div>
-                            <h1 class="slide-title"><%= banner.heading %></h1>
-                            <p class="slide-description"><%= banner.subtext %></p>
-                            <a href="<%= banner.categoryType === 'MainCategory' ? 
-                                `/subcategories?main=${banner.categoryId}` : 
-                                `/products?sub=${banner.categoryId}` %>" 
-                               class="shop-now-btn">
-                                <%= banner.buttonText %>
-                            </a>
-                        </div>
-                    </div>
-                <% }); %>
-            </div>
-            
-            <button class="slider-arrow prev" aria-label="Previous slide">❮</button>
-            <button class="slider-arrow next" aria-label="Next slide">❯</button>
-            
-            <div class="slider-controls">
-                <% banners.forEach(function(banner, index) { %>
-                    <div class="slider-dot <%= index === 0 ? 'active' : '' %>" 
-                         data-index="<%= index %>"
-                         role="button"
-                         aria-label="Go to slide <%= index + 1 %>"></div>
-                <% }); %>
+    <!-- ========== NAVBAR ========== -->
+    <header class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="/" class="logo">ARNI</a>
+
+            <nav class="nav-links" id="navLinks">
+                <a href="/" class="nav-link active">Home</a>
+                <a href="/shop" class="nav-link">Shop</a>
+                <% if (safeCategories.length > 0) { %>
+                    <button type="button" class="nav-link nav-category-trigger" data-category="true" aria-haspopup="true" aria-expanded="false">
+                        Categories
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                    </button>
+                <% } %>
+            </nav>
+
+            <div class="nav-actions">
+                <button class="icon-btn search-toggle" aria-label="Search">
+                    <i class="fas fa-search"></i>
+                </button>
+                <a href="/users/cart" class="icon-btn cart-btn" aria-label="Cart">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-dot"></span>
+                </a>
+                <% if (authentication) { %>
+                    <a href="/users/pI" class="icon-btn" aria-label="Profile">
+                        <i class="fas fa-user"></i>
+                    </a>
+                <% } else { %>
+                    <a href="/auth/login" class="btn-pill">Login</a>
+                <% } %>
+                <button class="hamburger" id="hamburger" aria-label="Menu">
+                    <span></span><span></span><span></span>
+                </button>
             </div>
         </div>
 
-        <section class="categories-section">
-            <div class="container">
-                <div class="section-title">
-                    <h2>TOP CATEGORIES</h2>
-                    <p>Explore our popular categories</p>
+        <!-- Search Bar -->
+        <div class="search-overlay" id="searchOverlay">
+            <form class="search-form" action="/search" method="GET">
+                <input type="text" name="search" placeholder="Search for styles, brands…" class="search-input" autofocus>
+                <button type="submit" class="search-submit"><i class="fas fa-search"></i></button>
+                <button type="button" class="search-close" id="searchClose"><i class="fas fa-times"></i></button>
+            </form>
+        </div>
+    </header>
+
+    <!-- Mobile Drawer -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <aside class="mobile-drawer" id="mobileDrawer">
+        <button class="drawer-close" id="drawerClose"><i class="fas fa-times"></i></button>
+        <div class="drawer-logo">ARNI</div>
+        <nav class="drawer-nav">
+            <a href="/">Home</a>
+            <a href="/shop">Shop</a>
+            <% safeCategories.forEach(function(category) { %>
+                <a href="/subcategories?main=<%= category._id %>">
+                    <%= category.mainCategoryName %>
+                </a>
+            <% }); %>
+            <a href="/users/cart">Cart</a>
+            <% if (authentication) { %>
+                <a href="/users/pI">My Profile</a>
+            <% } %>
+        </nav>
+        <div class="drawer-footer">
+            <% if (authentication) { %>
+                <a href="/users/pI" class="btn-pill">My Profile</a>
+            <% } else { %>
+                <a href="/auth/login" class="btn-pill">Login</a>
+            <% } %>
+        </div>
+    </aside>
+
+    <!-- ========== HERO SLIDER ========== -->
+    <section class="hero" id="hero">
+        <div class="hero-track" id="heroTrack">
+            <% safeBanners.forEach(function(banner, index) { %>
+                <div class="hero-slide"
+                     data-image="<%= banner.imageUrl %>"
+                     data-index="<%= index %>">
+                    <div class="hero-bg" style="background-image: url('<%= banner.imageUrl %>')"></div>
+                    <div class="hero-overlay"></div>
+                    <div class="hero-content">
+                        <span class="hero-label"><%= banner.title %></span>
+                        <h1 class="hero-heading"><%= banner.heading %></h1>
+                        <p class="hero-sub"><%= banner.subtext %></p>
+                        <a href="<%= banner.categoryType === 'MainCategory' ? `/subcategories?main=${banner.categoryId}` : `/products?sub=${banner.categoryId}` %>"
+                           class="hero-cta"><%= banner.buttonText %> <i class="fas fa-arrow-right"></i></a>
+                    </div>
                 </div>
-                <div class="categories">
-                    <% topCategories.forEach(function(category) { %>
-                        <div class="category" data-category-id="<%= category._id %>">
-                            <img src="<%= category.image %>" 
-                                 alt="<%= category.mainCategoryName %>">
-                            <div class="category-label">
-                                <SPan><%= category.mainCategoryName %></SPan>
-                                <% if (category.offerPercentage > 0) { %>
-                                    <span class="offer-badge5">
-                                        <%= category.offerPercentage %>% OFF
-                                    </span>
+            <% }); %>
+            <% if (safeBanners.length === 0) { %>
+                <div class="hero-slide active hero-fallback">
+                    <div class="hero-bg"></div>
+                    <div class="hero-overlay"></div>
+                    <div class="hero-content">
+                        <span class="hero-label">ARNI</span>
+                        <h1 class="hero-heading">New Style Is Coming</h1>
+                        <p class="hero-sub">Fresh collections will be available soon.</p>
+                        <a href="/shop" class="hero-cta">Explore Shop <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+
+        <div class="hero-nav">
+            <button class="hero-btn prev-btn" id="heroPrev" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
+            <div class="hero-dots" id="heroDots">
+                <% safeBanners.forEach(function(b, i) { %>
+                    <button class="hero-dot <%= i === 0 ? 'active' : '' %>" data-index="<%= i %>"></button>
+                <% }); %>
+            </div>
+            <button class="hero-btn next-btn" id="heroNext" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
+        </div>
+
+        <div class="hero-progress">
+            <div class="hero-progress-bar" id="heroProgressBar"></div>
+        </div>
+    </section>
+
+    <!-- ========== MARQUEE STRIP ========== -->
+    <div class="marquee-strip">
+        <div class="marquee-track">
+            <span>FREE SHIPPING OVER ₹999</span><span class="dot">·</span>
+            <span>NEW ARRIVALS EVERY WEEK</span><span class="dot">·</span>
+            <span>EXCLUSIVE MEMBER OFFERS</span><span class="dot">·</span>
+            <span>HASSLE-FREE RETURNS</span><span class="dot">·</span>
+            <span>FREE SHIPPING OVER ₹999</span><span class="dot">·</span>
+            <span>NEW ARRIVALS EVERY WEEK</span><span class="dot">·</span>
+            <span>EXCLUSIVE MEMBER OFFERS</span><span class="dot">·</span>
+            <span>HASSLE-FREE RETURNS</span><span class="dot">·</span>
+        </div>
+    </div>
+
+    <!-- ========== TOP CATEGORIES ========== -->
+    <section class="section categories-section">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-eyebrow">Discover</p>
+                <h2 class="section-title">Top Categories</h2>
+            </div>
+            <div class="categories-grid">
+                <% safeTopCategories.forEach(function(category, i) { %>
+                    <a href="/subcategories?main=<%= category._id %>"
+                       class="cat-card"
+                       data-index="<%= i %>">
+                        <div class="cat-img-wrap">
+                            <img src="<%= category.image %>"
+                                 alt="<%= category.mainCategoryName %>"
+                                 loading="lazy">
+                        </div>
+                        <div class="cat-body">
+                            <span class="cat-name"><%= category.mainCategoryName %></span>
+                            <% if (category.offerPercentage > 0) { %>
+                                <span class="cat-badge"><%= category.offerPercentage %>% OFF</span>
+                            <% } %>
+                            <span class="cat-arrow"><i class="fas fa-arrow-right"></i></span>
+                        </div>
+                    </a>
+                <% }); %>
+                <% if (safeTopCategories.length === 0) { %>
+                    <div class="empty-state wide">
+                        <h3>No categories yet</h3>
+                        <p>New collections will appear here soon.</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== BEST SELLERS ========== -->
+    <section class="section products-section">
+        <div class="container">
+            <div class="section-header between">
+                <div>
+                    <p class="section-eyebrow">Fan favourites</p>
+                    <h2 class="section-title">Best Sellers</h2>
+                </div>
+                <a href="/shop" class="view-all-btn">View All <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="products-grid">
+                <% safeTopSoldItems.forEach(function(product) { %>
+                    <a href="/overview/<%= product.variantId %>" class="product-card">
+                        <div class="product-img-wrap">
+                            <img src="<%= product.displayImage %>"
+                                 alt="<%= product.name %>"
+                                 loading="lazy"
+                                 class="product-img">
+                            <div class="product-overlay">
+                                <span class="quick-view">Quick View</span>
+                            </div>
+                            <% if (product.price > product.discountPrice) { %>
+                                <span class="product-badge">
+                                    <%= Math.round((1 - product.discountPrice / product.price) * 100) %>% OFF
+                                </span>
+                            <% } %>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name"><%= product.name %></h3>
+                            <div class="product-price">
+                                <span class="price-current">₹<%= product.discountPrice %></span>
+                                <% if (product.price > product.discountPrice) { %>
+                                    <span class="price-original">₹<%= product.price %></span>
                                 <% } %>
                             </div>
                         </div>
-                    <% }); %>
-                </div>
+                    </a>
+                <% }); %>
+                <% if (safeTopSoldItems.length === 0) { %>
+                    <div class="empty-state wide">
+                        <h3>No best sellers yet</h3>
+                        <p>Products will appear here once your store has active items.</p>
+                    </div>
+                <% } %>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section class="featured-products">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Best Sellers</h2>
-                    <p>Our most popular items</p>
-                </div>
-                <div class="product-grid">
-                    <% topSoldItems.forEach(function(product) { %>
-                        <a href="/overview/<%= product.variantId%>" class="product-card-link">
-                            <div class="product-card">
-                                <div class="product-image-container">
-                                    <img src="<%= product.displayImage %>" 
-                                         alt="<%= product.name %>" 
-                                         class="product-image">
-                                </div>
-                                <div class="product-info">
-                                    <h3 class="product-name"><%= product.name %></h3>
-                                    <div class="price-layout">
-                                        <div class="price-row">
-                                            <span class="discount-price">₹<%= product.discountPrice %></span>
-                                            <% if ( product.price  > product.discountPrice) { %>
-                                                <span class="original-price">₹<%= product.price %></span>
-                                            <% } %>
-                                        </div>
-                                        <% if ( product.price  > product.discountPrice) { %>
-                                            <span class="discount-percentage">
-                                                <%= Math.round((1 - product.discountPrice/ product.price ) * 100) %>% off
-                                            </span>
-                                        <% } %>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    <% }); %>
-                    
-                </div>
+    <!-- ========== FULL-WIDTH PROMO BANNER ========== -->
+    <section class="promo-banner">
+        <div class="promo-inner">
+            <div class="promo-text">
+                <span class="promo-eyebrow">Limited Time</span>
+                <h2 class="promo-heading">Style That Speaks</h2>
+                <p class="promo-sub">Elevate your wardrobe with our curated collections — from street to statement.</p>
+                <a href="/shop" class="btn-pill large">Explore Collection</a>
             </div>
-        </section>
-     
+        </div>
+    </section>
 
-     
-        <footer>
-            <div class="container">
-                <div class="footer-content">
-                    <div class="footer-section">
-                        <h3>About ARNI</h3>
-                        <p>Fashion for everyone</p>
-                    </div>
-                    <div class="footer-section">
-                        <h3>Quick Links</h3>
-                        <a href="/">Home</a>
-            <a href="/shop">Shop</a>
-                    </div>
-                    <div class="footer-section">
-                        <h3>Contact Us</h3>
-                        <p>Email: info@arni.com</p>
-                    </div>
-                    <div class="footer-section">
-                        <h3>Follow Us</h3>
-                        <div class="social-links">
-                            <a href="#">Instagram</a>
-                            <a href="#">Facebook</a>
-                            <a href="#">Twitter</a>
-                        </div>
-                    </div>
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <span class="footer-logo">ARNI</span>
+                    <p>Fashion for everyone. Curated with intention.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Navigate</h4>
+                    <a href="/">Home</a>
+                    <a href="/shop">Shop</a>
+                    <a href="/users/cart">Cart</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Help</h4>
+                    <a href="/returns">Returns</a>
+                    <a href="/size-guide">Sizing Guide</a>
+                    <a href="/contact">Contact Us</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Connect</h4>
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a>
+                    <a href="https://x.com" target="_blank" rel="noopener noreferrer">X / Twitter</a>
                 </div>
             </div>
-        </footer>
-    </div>
+            <div class="footer-bottom">
+                <span>© 2026 ARNI. All rights reserved.</span>
+                <span>info@arni.com</span>
+            </div>
+        </div>
+    </footer>
+
+    <script id="arni-categories-data" type="application/json"><%- JSON.stringify(safeCategories || []) %></script>
     <script src="/javascripts/index/home.js"></script>
 </body>
 </html>

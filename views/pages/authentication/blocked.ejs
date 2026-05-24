@@ -1,15 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Access Blocked</title>
-    <link rel="stylesheet" href="/stylesheets/authentication/blocked.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Access Blocked - ARNI</title>
+
+  <link rel="stylesheet" href="/stylesheets/authentication/blocked.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
+
 <body>
-    <div class="container">
-        <h1>Access Blocked</h1>
-        <p>Your access has been restricted due to suspicious activity. If you believe this is a mistake, please contact support.</p>
-    </div>
+  <canvas id="backgroundCanvas"></canvas>
+
+  <main class="blocked-page">
+    <section class="blocked-card">
+      <a href="/" class="logo-section" aria-label="Go to ARNI home">
+        <img src="/images/common/logo.png" alt="ARNI Logo" />
+      </a>
+
+      <div class="blocked-icon">
+        <i class="fas fa-ban"></i>
+      </div>
+
+      <p class="eyebrow">Security Notice</p>
+
+      <h1>Access Blocked</h1>
+
+      <p class="blocked-message">
+        Your access has been restricted due to suspicious activity. If you believe this is a mistake,
+        please contact support.
+      </p>
+
+      <div class="blocked-actions">
+        <a href="/" class="btn-secondary">
+          <i class="fas fa-house"></i>
+          Go Home
+        </a>
+
+        <a href="mailto:support@arni.com" class="btn-primary">
+          <i class="fas fa-headset"></i>
+          Contact Support
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script src="/javascripts/authentication/blocked.js"></script>
 </body>
 </html>
