@@ -1,112 +1,33 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('form');
-  const emailOrPhone = document.getElementById('emailOrPhone');
   const canvas = document.getElementById('backgroundCanvas');
+  const sections = document.querySelectorAll('.section, .contact-info, .page-actions');
 
-  let emailOrPhoneError = false;
-
-  initializeValidation();
   initializeCanvas();
+  initializeReveal();
 
-  function setError(element, message) {
-    if (!element) return;
+  function initializeReveal() {
+    if (!sections.length) return;
 
-    const messageElement = document.getElementById(`${element.id}Message`);
-
-    if (messageElement) {
-      messageElement.textContent = message;
-    }
-
-    element.classList.add('iAfter');
-  }
-
-  function clearError(element) {
-    if (!element) return;
-
-    const messageElement = document.getElementById(`${element.id}Message`);
-
-    if (messageElement) {
-      messageElement.textContent = '';
-    }
-
-    element.classList.remove('iAfter');
-  }
-
-  function validateEmailOrPhone() {
-    if (!emailOrPhone) return true;
-
-    const value = emailOrPhone.value.trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^[+]?[0-9]{10,15}$/;
-
-    if (!value) {
-      setError(emailOrPhone, 'Email or phone number is required.');
-      emailOrPhoneError = true;
-      return false;
-    }
-
-    if (!emailRegex.test(value) && !phoneRegex.test(value)) {
-      setError(emailOrPhone, 'Enter a valid email or phone number.');
-      emailOrPhoneError = true;
-      return false;
-    }
-
-    clearError(emailOrPhone);
-    emailOrPhoneError = false;
-    return true;
-  }
-
-  function initializeValidation() {
-    if (!form || !emailOrPhone) return;
-
-    emailOrPhone.addEventListener('blur', validateEmailOrPhone);
-
-    emailOrPhone.addEventListener('input', () => {
-      if (emailOrPhoneError) {
-        validateEmailOrPhone();
-      }
+    sections.forEach((section, index) => {
+      section.style.opacity = '0';
+      section.style.transform = 'translateY(22px)';
+      section.style.transition = `opacity 0.55s ease ${Math.min(index * 50, 250)}ms, transform 0.55s ease ${Math.min(index * 50, 250)}ms`;
     });
 
-    form.addEventListener('submit', (event) => {
-      const isValid = validateEmailOrPhone();
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
 
-      if (!isValid) {
-        event.preventDefault();
-        showToast('Please enter a valid email or phone number.', 'error');
-      }
-    });
-  }
-
-  function showToast(message, type = 'info') {
-    let toastContainer = document.querySelector('.toast-container');
-
-    if (!toastContainer) {
-      toastContainer = document.createElement('div');
-      toastContainer.className = 'toast-container';
-      document.body.appendChild(toastContainer);
-    }
-
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-
-    toastContainer.appendChild(toast);
-
-    requestAnimationFrame(() => {
-      toast.classList.add('show');
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+        observer.unobserve(entry.target);
+      });
+    }, {
+      threshold: 0.12,
+      rootMargin: '0px 0px -40px 0px'
     });
 
-    setTimeout(() => {
-      toast.classList.remove('show');
-
-      setTimeout(() => {
-        toast.remove();
-
-        if (!toastContainer.children.length) {
-          toastContainer.remove();
-        }
-      }, 300);
-    }, 3200);
+    sections.forEach((section) => observer.observe(section));
   }
 
   function initializeCanvas() {

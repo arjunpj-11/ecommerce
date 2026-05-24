@@ -1,206 +1,316 @@
-// Common Utility Functions for Validation Feedback
-function setError(element, message) {
+document.addEventListener('DOMContentLoaded', () => {
+  const emailOrPhone = document.getElementById('emailOrPhone');
+  const password = document.getElementById('password');
+  const togglePassword = document.getElementById('togglePassword');
+  const form = document.getElementById('form');
+  const canvas = document.getElementById('backgroundCanvas');
+
+  let emailOrPhoneError = false;
+  let passwordError = false;
+
+  initializeValidation();
+  initializePasswordToggle();
+  initializeCanvas();
+
+  function setError(element, message) {
+    if (!element) return;
+
     const messageElement = document.getElementById(`${element.id}Message`);
-    messageElement.textContent = message; // Set the error message
-    element.classList.add('iAfter'); // Add error styling
-}
 
-function clearError(element) {
+    if (messageElement) {
+      messageElement.textContent = message;
+    }
+
+    element.classList.add('iAfter');
+  }
+
+  function clearError(element) {
+    if (!element) return;
+
     const messageElement = document.getElementById(`${element.id}Message`);
-    messageElement.textContent = ''; // Clear the error message
-    element.classList.remove('iAfter'); // Remove error styling
-}
 
-// Email or Phone Validation
-const emailOrPhone = document.getElementById('emailOrPhone');
-const password = document.getElementById('password');
-const togglePassword = document.getElementById('togglePassword');
-const form = document.getElementById('form');
-let emailOrPhoneError = false;
+    if (messageElement) {
+      messageElement.textContent = '';
+    }
 
-// Validate Email or Phone
-function validateEmailOrPhone() {
+    element.classList.remove('iAfter');
+  }
+
+  function validateEmailOrPhone() {
+    if (!emailOrPhone) return true;
+
     const value = emailOrPhone.value.trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email regex
-    const phoneRegex = /^[+]?[0-9]{10,15}$/; // Phone number regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[+]?[0-9]{10,15}$/;
 
-    if (value === '') {
-        setError(emailOrPhone, 'Email or Phone Number is required');
-        emailOrPhoneError = true;
-    } else if (!emailRegex.test(value) && !phoneRegex.test(value)) {
-        setError(emailOrPhone, 'Invalid email or phone number format');
-        emailOrPhoneError = true;
-    } else {
-        clearError(emailOrPhone);
-        emailOrPhoneError = false;
+    if (!value) {
+      setError(emailOrPhone, 'Email or phone number is required.');
+      emailOrPhoneError = true;
+      return false;
     }
-}
 
-// Event Listeners for Validation
-emailOrPhone.addEventListener('blur', validateEmailOrPhone);
-emailOrPhone.addEventListener('input', validateEmailOrPhone);
-
-// Toggle Password Visibility
-togglePassword.addEventListener('click', () => {
-    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-    password.setAttribute('type', type); // Toggle input type
-    togglePassword.classList.toggle('fa-eye'); // Toggle eye icon
-    togglePassword.classList.toggle('fa-eye-slash'); // Toggle eye-slash icon
-});
-
-// Form Submission Handling
-form.addEventListener('submit', (e) => {
-    validateEmailOrPhone(); // Call validation function explicitly
-
-    if (emailOrPhoneError) {
-        e.preventDefault(); // Prevent form submission if errors exist
-        alert('Please fix validation errors before submitting.');
-    } else {
-        e.preventDefault(); // Always prevent default to control form submission via JavaScript
-
-        // Prepare Form Data
-        const formData = {
-            emailOrPhone: emailOrPhone.value.trim(),
-            password: password.value.trim()
-        };
-
-        // Send Form Data to Server
-        fetch('/auth/login/loginAuth', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json' // Sending JSON data
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.text(); // Read the response body as text
-            } else {
-                throw new Error('Failed to authenticate. Please try again.');
-            }
-        })
-        .then(data => {
-            console.log('Response from server:', data);
-            // Handle different responses from the server
-            if (data === "done") {
-                window.location.href = '/'; // Redirect to landing page
-            } else if (data === "new") {
-                window.location.reload(); // Reload the page
-            } else if (data === "admin") {
-                window.location.href = '/admin/dashboard'; // Redirect to admin page
-            } else if (data === "undone") {
-                window.location.reload(); // Reload the page
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while logging in. Please try again.'); // Show error alert
-        });
+    if (!emailRegex.test(value) && !phoneRegex.test(value)) {
+      setError(emailOrPhone, 'Enter a valid email or phone number.');
+      emailOrPhoneError = true;
+      return false;
     }
-});
 
-// Background canvas animation
-const canvas = document.getElementById('backgroundCanvas');
-const ctx = canvas.getContext('2d');
-let mousePosition = { x: 0, y: 0 };
+    clearError(emailOrPhone);
+    emailOrPhoneError = false;
+    return true;
+  }
 
-function setCanvasSize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-setCanvasSize();
-window.addEventListener('resize', setCanvasSize);
+  function validatePassword() {
+    if (!password) return true;
 
-class Particle {
-    constructor() {
+    const value = password.value.trim();
+
+    if (!value) {
+      setError(password, 'Password is required.');
+      passwordError = true;
+      return false;
+    }
+
+    clearError(password);
+    passwordError = false;
+    return true;
+  }
+
+  function initializeValidation() {
+    if (!emailOrPhone || !password || !form) return;
+
+    emailOrPhone.addEventListener('blur', validateEmailOrPhone);
+    emailOrPhone.addEventListener('input', validateEmailOrPhone);
+
+    password.addEventListener('blur', validatePassword);
+    password.addEventListener('input', validatePassword);
+
+    form.addEventListener('submit', handleLoginSubmit);
+  }
+
+  function initializePasswordToggle() {
+    if (!togglePassword || !password) return;
+
+    togglePassword.addEventListener('click', () => {
+      const icon = togglePassword.querySelector('i');
+      const isPassword = password.getAttribute('type') === 'password';
+
+      password.setAttribute('type', isPassword ? 'text' : 'password');
+      togglePassword.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+
+      icon?.classList.toggle('fa-eye', !isPassword);
+      icon?.classList.toggle('fa-eye-slash', isPassword);
+    });
+  }
+
+  async function handleLoginSubmit(event) {
+    event.preventDefault();
+
+    const isEmailOrPhoneValid = validateEmailOrPhone();
+    const isPasswordValid = validatePassword();
+
+    if (!isEmailOrPhoneValid || !isPasswordValid || emailOrPhoneError || passwordError) {
+      showToast('Please fix the highlighted fields before logging in.', 'error');
+      return;
+    }
+
+    const submitButton = form.querySelector('.submit-btn');
+
+    try {
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+      }
+
+      const formData = {
+        emailOrPhone: emailOrPhone.value.trim(),
+        password: password.value.trim()
+      };
+
+      const response = await fetch('/auth/login/loginAuth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to authenticate. Please try again.');
+      }
+
+      const data = await response.text();
+
+      if (data === 'done') {
+        showToast('Login successful. Redirecting...', 'success');
+        window.location.href = '/';
+        return;
+      }
+
+      if (data === 'admin') {
+        showToast('Admin login successful. Redirecting...', 'success');
+        window.location.href = '/admin/dashboard';
+        return;
+      }
+
+      if (data === 'new' || data === 'undone') {
+        window.location.reload();
+        return;
+      }
+
+      showToast('Unable to login. Please check your details.', 'error');
+    } catch (error) {
+      console.error('Login error:', error);
+      showToast('An error occurred while logging in. Please try again.', 'error');
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.innerHTML = '<i class="fas fa-right-to-bracket"></i> Login';
+      }
+    }
+  }
+
+  function showToast(message, type = 'info') {
+    let toastContainer = document.querySelector('.toast-container');
+
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.className = 'toast-container';
+      document.body.appendChild(toastContainer);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+
+    toastContainer.appendChild(toast);
+
+    requestAnimationFrame(() => {
+      toast.classList.add('show');
+    });
+
+    setTimeout(() => {
+      toast.classList.remove('show');
+
+      setTimeout(() => {
+        toast.remove();
+
+        if (!toastContainer.children.length) {
+          toastContainer.remove();
+        }
+      }, 300);
+    }, 3200);
+  }
+
+  function initializeCanvas() {
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let mousePosition = {
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2
+    };
+
+    function setCanvasSize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    class Particle {
+      constructor() {
         this.reset();
-    }
+      }
 
-    reset() {
+      reset() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 2 + 0.5;
-        this.speedX = Math.random() * 1 - 0.5;
-        this.speedY = Math.random() * 1 - 0.5;
+        this.size = Math.random() * 2.2 + 0.6;
+        this.speedX = Math.random() * 0.6 - 0.3;
+        this.speedY = Math.random() * 0.6 - 0.3;
         this.life = 0;
-        this.maxLife = Math.random() * 200 + 100;
-        const colors = [
-            'hsla(45, 100%, 50%, 0.2)',  // Gold
-            'hsla(280, 70%, 40%, 0.2)',  // Deep Purple
-            'hsla(350, 70%, 40%, 0.2)'   // Dark Red
-        ];
-        this.color = colors[Math.floor(Math.random() * colors.length)];
-    }
+        this.maxLife = Math.random() * 220 + 120;
 
-    update() {
+        const colors = [
+          'rgba(16, 110, 190, 0.22)',
+          'rgba(24, 128, 212, 0.2)',
+          'rgba(15, 252, 190, 0.18)',
+          'rgba(96, 200, 245, 0.2)'
+        ];
+
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+      }
+
+      update() {
         this.x += this.speedX;
         this.y += this.speedY;
-        this.life++;
+        this.life += 1;
 
-        if (this.life >= this.maxLife ||
-            this.x < 0 || this.x > canvas.width ||
-            this.y < 0 || this.y > canvas.height) {
-            this.reset();
+        if (
+          this.life >= this.maxLife ||
+          this.x < 0 ||
+          this.x > canvas.width ||
+          this.y < 0 ||
+          this.y > canvas.height
+        ) {
+          this.reset();
         }
-    }
+      }
 
-    draw() {
-        const opacity = 1 - (this.life / this.maxLife);
-        ctx.fillStyle = this.color.replace('0.2', opacity * 0.2);
+      draw() {
+        const opacity = 1 - this.life / this.maxLife;
+
+        ctx.save();
+        ctx.globalAlpha = opacity;
+        ctx.fillStyle = this.color;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
+        ctx.restore();
+      }
     }
-}
 
-const particles = Array.from({ length: 100 }, () => new Particle());
+    setCanvasSize();
 
-function animate() {
-    ctx.fillStyle = 'rgba(18, 18, 18, 0.1)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const particles = Array.from({ length: 85 }, () => new Particle());
 
-    particles.forEach(particle => {
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach((particle) => {
         particle.update();
         particle.draw();
+      });
+
+      const mouseGradient = ctx.createRadialGradient(
+        mousePosition.x,
+        mousePosition.y,
+        0,
+        mousePosition.x,
+        mousePosition.y,
+        190
+      );
+
+      mouseGradient.addColorStop(0, 'rgba(15, 252, 190, 0.12)');
+      mouseGradient.addColorStop(0.45, 'rgba(16, 110, 190, 0.08)');
+      mouseGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+      ctx.fillStyle = mouseGradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', setCanvasSize);
+
+    window.addEventListener('mousemove', (event) => {
+      mousePosition = {
+        x: event.clientX,
+        y: event.clientY
+      };
     });
 
-    const mouseGradient = ctx.createRadialGradient(
-        mousePosition.x, mousePosition.y, 0,
-        mousePosition.x, mousePosition.y, 150
-    );
-    mouseGradient.addColorStop(0, 'rgba(255, 215, 0, 0.1)');
-    mouseGradient.addColorStop(1, 'rgba(18, 18, 18, 0)');
-    ctx.fillStyle = mouseGradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    requestAnimationFrame(animate);
-}
-
-window.addEventListener('mousemove', (e) => {
-    mousePosition = { x: e.clientX, y: e.clientY };
-});
-
-animate();
-
-// Scroll animations for elements
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
-
-// Animate sections on scroll
-document.querySelectorAll('.section-title, .category, .product-card, .blog-card').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    el.style.transition = 'all 0.6s ease-out';
-    observer.observe(el);
+    animate();
+  }
 });
