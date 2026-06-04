@@ -1,3 +1,5 @@
+![E-Commerce Preview](./social-preview.jpeg)
+
 # 🛒 Full Stack E-Commerce Web Application
 
 A complete e-commerce web application built with Node.js, Express, MongoDB, and EJS — featuring advanced admin controls, a coupon system, Razorpay payment integration, and a full user shopping experience.
@@ -145,13 +147,6 @@ Visit 👉 **http://localhost:3000**
 * [ ] Fully responsive mobile UI
 * [ ] REST API for React / Next.js frontend
 * [ ] Invoice generation
-
----
-
-## 🖼️ Preview
-
-![E-Commerce Preview](./social-preview.jpeg)
-
 
 ---
 
