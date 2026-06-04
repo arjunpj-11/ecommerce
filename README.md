@@ -7,43 +7,45 @@ A complete e-commerce web application built with Node.js, Express, MongoDB, and 
 ## 🚀 Features
 
 ### 👤 User Side
-- 🔐 User registration & login
-- 🏠 Home page with featured products
-- 🔍 Product search functionality
-- 🗂️ Browse by categories & subcategories
-- 📦 Product listing & detailed product view
-- 🛒 Cart management (add / update / remove)
-- 💳 Secure checkout & payment integration
-- 💰 Razorpay payment gateway
-- 🎟️ Apply coupons & discounts
-- 📍 Address management
-- 📦 Order management (My Orders)
-- 👤 User profile management
-- 💼 Wallet system
-- 🔁 Order cancellation & returns
+
+* 🔐 User registration & login
+* 🏠 Home page with featured products
+* 🔍 Product search functionality
+* 🗂️ Browse by categories & subcategories
+* 📦 Product listing & detailed product view
+* 🛒 Cart management (add / update / remove)
+* 💳 Secure checkout & payment integration
+* 💰 Razorpay payment gateway
+* 🎟️ Apply coupons & discounts
+* 📍 Address management
+* 📦 Order management (My Orders)
+* 👤 User profile management
+* 💼 Wallet system
+* 🔁 Order cancellation & returns
 
 ### 🛠️ Admin Side
-- 🔐 Admin authentication
-- 📊 Dashboard with sales analytics
-- 👥 User management
-- 📦 Order management
-- 🛍️ Product & variant management
-- 🏷️ Category & subcategory management
-- 🎟️ Coupon management
-- 🎨 Banner management
-- 📊 Sales & offer management
+
+* 🔐 Admin authentication
+* 📊 Dashboard with sales analytics
+* 👥 User management
+* 📦 Order management
+* 🛍️ Product & variant management
+* 🏷️ Category & subcategory management
+* 🎟️ Coupon management
+* 🎨 Banner management
+* 📊 Sales & offer management
 
 ---
 
 ## 🧠 Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Backend | Node.js + Express.js (Express Generator) |
-| Frontend | EJS (Embedded JavaScript Templates) |
-| Database | MongoDB |
-| Payment | Razorpay |
-| Authentication | Session-based |
+| Layer          | Technology                               |
+| -------------- | ---------------------------------------- |
+| Backend        | Node.js + Express.js (Express Generator) |
+| Frontend       | EJS (Embedded JavaScript Templates)      |
+| Database       | MongoDB                                  |
+| Payment        | Razorpay                                 |
+| Authentication | Session-based                            |
 
 ---
 
@@ -68,12 +70,14 @@ project-root/
 ## ⚙️ Installation & Setup
 
 ### 1. Clone the repository
+
 ```bash
 git clone https://github.com/arjunpj-11/Arni
 cd Arni
 ```
 
 ### 2. Install dependencies
+
 ```bash
 npm install
 ```
@@ -91,6 +95,7 @@ PORT=3000
 ```
 
 ### 4. Start the application
+
 ```bash
 npm start
 ```
@@ -102,6 +107,7 @@ Visit 👉 **http://localhost:3000**
 ## 🔄 Application Workflow
 
 ### 🧑‍💻 User Flow
+
 1. Register / Login
 2. Browse or search products
 3. Add items to cart
@@ -110,6 +116,7 @@ Visit 👉 **http://localhost:3000**
 6. Place order & track / manage orders
 
 ### 🧑‍💼 Admin Flow
+
 1. Login to admin dashboard
 2. Manage products, categories, and variants
 3. Create and manage coupons & banners
@@ -120,30 +127,31 @@ Visit 👉 **http://localhost:3000**
 
 ## ✨ Key Highlights
 
-- 🧩 MVC pattern via Express Generator
-- 🛍️ Complete end-to-end e-commerce workflow
-- 💳 Razorpay payment integration
-- 🎟️ Coupon & discount system
-- 📊 Advanced admin dashboard
-- ⚡ Server-side rendering with EJS
-- 📦 Scalable and modular architecture
+* 🧩 MVC pattern via Express Generator
+* 🛍️ Complete end-to-end e-commerce workflow
+* 💳 Razorpay payment integration
+* 🎟️ Coupon & discount system
+* 📊 Advanced admin dashboard
+* ⚡ Server-side rendering with EJS
+* 📦 Scalable and modular architecture
 
 ---
 
 ## 🔮 Future Enhancements
 
-- [ ] Product reviews & ratings
-- [ ] Real-time notifications
-- [ ] Live order tracking
-- [ ] Fully responsive mobile UI
-- [ ] REST API for React / Next.js frontend
-- [ ] Invoice generation
+* [ ] Product reviews & ratings
+* [ ] Real-time notifications
+* [ ] Live order tracking
+* [ ] Fully responsive mobile UI
+* [ ] REST API for React / Next.js frontend
+* [ ] Invoice generation
 
 ---
 
-## 📸 Screenshots
+## 🖼️ Preview
 
-> Add screenshots of your application here
+![E-Commerce Preview](./social-preview.jpeg)
+
 
 ---
 
@@ -155,14 +163,15 @@ Contributions are welcome! Feel free to fork this repository and submit a pull r
 
 ## 📜 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the MIT License.
 
 ---
 
 ## 👨‍💻 Author
 
-**Arjun PJ** — [github.com/arjunpj-11](https://github.com/arjunpj-11)
+**Arjun PJ** — https://github.com/arjunpj-11
 
 ---
 
 > 💡 Built as a full-stack implementation of a real-world e-commerce platform to explore scalable architecture, payment integration, and admin management systems.
+
