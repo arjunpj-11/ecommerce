@@ -1,6 +1,8 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const canvas = document.getElementById('backgroundCanvas');
-  const sections = document.querySelectorAll('.section, .contact-info, .page-actions');
+document.addEventListener("DOMContentLoaded", () => {
+  const canvas = document.getElementById("backgroundCanvas");
+  const sections = document.querySelectorAll(
+    ".section, .contact-info, .page-actions",
+  );
 
   initializeCanvas();
   initializeReveal();
@@ -9,23 +11,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!sections.length) return;
 
     sections.forEach((section, index) => {
-      section.style.opacity = '0';
-      section.style.transform = 'translateY(22px)';
+      section.style.opacity = "0";
+      section.style.transform = "translateY(22px)";
       section.style.transition = `opacity 0.55s ease ${Math.min(index * 50, 250)}ms, transform 0.55s ease ${Math.min(index * 50, 250)}ms`;
     });
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
 
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-        observer.unobserve(entry.target);
-      });
-    }, {
-      threshold: 0.12,
-      rootMargin: '0px 0px -40px 0px'
-    });
+          entry.target.style.opacity = "1";
+          entry.target.style.transform = "translateY(0)";
+          observer.unobserve(entry.target);
+        });
+      },
+      {
+        threshold: 0.12,
+        rootMargin: "0px 0px -40px 0px",
+      },
+    );
 
     sections.forEach((section) => observer.observe(section));
   }
@@ -33,12 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function initializeCanvas() {
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let mousePosition = {
       x: window.innerWidth / 2,
-      y: window.innerHeight / 2
+      y: window.innerHeight / 2,
     };
 
     function setCanvasSize() {
@@ -61,10 +66,10 @@ document.addEventListener('DOMContentLoaded', () => {
         this.maxLife = Math.random() * 220 + 120;
 
         const colors = [
-          'rgba(16, 110, 190, 0.22)',
-          'rgba(24, 128, 212, 0.2)',
-          'rgba(15, 252, 190, 0.18)',
-          'rgba(96, 200, 245, 0.2)'
+          "rgba(16, 110, 190, 0.22)",
+          "rgba(24, 128, 212, 0.2)",
+          "rgba(15, 252, 190, 0.18)",
+          "rgba(96, 200, 245, 0.2)",
         ];
 
         this.color = colors[Math.floor(Math.random() * colors.length)];
@@ -117,12 +122,12 @@ document.addEventListener('DOMContentLoaded', () => {
         0,
         mousePosition.x,
         mousePosition.y,
-        190
+        190,
       );
 
-      mouseGradient.addColorStop(0, 'rgba(15, 252, 190, 0.12)');
-      mouseGradient.addColorStop(0.45, 'rgba(16, 110, 190, 0.08)');
-      mouseGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      mouseGradient.addColorStop(0, "rgba(15, 252, 190, 0.12)");
+      mouseGradient.addColorStop(0.45, "rgba(16, 110, 190, 0.08)");
+      mouseGradient.addColorStop(1, "rgba(255, 255, 255, 0)");
 
       ctx.fillStyle = mouseGradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -130,12 +135,12 @@ document.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(animate);
     }
 
-    window.addEventListener('resize', setCanvasSize);
+    window.addEventListener("resize", setCanvasSize);
 
-    window.addEventListener('mousemove', (event) => {
+    window.addEventListener("mousemove", (event) => {
       mousePosition = {
         x: event.clientX,
-        y: event.clientY
+        y: event.clientY,
       };
     });
 

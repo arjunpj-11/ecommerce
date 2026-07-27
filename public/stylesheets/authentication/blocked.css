@@ -28,14 +28,24 @@
 
   --danger: #ef4444;
 
-  --grad-primary: linear-gradient(135deg, var(--blue) 0%, var(--blue-mid) 55%, var(--blue-light) 100%);
+  --grad-primary: linear-gradient(
+    135deg,
+    var(--blue) 0%,
+    var(--blue-mid) 55%,
+    var(--blue-light) 100%
+  );
   --grad-danger: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
-  --grad-accent: linear-gradient(135deg, var(--mint) 0%, var(--blue-light) 100%);
+  --grad-accent: linear-gradient(
+    135deg,
+    var(--mint) 0%,
+    var(--blue-light) 100%
+  );
 
   --radius: 18px;
   --radius-lg: 28px;
 
-  --font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 html {
@@ -46,8 +56,16 @@ body {
   min-height: 100vh;
   font-family: var(--font-body);
   background:
-    radial-gradient(circle at 12% 18%, rgba(15, 252, 190, 0.18), transparent 28%),
-    radial-gradient(circle at 88% 10%, rgba(16, 110, 190, 0.18), transparent 28%),
+    radial-gradient(
+      circle at 12% 18%,
+      rgba(15, 252, 190, 0.18),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 88% 10%,
+      rgba(16, 110, 190, 0.18),
+      transparent 28%
+    ),
     linear-gradient(135deg, #f4faff 0%, #eaf6ff 45%, #f7fffd 100%);
   color: var(--ink);
   overflow-x: hidden;
@@ -86,8 +104,16 @@ a {
   padding: 5rem 2.5rem 2.7rem;
   border-radius: var(--radius-lg);
   background:
-    radial-gradient(circle at top right, rgba(239, 68, 68, 0.1), transparent 34%),
-    radial-gradient(circle at bottom left, rgba(15, 252, 190, 0.12), transparent 34%),
+    radial-gradient(
+      circle at top right,
+      rgba(239, 68, 68, 0.1),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at bottom left,
+      rgba(15, 252, 190, 0.12),
+      transparent 34%
+    ),
     rgba(255, 255, 255, 0.86);
   border: 1px solid rgba(16, 110, 190, 0.14);
   box-shadow:
@@ -117,7 +143,11 @@ a {
   left: -110px;
   width: 280px;
   height: 280px;
-  background: radial-gradient(circle, rgba(16, 110, 190, 0.16), transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(16, 110, 190, 0.16),
+    transparent 70%
+  );
   pointer-events: none;
 }
 
@@ -135,7 +165,9 @@ a {
   align-items: center;
   justify-content: center;
   box-shadow: 0 14px 34px rgba(12, 31, 58, 0.16);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .logo-section:hover {
@@ -221,7 +253,10 @@ h1 {
   align-items: center;
   justify-content: center;
   gap: 0.55rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
 }
 
 .btn-primary {

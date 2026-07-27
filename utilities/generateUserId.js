@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const User = require("../models/user");
 
 /**
  * Utility function to generate a unique 6-digit userId format Arni/XXXXXX

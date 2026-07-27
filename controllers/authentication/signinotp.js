@@ -1,7 +1,7 @@
-const generateRandomOTP = require('../../utilities/generateOtp');
-const emailOtp = require('../../utilities/emailOtp');
-const User = require('../../models/user');
-const generateUniqueUserId = require('../../utilities/generateUserId');
+const generateRandomOTP = require("../../utilities/generateOtp");
+const emailOtp = require("../../utilities/emailOtp");
+const User = require("../../models/user");
+const generateUniqueUserId = require("../../utilities/generateUserId");
 
 // GET users listing
 exports.getSigninOtp = async (req, res) => {
@@ -11,11 +11,11 @@ exports.getSigninOtp = async (req, res) => {
     req.session.error = null; // Clear error after use
 
     // Render the signinOtp page with value and error
-    res.render('../views/pages/authentication/signinotp', { value, error });
+    res.render("../views/pages/authentication/signinotp", { value, error });
   } catch (error) {
-    console.error('Error rendering signinOtp page:', error);
-    req.session.error = 'Failed to load the OTP page. Please try again.';
-    res.redirect('/auth/otp'); // Redirect to OTP page on error
+    console.error("Error rendering signinOtp page:", error);
+    req.session.error = "Failed to load the OTP page. Please try again.";
+    res.redirect("/auth/otp"); // Redirect to OTP page on error
   }
 };
 
@@ -24,8 +24,8 @@ exports.verifyOtp = async (req, res) => {
   try {
     // Ensure the OTP and session OTP exist
     if (!req.session.otp) {
-      req.session.error = 'Session expired. Please request a new OTP.';
-      return res.redirect('/auth/otp'); // Redirect to OTP page if session OTP is missing
+      req.session.error = "Session expired. Please request a new OTP.";
+      return res.redirect("/auth/otp"); // Redirect to OTP page if session OTP is missing
     }
 
     // Extract and combine entered OTP from req.body
@@ -39,7 +39,7 @@ exports.verifyOtp = async (req, res) => {
       try {
         // Ensure all required registration data exists
         if (!req.session.username || !req.session.password) {
-          throw new Error('Missing registration information');
+          throw new Error("Missing registration information");
         }
 
         const userId = await generateUniqueUserId(); // Generate a unique user ID
@@ -48,10 +48,10 @@ exports.verifyOtp = async (req, res) => {
           username: req.session.username,
           phone: req.session.phone,
           email: req.session.email || null, // Make email optional
-          password: req.session.password
+          password: req.session.password,
         });
 
-        console.log('User  created:', user);
+        console.log("User  created:", user);
         req.session.userId = user._id; // Store user ID in session
         req.session.isAuthenticated = true; // Set authentication status
 
@@ -62,20 +62,21 @@ exports.verifyOtp = async (req, res) => {
         delete req.session.password;
         delete req.session.value;
 
-        return res.redirect('/'); // Redirect to home page
+        return res.redirect("/"); // Redirect to home page
       } catch (err) {
-        console.error('Error registering user:', err);
-        req.session.error = 'Error registering user. Please try again.';
-        return res.redirect('/auth/register'); // Redirect to registration page on error
+        console.error("Error registering user:", err);
+        req.session.error = "Error registering user. Please try again.";
+        return res.redirect("/auth/register"); // Redirect to registration page on error
       }
     } else {
-      req.session.error = 'Invalid OTP. Please try again.';
-      return res.redirect('/auth/otp'); // Redirect back to OTP page if OTP is invalid
+      req.session.error = "Invalid OTP. Please try again.";
+      return res.redirect("/auth/otp"); // Redirect back to OTP page if OTP is invalid
     }
   } catch (error) {
-    console.error('Error in OTP verification:', error);
-    req.session.error = 'Something went wrong during OTP verification. Please try again.';
-    return res.redirect('/auth/otp'); // Redirect back to OTP page on error
+    console.error("Error in OTP verification:", error);
+    req.session.error =
+      "Something went wrong during OTP verification. Please try again.";
+    return res.redirect("/auth/otp"); // Redirect back to OTP page on error
   }
 };
 
@@ -86,17 +87,20 @@ exports.resendOtp = async (req, res) => {
     await emailOtp(req.session.otp, req.session.value); // Send OTP to email or phone number
     console.log(req.session.otp);
     console.log(req.session.value);
-    
+
     // Clear OTP after 10 hours
-    setTimeout(() => {
-      delete req.session.otp; // Clear OTP from session
-      delete req.session.enteredOtp; // Clear entered OTP from session
-    }, 1000 * 60 * 60 * 10); // 10 hours expiration
-    
-    res.status(200).json({ message: 'OTP resent successfully.' }); // Return success message
+    setTimeout(
+      () => {
+        delete req.session.otp; // Clear OTP from session
+        delete req.session.enteredOtp; // Clear entered OTP from session
+      },
+      1000 * 60 * 60 * 10,
+    ); // 10 hours expiration
+
+    res.status(200).json({ message: "OTP resent successfully." }); // Return success message
   } catch (error) {
-    console.error('Error resending OTP:', error);
-    req.session.error = 'Failed to resend OTP. Please try again later.';
-    return res.status(500).json({ message: 'Failed to resend OTP.' }); // Return error message
+    console.error("Error resending OTP:", error);
+    req.session.error = "Failed to resend OTP. Please try again later.";
+    return res.status(500).json({ message: "Failed to resend OTP." }); // Return error message
   }
 };

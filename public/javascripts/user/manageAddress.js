@@ -5,14 +5,14 @@ class NotificationSystem {
   }
 
   initializeToastContainer() {
-    this.toastContainer = document.createElement('div');
-    this.toastContainer.className = 'toast-container';
+    this.toastContainer = document.createElement("div");
+    this.toastContainer.className = "toast-container";
     document.body.appendChild(this.toastContainer);
   }
 
   initializeConfirmDialog() {
-    const dialog = document.createElement('div');
-    dialog.className = 'confirm-dialog';
+    const dialog = document.createElement("div");
+    dialog.className = "confirm-dialog";
     dialog.innerHTML = `
       <div class="confirm-content">
         <h3>Confirm Action</h3>
@@ -32,40 +32,40 @@ class NotificationSystem {
   }
 
   setupConfirmListeners() {
-    const cancelBtn = this.confirmDialog.querySelector('.cancel-btn');
-    const confirmBtn = this.confirmDialog.querySelector('.confirm-btn');
+    const cancelBtn = this.confirmDialog.querySelector(".cancel-btn");
+    const confirmBtn = this.confirmDialog.querySelector(".confirm-btn");
 
-    cancelBtn.addEventListener('click', () => {
+    cancelBtn.addEventListener("click", () => {
       this.hideConfirm();
     });
 
-    confirmBtn.addEventListener('click', () => {
+    confirmBtn.addEventListener("click", () => {
       if (this.onConfirm) {
         this.onConfirm();
         this.hideConfirm();
       }
     });
 
-    this.confirmDialog.addEventListener('click', (event) => {
+    this.confirmDialog.addEventListener("click", (event) => {
       if (event.target === this.confirmDialog) {
         this.hideConfirm();
       }
     });
   }
 
-  showToast(message, type = 'info') {
-    const toast = document.createElement('div');
+  showToast(message, type = "info") {
+    const toast = document.createElement("div");
     toast.className = `toast ${type}`;
     toast.textContent = message;
 
     this.toastContainer.appendChild(toast);
 
     requestAnimationFrame(() => {
-      toast.classList.add('show');
+      toast.classList.add("show");
     });
 
     setTimeout(() => {
-      toast.classList.remove('show');
+      toast.classList.remove("show");
 
       setTimeout(() => {
         toast.remove();
@@ -74,13 +74,13 @@ class NotificationSystem {
   }
 
   confirm(message, onConfirm) {
-    this.confirmDialog.querySelector('.confirm-message').textContent = message;
+    this.confirmDialog.querySelector(".confirm-message").textContent = message;
     this.onConfirm = onConfirm;
-    this.confirmDialog.style.display = 'flex';
+    this.confirmDialog.style.display = "flex";
   }
 
   hideConfirm() {
-    this.confirmDialog.style.display = 'none';
+    this.confirmDialog.style.display = "none";
     this.onConfirm = null;
   }
 }
@@ -89,10 +89,10 @@ const notifications = new NotificationSystem();
 
 const API = {
   async addAddress(data) {
-    const response = await fetch('/users/adr/addresses', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+    const response = await fetch("/users/adr/addresses", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     });
 
     return response.json();
@@ -100,9 +100,9 @@ const API = {
 
   async updateAddress(id, data) {
     const response = await fetch(`/users/adr/addresses/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     });
 
     return response.json();
@@ -110,7 +110,7 @@ const API = {
 
   async deleteAddress(id) {
     const response = await fetch(`/users/adr/addresses/${id}`, {
-      method: 'DELETE'
+      method: "DELETE",
     });
 
     return response.json();
@@ -118,49 +118,51 @@ const API = {
 
   async setPrimaryAddress(id) {
     const response = await fetch(`/users/adr/addresses/${id}/primary`, {
-      method: 'PATCH'
+      method: "PATCH",
     });
 
     return response.json();
-  }
+  },
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-  const navbar = document.getElementById('navbar');
-  const searchToggle = document.querySelector('.search-toggle');
-  const searchOverlay = document.getElementById('searchOverlay');
-  const searchClose = document.getElementById('searchClose');
+document.addEventListener("DOMContentLoaded", () => {
+  const navbar = document.getElementById("navbar");
+  const searchToggle = document.querySelector(".search-toggle");
+  const searchOverlay = document.getElementById("searchOverlay");
+  const searchClose = document.getElementById("searchClose");
 
-  const hamburger = document.getElementById('hamburger');
-  const mobileDrawer = document.getElementById('mobileDrawer');
-  const mobileOverlay = document.getElementById('mobileOverlay');
-  const drawerClose = document.getElementById('drawerClose');
+  const hamburger = document.getElementById("hamburger");
+  const mobileDrawer = document.getElementById("mobileDrawer");
+  const mobileOverlay = document.getElementById("mobileOverlay");
+  const drawerClose = document.getElementById("drawerClose");
 
-  const categoriesDataEl = document.getElementById('arni-categories-data');
-  const canvas = document.getElementById('backgroundCanvas');
+  const categoriesDataEl = document.getElementById("arni-categories-data");
+  const canvas = document.getElementById("backgroundCanvas");
 
-  const addAddressBtn = document.getElementById('addAddressBtn');
-  const createAddressForm = document.getElementById('createAddressForm');
-  const createFormContainer = document.getElementById('createAddressFormContainer');
-  const closeCreateFormBtn = document.getElementById('closeCreateFormBtn');
-  const cancelCreateFormBtn = document.getElementById('cancelCreateFormBtn');
+  const addAddressBtn = document.getElementById("addAddressBtn");
+  const createAddressForm = document.getElementById("createAddressForm");
+  const createFormContainer = document.getElementById(
+    "createAddressFormContainer",
+  );
+  const closeCreateFormBtn = document.getElementById("closeCreateFormBtn");
+  const cancelCreateFormBtn = document.getElementById("cancelCreateFormBtn");
 
-  const editFormContainer = document.getElementById('editAddressFormContainer');
-  const editForm = document.getElementById('editAddressForm');
-  const closeEditFormBtn = document.getElementById('closeEditFormBtn');
-  const cancelEditFormBtn = document.getElementById('cancelEditFormBtn');
+  const editFormContainer = document.getElementById("editAddressFormContainer");
+  const editForm = document.getElementById("editAddressForm");
+  const closeEditFormBtn = document.getElementById("closeEditFormBtn");
+  const cancelEditFormBtn = document.getElementById("cancelEditFormBtn");
 
-  const addressGrid = document.getElementById('addressGrid');
+  const addressGrid = document.getElementById("addressGrid");
 
   let lastScrollY = 0;
   let arniCategories = [];
 
   try {
     arniCategories = categoriesDataEl
-      ? JSON.parse(categoriesDataEl.textContent || '[]')
+      ? JSON.parse(categoriesDataEl.textContent || "[]")
       : [];
   } catch (error) {
-    console.error('Failed to parse ARNI categories:', error);
+    console.error("Failed to parse ARNI categories:", error);
     arniCategories = [];
   }
 
@@ -176,112 +178,124 @@ document.addEventListener('DOMContentLoaded', () => {
   function initializeNavbar() {
     if (!navbar) return;
 
-    window.addEventListener('scroll', () => {
-      const currentY = window.scrollY;
+    window.addEventListener(
+      "scroll",
+      () => {
+        const currentY = window.scrollY;
 
-      navbar.classList.toggle('scrolled', currentY > 20);
-      navbar.style.transform =
-        currentY > lastScrollY && currentY > 140
-          ? 'translateY(-100%)'
-          : 'translateY(0)';
+        navbar.classList.toggle("scrolled", currentY > 20);
+        navbar.style.transform =
+          currentY > lastScrollY && currentY > 140
+            ? "translateY(-100%)"
+            : "translateY(0)";
 
-      lastScrollY = currentY;
-    }, { passive: true });
+        lastScrollY = currentY;
+      },
+      { passive: true },
+    );
   }
 
   function initializeSearch() {
-    searchToggle?.addEventListener('click', () => {
-      const isOpen = searchOverlay?.classList.toggle('open');
+    searchToggle?.addEventListener("click", () => {
+      const isOpen = searchOverlay?.classList.toggle("open");
 
       if (isOpen) {
-        searchOverlay?.querySelector('.search-input')?.focus();
+        searchOverlay?.querySelector(".search-input")?.focus();
       }
     });
 
-    searchClose?.addEventListener('click', () => {
-      searchOverlay?.classList.remove('open');
+    searchClose?.addEventListener("click", () => {
+      searchOverlay?.classList.remove("open");
     });
 
-    document.addEventListener('click', (event) => {
+    document.addEventListener("click", (event) => {
       if (
-        searchOverlay?.classList.contains('open') &&
+        searchOverlay?.classList.contains("open") &&
         !searchOverlay.contains(event.target) &&
         !searchToggle?.contains(event.target)
       ) {
-        searchOverlay.classList.remove('open');
+        searchOverlay.classList.remove("open");
       }
     });
   }
 
   function initializeMobileDrawer() {
     function openDrawer() {
-      mobileDrawer?.classList.add('open');
-      mobileOverlay?.classList.add('visible');
-      hamburger?.classList.add('open');
-      document.body.style.overflow = 'hidden';
+      mobileDrawer?.classList.add("open");
+      mobileOverlay?.classList.add("visible");
+      hamburger?.classList.add("open");
+      document.body.style.overflow = "hidden";
     }
 
     function closeDrawer() {
-      mobileDrawer?.classList.remove('open');
-      mobileOverlay?.classList.remove('visible');
-      hamburger?.classList.remove('open');
-      document.body.style.overflow = '';
+      mobileDrawer?.classList.remove("open");
+      mobileOverlay?.classList.remove("visible");
+      hamburger?.classList.remove("open");
+      document.body.style.overflow = "";
     }
 
-    hamburger?.addEventListener('click', () => {
-      if (mobileDrawer?.classList.contains('open')) {
+    hamburger?.addEventListener("click", () => {
+      if (mobileDrawer?.classList.contains("open")) {
         closeDrawer();
       } else {
         openDrawer();
       }
     });
 
-    mobileOverlay?.addEventListener('click', closeDrawer);
-    drawerClose?.addEventListener('click', closeDrawer);
+    mobileOverlay?.addEventListener("click", closeDrawer);
+    drawerClose?.addEventListener("click", closeDrawer);
 
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
         closeDrawer();
         closeCreateForm();
         closeEditForm();
-        searchOverlay?.classList.remove('open');
+        searchOverlay?.classList.remove("open");
         notifications.hideConfirm();
       }
     });
   }
 
   function initializeCategoryDropdown() {
-    const navLinks = document.querySelector('.nav-links');
+    const navLinks = document.querySelector(".nav-links");
     if (!navLinks || !arniCategories.length) return;
 
     let dropdownMenu = null;
 
     function buildDropdown(categories) {
       if (!dropdownMenu) {
-        dropdownMenu = document.createElement('div');
-        dropdownMenu.className = 'cat-dropdown';
+        dropdownMenu = document.createElement("div");
+        dropdownMenu.className = "cat-dropdown";
         document.body.appendChild(dropdownMenu);
       }
 
       dropdownMenu.innerHTML = `
         <div class="cat-dropdown-inner">
-          ${categories.map((category) => `
+          ${categories
+            .map(
+              (category) => `
             <div class="cat-dropdown-col">
-              <a href="/subcategories?main=${escapeHtml(category._id || '')}" class="cat-dropdown-title">
-                ${escapeHtml(category.mainCategoryName || 'Category')}
+              <a href="/subcategories?main=${escapeHtml(category._id || "")}" class="cat-dropdown-title">
+                ${escapeHtml(category.mainCategoryName || "Category")}
               </a>
 
               <ul>
-                ${(category.subcategories || []).map((subcategory) => `
+                ${(category.subcategories || [])
+                  .map(
+                    (subcategory) => `
                   <li>
-                    <a href="/products?sub=${escapeHtml(subcategory._id || '')}">
-                      ${escapeHtml(subcategory.subCategoryName || 'Subcategory')}
+                    <a href="/products?sub=${escapeHtml(subcategory._id || "")}">
+                      ${escapeHtml(subcategory.subCategoryName || "Subcategory")}
                     </a>
                   </li>
-                `).join('')}
+                `,
+                  )
+                  .join("")}
               </ul>
             </div>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </div>
       `;
     }
@@ -290,21 +304,18 @@ document.addEventListener('DOMContentLoaded', () => {
       buildDropdown(arniCategories);
 
       const rect = link.getBoundingClientRect();
-      const left = Math.min(
-        Math.max(12, rect.left),
-        window.innerWidth - 360
-      );
+      const left = Math.min(Math.max(12, rect.left), window.innerWidth - 360);
 
       dropdownMenu.style.top = `${rect.bottom + 10}px`;
       dropdownMenu.style.left = `${left}px`;
-      dropdownMenu.classList.add('open');
+      dropdownMenu.classList.add("open");
     }
 
     function closeDropdown() {
-      dropdownMenu?.classList.remove('open');
+      dropdownMenu?.classList.remove("open");
     }
 
-    navLinks.addEventListener('mouseover', (event) => {
+    navLinks.addEventListener("mouseover", (event) => {
       const link = event.target.closest('a[data-category="true"]');
 
       if (link) {
@@ -312,35 +323,38 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    document.addEventListener('mouseover', (event) => {
+    document.addEventListener("mouseover", (event) => {
       if (
-        dropdownMenu?.classList.contains('open') &&
-        !event.target.closest('.cat-dropdown') &&
+        dropdownMenu?.classList.contains("open") &&
+        !event.target.closest(".cat-dropdown") &&
         !event.target.closest('[data-category="true"]')
       ) {
         closeDropdown();
       }
     });
 
-    window.addEventListener('scroll', closeDropdown, { passive: true });
-    window.addEventListener('resize', closeDropdown);
+    window.addEventListener("scroll", closeDropdown, { passive: true });
+    window.addEventListener("resize", closeDropdown);
   }
 
   function initializeAddressForms() {
-    addAddressBtn?.addEventListener('click', () => {
+    addAddressBtn?.addEventListener("click", () => {
       closeEditForm();
-      createFormContainer?.classList.add('active');
-      createAddressForm?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      createFormContainer?.classList.add("active");
+      createAddressForm?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
     });
 
-    closeCreateFormBtn?.addEventListener('click', closeCreateForm);
-    cancelCreateFormBtn?.addEventListener('click', closeCreateForm);
+    closeCreateFormBtn?.addEventListener("click", closeCreateForm);
+    cancelCreateFormBtn?.addEventListener("click", closeCreateForm);
 
-    closeEditFormBtn?.addEventListener('click', closeEditForm);
-    cancelEditFormBtn?.addEventListener('click', closeEditForm);
+    closeEditFormBtn?.addEventListener("click", closeEditForm);
+    cancelEditFormBtn?.addEventListener("click", closeEditForm);
 
-    createAddressForm?.addEventListener('submit', handleCreateAddress);
-    editForm?.addEventListener('submit', handleEditAddress);
+    createAddressForm?.addEventListener("submit", handleCreateAddress);
+    editForm?.addEventListener("submit", handleEditAddress);
   }
 
   async function handleCreateAddress(event) {
@@ -354,18 +368,24 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await API.addAddress(data);
 
       if (response.success) {
-        notifications.showToast('Address added successfully.', 'success');
+        notifications.showToast("Address added successfully.", "success");
         closeCreateForm();
 
         setTimeout(() => {
           window.location.reload();
         }, 700);
       } else {
-        notifications.showToast(response.message || response.error || 'Failed to add address.', 'error');
+        notifications.showToast(
+          response.message || response.error || "Failed to add address.",
+          "error",
+        );
       }
     } catch (error) {
-      console.error('Create address error:', error);
-      notifications.showToast('An error occurred while adding the address.', 'error');
+      console.error("Create address error:", error);
+      notifications.showToast(
+        "An error occurred while adding the address.",
+        "error",
+      );
     }
   }
 
@@ -375,7 +395,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const data = readAddressForm(editForm);
 
     if (!data.id) {
-      notifications.showToast('Address id missing. Please refresh and try again.', 'error');
+      notifications.showToast(
+        "Address id missing. Please refresh and try again.",
+        "error",
+      );
       return;
     }
 
@@ -385,76 +408,107 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await API.updateAddress(data.id, data);
 
       if (response.success) {
-        notifications.showToast('Address updated successfully.', 'success');
+        notifications.showToast("Address updated successfully.", "success");
         closeEditForm();
 
         setTimeout(() => {
           window.location.reload();
         }, 700);
       } else {
-        notifications.showToast(response.message || response.error || 'Failed to update address.', 'error');
+        notifications.showToast(
+          response.message || response.error || "Failed to update address.",
+          "error",
+        );
       }
     } catch (error) {
-      console.error('Edit address error:', error);
-      notifications.showToast('An error occurred while updating the address.', 'error');
+      console.error("Edit address error:", error);
+      notifications.showToast(
+        "An error occurred while updating the address.",
+        "error",
+      );
     }
   }
 
   function initializeAddressActions() {
     if (!addressGrid) return;
 
-    addressGrid.addEventListener('click', async (event) => {
-      const target = event.target.closest('button');
-      const card = event.target.closest('.address-card');
+    addressGrid.addEventListener("click", async (event) => {
+      const target = event.target.closest("button");
+      const card = event.target.closest(".address-card");
 
       if (!target || !card) return;
 
       const id = card.dataset.id;
 
-      if (target.classList.contains('edit-address')) {
+      if (target.classList.contains("edit-address")) {
         openEditForm(card);
         return;
       }
 
-      if (target.classList.contains('delete-address')) {
-        notifications.confirm('Are you sure you want to delete this address?', async () => {
-          try {
-            const response = await API.deleteAddress(id);
+      if (target.classList.contains("delete-address")) {
+        notifications.confirm(
+          "Are you sure you want to delete this address?",
+          async () => {
+            try {
+              const response = await API.deleteAddress(id);
 
-            if (response.success) {
-              notifications.showToast('Address deleted successfully.', 'success');
+              if (response.success) {
+                notifications.showToast(
+                  "Address deleted successfully.",
+                  "success",
+                );
 
-              setTimeout(() => {
-                window.location.reload();
-              }, 700);
-            } else {
-              notifications.showToast(response.message || response.error || 'Failed to delete address.', 'error');
+                setTimeout(() => {
+                  window.location.reload();
+                }, 700);
+              } else {
+                notifications.showToast(
+                  response.message ||
+                    response.error ||
+                    "Failed to delete address.",
+                  "error",
+                );
+              }
+            } catch (error) {
+              console.error("Delete address error:", error);
+              notifications.showToast(
+                "An error occurred while deleting the address.",
+                "error",
+              );
             }
-          } catch (error) {
-            console.error('Delete address error:', error);
-            notifications.showToast('An error occurred while deleting the address.', 'error');
-          }
-        });
+          },
+        );
 
         return;
       }
 
-      if (target.classList.contains('set-default')) {
+      if (target.classList.contains("set-default")) {
         try {
           const response = await API.setPrimaryAddress(id);
 
           if (response.success) {
-            notifications.showToast('Default address updated successfully.', 'success');
+            notifications.showToast(
+              "Default address updated successfully.",
+              "success",
+            );
 
             setTimeout(() => {
               window.location.reload();
             }, 700);
           } else {
-            notifications.showToast(response.message || response.error || 'Failed to update default address.', 'error');
+            notifications.showToast(
+              response.message ||
+                response.error ||
+                "Failed to update default address.",
+              "error",
+            );
           }
         } catch (error) {
-          console.error('Set default address error:', error);
-          notifications.showToast('An error occurred while updating default address.', 'error');
+          console.error("Set default address error:", error);
+          notifications.showToast(
+            "An error occurred while updating default address.",
+            "error",
+          );
         }
       }
     });
@@ -465,40 +519,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
     closeCreateForm();
 
-    editForm.id.value = card.dataset.id || '';
-    editForm.street.value = card.dataset.street || '';
-    editForm.city.value = card.dataset.city || '';
-    editForm.state.value = card.dataset.state || '';
-    editForm.postalCode.value = card.dataset.postalCode || '';
-    editForm.country.value = card.dataset.country || '';
-    editForm.isPrimary.checked = card.dataset.primary === 'true';
+    editForm.id.value = card.dataset.id || "";
+    editForm.street.value = card.dataset.street || "";
+    editForm.city.value = card.dataset.city || "";
+    editForm.state.value = card.dataset.state || "";
+    editForm.postalCode.value = card.dataset.postalCode || "";
+    editForm.country.value = card.dataset.country || "";
+    editForm.isPrimary.checked = card.dataset.primary === "true";
 
-    editFormContainer.classList.add('active');
-    editFormContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    editFormContainer.classList.add("active");
+    editFormContainer.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   function readAddressForm(form) {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
-    data.street = data.street?.trim() || '';
-    data.city = data.city?.trim() || '';
-    data.state = data.state?.trim() || '';
-    data.postalCode = data.postalCode?.trim() || '';
-    data.country = data.country?.trim() || '';
-    data.isPrimary = data.isPrimary === 'on';
+    data.street = data.street?.trim() || "";
+    data.city = data.city?.trim() || "";
+    data.state = data.state?.trim() || "";
+    data.postalCode = data.postalCode?.trim() || "";
+    data.country = data.country?.trim() || "";
+    data.isPrimary = data.isPrimary === "on";
 
     return data;
   }
 
   function validateAddressData(data) {
-    if (!data.street || !data.city || !data.state || !data.postalCode || !data.country) {
-      notifications.showToast('Please fill all required address fields.', 'error');
+    if (
+      !data.street ||
+      !data.city ||
+      !data.state ||
+      !data.postalCode ||
+      !data.country
+    ) {
+      notifications.showToast(
+        "Please fill all required address fields.",
+        "error",
+      );
       return false;
     }
 
     if (!/^[0-9]{6}$/.test(data.postalCode)) {
-      notifications.showToast('Postal code must be exactly 6 digits.', 'error');
+      notifications.showToast("Postal code must be exactly 6 digits.", "error");
       return false;
     }
 
@@ -506,60 +569,63 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function closeCreateForm() {
-    createFormContainer?.classList.remove('active');
+    createFormContainer?.classList.remove("active");
     createAddressForm?.reset();
   }
 
   function closeEditForm() {
-    editFormContainer?.classList.remove('active');
+    editFormContainer?.classList.remove("active");
     editForm?.reset();
   }
 
   function initializeReveal() {
     const revealEls = document.querySelectorAll(
-      '.profile-hero, .sidebar, .content-area, .address-card, .footer-section'
+      ".profile-hero, .sidebar, .content-area, .address-card, .footer-section",
     );
 
     if (!revealEls.length) return;
 
     revealEls.forEach((el, index) => {
-      el.classList.add('reveal');
+      el.classList.add("reveal");
       el.style.transitionDelay = `${Math.min(index * 55, 240)}ms`;
     });
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
 
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      });
-    }, {
-      threshold: 0.1,
-      rootMargin: '0px 0px -40px 0px'
-    });
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: "0px 0px -40px 0px",
+      },
+    );
 
     revealEls.forEach((el) => observer.observe(el));
   }
 
   function escapeHtml(value) {
     return String(value)
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#039;');
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
   }
 
   function initializeCanvas() {
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let mousePosition = {
       x: window.innerWidth / 2,
-      y: window.innerHeight / 2
+      y: window.innerHeight / 2,
     };
 
     function setCanvasSize() {
@@ -582,10 +648,10 @@ document.addEventListener('DOMContentLoaded', () => {
         this.maxLife = Math.random() * 220 + 120;
 
         const colors = [
-          'rgba(16, 110, 190, 0.22)',
-          'rgba(24, 128, 212, 0.2)',
-          'rgba(15, 252, 190, 0.18)',
-          'rgba(96, 200, 245, 0.2)'
+          "rgba(16, 110, 190, 0.22)",
+          "rgba(24, 128, 212, 0.2)",
+          "rgba(15, 252, 190, 0.18)",
+          "rgba(96, 200, 245, 0.2)",
         ];
 
         this.color = colors[Math.floor(Math.random() * colors.length)];
@@ -638,12 +704,12 @@ document.addEventListener('DOMContentLoaded', () => {
         0,
         mousePosition.x,
         mousePosition.y,
-        190
+        190,
       );
 
-      mouseGradient.addColorStop(0, 'rgba(15, 252, 190, 0.12)');
-      mouseGradient.addColorStop(0.45, 'rgba(16, 110, 190, 0.08)');
-      mouseGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      mouseGradient.addColorStop(0, "rgba(15, 252, 190, 0.12)");
+      mouseGradient.addColorStop(0.45, "rgba(16, 110, 190, 0.08)");
+      mouseGradient.addColorStop(1, "rgba(255, 255, 255, 0)");
 
       ctx.fillStyle = mouseGradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -651,12 +717,12 @@ document.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(animate);
     }
 
-    window.addEventListener('resize', setCanvasSize);
+    window.addEventListener("resize", setCanvasSize);
 
-    window.addEventListener('mousemove', (event) => {
+    window.addEventListener("mousemove", (event) => {
       mousePosition = {
         x: event.clientX,
-        y: event.clientY
+        y: event.clientY,
       };
     });
 

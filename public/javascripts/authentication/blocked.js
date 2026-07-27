@@ -1,17 +1,17 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const canvas = document.getElementById('backgroundCanvas');
+document.addEventListener("DOMContentLoaded", () => {
+  const canvas = document.getElementById("backgroundCanvas");
 
   initializeCanvas();
 
   function initializeCanvas() {
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let mousePosition = {
       x: window.innerWidth / 2,
-      y: window.innerHeight / 2
+      y: window.innerHeight / 2,
     };
 
     function setCanvasSize() {
@@ -34,10 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
         this.maxLife = Math.random() * 220 + 120;
 
         const colors = [
-          'rgba(16, 110, 190, 0.22)',
-          'rgba(24, 128, 212, 0.2)',
-          'rgba(15, 252, 190, 0.18)',
-          'rgba(239, 68, 68, 0.14)'
+          "rgba(16, 110, 190, 0.22)",
+          "rgba(24, 128, 212, 0.2)",
+          "rgba(15, 252, 190, 0.18)",
+          "rgba(239, 68, 68, 0.14)",
         ];
 
         this.color = colors[Math.floor(Math.random() * colors.length)];
@@ -90,12 +90,12 @@ document.addEventListener('DOMContentLoaded', () => {
         0,
         mousePosition.x,
         mousePosition.y,
-        190
+        190,
       );
 
-      mouseGradient.addColorStop(0, 'rgba(15, 252, 190, 0.1)');
-      mouseGradient.addColorStop(0.45, 'rgba(16, 110, 190, 0.08)');
-      mouseGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      mouseGradient.addColorStop(0, "rgba(15, 252, 190, 0.1)");
+      mouseGradient.addColorStop(0.45, "rgba(16, 110, 190, 0.08)");
+      mouseGradient.addColorStop(1, "rgba(255, 255, 255, 0)");
 
       ctx.fillStyle = mouseGradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -103,12 +103,12 @@ document.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(animate);
     }
 
-    window.addEventListener('resize', setCanvasSize);
+    window.addEventListener("resize", setCanvasSize);
 
-    window.addEventListener('mousemove', (event) => {
+    window.addEventListener("mousemove", (event) => {
       mousePosition = {
         x: event.clientX,
-        y: event.clientY
+        y: event.clientY,
       };
     });
 

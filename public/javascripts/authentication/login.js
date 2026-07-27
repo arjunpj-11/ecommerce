@@ -1,9 +1,9 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const emailOrPhone = document.getElementById('emailOrPhone');
-  const password = document.getElementById('password');
-  const togglePassword = document.getElementById('togglePassword');
-  const form = document.getElementById('form');
-  const canvas = document.getElementById('backgroundCanvas');
+document.addEventListener("DOMContentLoaded", () => {
+  const emailOrPhone = document.getElementById("emailOrPhone");
+  const password = document.getElementById("password");
+  const togglePassword = document.getElementById("togglePassword");
+  const form = document.getElementById("form");
+  const canvas = document.getElementById("backgroundCanvas");
 
   let emailOrPhoneError = false;
   let passwordError = false;
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
       messageElement.textContent = message;
     }
 
-    element.classList.add('iAfter');
+    element.classList.add("iAfter");
   }
 
   function clearError(element) {
@@ -30,10 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageElement = document.getElementById(`${element.id}Message`);
 
     if (messageElement) {
-      messageElement.textContent = '';
+      messageElement.textContent = "";
     }
 
-    element.classList.remove('iAfter');
+    element.classList.remove("iAfter");
   }
 
   function validateEmailOrPhone() {
@@ -44,13 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const phoneRegex = /^[+]?[0-9]{10,15}$/;
 
     if (!value) {
-      setError(emailOrPhone, 'Email or phone number is required.');
+      setError(emailOrPhone, "Email or phone number is required.");
       emailOrPhoneError = true;
       return false;
     }
 
     if (!emailRegex.test(value) && !phoneRegex.test(value)) {
-      setError(emailOrPhone, 'Enter a valid email or phone number.');
+      setError(emailOrPhone, "Enter a valid email or phone number.");
       emailOrPhoneError = true;
       return false;
     }
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const value = password.value.trim();
 
     if (!value) {
-      setError(password, 'Password is required.');
+      setError(password, "Password is required.");
       passwordError = true;
       return false;
     }
@@ -79,27 +79,30 @@ document.addEventListener('DOMContentLoaded', () => {
   function initializeValidation() {
     if (!emailOrPhone || !password || !form) return;
 
-    emailOrPhone.addEventListener('blur', validateEmailOrPhone);
-    emailOrPhone.addEventListener('input', validateEmailOrPhone);
+    emailOrPhone.addEventListener("blur", validateEmailOrPhone);
+    emailOrPhone.addEventListener("input", validateEmailOrPhone);
 
-    password.addEventListener('blur', validatePassword);
-    password.addEventListener('input', validatePassword);
+    password.addEventListener("blur", validatePassword);
+    password.addEventListener("input", validatePassword);
 
-    form.addEventListener('submit', handleLoginSubmit);
+    form.addEventListener("submit", handleLoginSubmit);
   }
 
   function initializePasswordToggle() {
     if (!togglePassword || !password) return;
 
-    togglePassword.addEventListener('click', () => {
-      const icon = togglePassword.querySelector('i');
-      const isPassword = password.getAttribute('type') === 'password';
+    togglePassword.addEventListener("click", () => {
+      const icon = togglePassword.querySelector("i");
+      const isPassword = password.getAttribute("type") === "password";
 
-      password.setAttribute('type', isPassword ? 'text' : 'password');
-      togglePassword.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+      password.setAttribute("type", isPassword ? "text" : "password");
+      togglePassword.setAttribute(
+        "aria-label",
+        isPassword ? "Hide password" : "Show password",
+      );
 
-      icon?.classList.toggle('fa-eye', !isPassword);
-      icon?.classList.toggle('fa-eye-slash', isPassword);
+      icon?.classList.toggle("fa-eye", !isPassword);
+      icon?.classList.toggle("fa-eye-slash", isPassword);
     });
   }
 
@@ -109,88 +112,101 @@ document.addEventListener('DOMContentLoaded', () => {
     const isEmailOrPhoneValid = validateEmailOrPhone();
     const isPasswordValid = validatePassword();
 
-    if (!isEmailOrPhoneValid || !isPasswordValid || emailOrPhoneError || passwordError) {
-      showToast('Please fix the highlighted fields before logging in.', 'error');
+    if (
+      !isEmailOrPhoneValid ||
+      !isPasswordValid ||
+      emailOrPhoneError ||
+      passwordError
+    ) {
+      showToast(
+        "Please fix the highlighted fields before logging in.",
+        "error",
+      );
       return;
     }
 
-    const submitButton = form.querySelector('.submit-btn');
+    const submitButton = form.querySelector(".submit-btn");
 
     try {
       if (submitButton) {
         submitButton.disabled = true;
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+        submitButton.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> Logging in...';
       }
 
       const formData = {
         emailOrPhone: emailOrPhone.value.trim(),
-        password: password.value.trim()
+        password: password.value.trim(),
       };
 
-      const response = await fetch('/auth/login/loginAuth', {
-        method: 'POST',
+      const response = await fetch("/auth/login/loginAuth", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to authenticate. Please try again.');
+        throw new Error("Failed to authenticate. Please try again.");
       }
 
       const data = await response.text();
 
-      if (data === 'done') {
-        showToast('Login successful. Redirecting...', 'success');
-        window.location.href = '/';
+      if (data === "done") {
+        showToast("Login successful. Redirecting...", "success");
+        window.location.href = "/";
         return;
       }
 
-      if (data === 'admin') {
-        showToast('Admin login successful. Redirecting...', 'success');
-        window.location.href = '/admin/dashboard';
+      if (data === "admin") {
+        showToast("Admin login successful. Redirecting...", "success");
+        window.location.href = "/admin/dashboard";
         return;
       }
 
-      if (data === 'new' || data === 'undone') {
+      if (data === "new" || data === "undone") {
         window.location.reload();
         return;
       }
 
-      showToast('Unable to login. Please check your details.', 'error');
+      showToast("Unable to login. Please check your details.", "error");
     } catch (error) {
-      console.error('Login error:', error);
-      showToast('An error occurred while logging in. Please try again.', 'error');
+      console.error("Login error:", error);
+      showToast(
+        "An error occurred while logging in. Please try again.",
+        "error",
+      );
     } finally {
       if (submitButton) {
         submitButton.disabled = false;
-        submitButton.innerHTML = '<i class="fas fa-right-to-bracket"></i> Login';
+        submitButton.innerHTML =
+          '<i class="fas fa-right-to-bracket"></i> Login';
       }
     }
   }
 
-  function showToast(message, type = 'info') {
-    let toastContainer = document.querySelector('.toast-container');
+  function showToast(message, type = "info") {
+    let toastContainer = document.querySelector(".toast-container");
 
     if (!toastContainer) {
-      toastContainer = document.createElement('div');
-      toastContainer.className = 'toast-container';
+      toastContainer = document.createElement("div");
+      toastContainer.className = "toast-container";
       document.body.appendChild(toastContainer);
     }
 
-    const toast = document.createElement('div');
+    const toast = document.createElement("div");
     toast.className = `toast ${type}`;
     toast.textContent = message;
 
     toastContainer.appendChild(toast);
 
     requestAnimationFrame(() => {
-      toast.classList.add('show');
+      toast.classList.add("show");
     });
 
     setTimeout(() => {
-      toast.classList.remove('show');
+      toast.classList.remove("show");
 
       setTimeout(() => {
         toast.remove();
@@ -205,12 +221,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function initializeCanvas() {
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let mousePosition = {
       x: window.innerWidth / 2,
-      y: window.innerHeight / 2
+      y: window.innerHeight / 2,
     };
 
     function setCanvasSize() {
@@ -233,10 +249,10 @@ document.addEventListener('DOMContentLoaded', () => {
         this.maxLife = Math.random() * 220 + 120;
 
         const colors = [
-          'rgba(16, 110, 190, 0.22)',
-          'rgba(24, 128, 212, 0.2)',
-          'rgba(15, 252, 190, 0.18)',
-          'rgba(96, 200, 245, 0.2)'
+          "rgba(16, 110, 190, 0.22)",
+          "rgba(24, 128, 212, 0.2)",
+          "rgba(15, 252, 190, 0.18)",
+          "rgba(96, 200, 245, 0.2)",
         ];
 
         this.color = colors[Math.floor(Math.random() * colors.length)];
@@ -289,12 +305,12 @@ document.addEventListener('DOMContentLoaded', () => {
         0,
         mousePosition.x,
         mousePosition.y,
-        190
+        190,
       );
 
-      mouseGradient.addColorStop(0, 'rgba(15, 252, 190, 0.12)');
-      mouseGradient.addColorStop(0.45, 'rgba(16, 110, 190, 0.08)');
-      mouseGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      mouseGradient.addColorStop(0, "rgba(15, 252, 190, 0.12)");
+      mouseGradient.addColorStop(0.45, "rgba(16, 110, 190, 0.08)");
+      mouseGradient.addColorStop(1, "rgba(255, 255, 255, 0)");
 
       ctx.fillStyle = mouseGradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -302,12 +318,12 @@ document.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(animate);
     }
 
-    window.addEventListener('resize', setCanvasSize);
+    window.addEventListener("resize", setCanvasSize);
 
-    window.addEventListener('mousemove', (event) => {
+    window.addEventListener("mousemove", (event) => {
       mousePosition = {
         x: event.clientX,
-        y: event.clientY
+        y: event.clientY,
       };
     });
 

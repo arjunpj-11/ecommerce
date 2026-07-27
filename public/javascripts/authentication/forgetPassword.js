@@ -1,7 +1,7 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('form');
-  const emailOrPhone = document.getElementById('emailOrPhone');
-  const canvas = document.getElementById('backgroundCanvas');
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("form");
+  const emailOrPhone = document.getElementById("emailOrPhone");
+  const canvas = document.getElementById("backgroundCanvas");
 
   let emailOrPhoneError = false;
 
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
       messageElement.textContent = message;
     }
 
-    element.classList.add('iAfter');
+    element.classList.add("iAfter");
   }
 
   function clearError(element) {
@@ -26,10 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageElement = document.getElementById(`${element.id}Message`);
 
     if (messageElement) {
-      messageElement.textContent = '';
+      messageElement.textContent = "";
     }
 
-    element.classList.remove('iAfter');
+    element.classList.remove("iAfter");
   }
 
   function validateEmailOrPhone() {
@@ -40,13 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const phoneRegex = /^[+]?[0-9]{10,15}$/;
 
     if (!value) {
-      setError(emailOrPhone, 'Email or phone number is required.');
+      setError(emailOrPhone, "Email or phone number is required.");
       emailOrPhoneError = true;
       return false;
     }
 
     if (!emailRegex.test(value) && !phoneRegex.test(value)) {
-      setError(emailOrPhone, 'Enter a valid email or phone number.');
+      setError(emailOrPhone, "Enter a valid email or phone number.");
       emailOrPhoneError = true;
       return false;
     }
@@ -59,45 +59,45 @@ document.addEventListener('DOMContentLoaded', () => {
   function initializeValidation() {
     if (!form || !emailOrPhone) return;
 
-    emailOrPhone.addEventListener('blur', validateEmailOrPhone);
+    emailOrPhone.addEventListener("blur", validateEmailOrPhone);
 
-    emailOrPhone.addEventListener('input', () => {
+    emailOrPhone.addEventListener("input", () => {
       if (emailOrPhoneError) {
         validateEmailOrPhone();
       }
     });
 
-    form.addEventListener('submit', (event) => {
+    form.addEventListener("submit", (event) => {
       const isValid = validateEmailOrPhone();
 
       if (!isValid) {
         event.preventDefault();
-        showToast('Please enter a valid email or phone number.', 'error');
+        showToast("Please enter a valid email or phone number.", "error");
       }
     });
   }
 
-  function showToast(message, type = 'info') {
-    let toastContainer = document.querySelector('.toast-container');
+  function showToast(message, type = "info") {
+    let toastContainer = document.querySelector(".toast-container");
 
     if (!toastContainer) {
-      toastContainer = document.createElement('div');
-      toastContainer.className = 'toast-container';
+      toastContainer = document.createElement("div");
+      toastContainer.className = "toast-container";
       document.body.appendChild(toastContainer);
     }
 
-    const toast = document.createElement('div');
+    const toast = document.createElement("div");
     toast.className = `toast ${type}`;
     toast.textContent = message;
 
     toastContainer.appendChild(toast);
 
     requestAnimationFrame(() => {
-      toast.classList.add('show');
+      toast.classList.add("show");
     });
 
     setTimeout(() => {
-      toast.classList.remove('show');
+      toast.classList.remove("show");
 
       setTimeout(() => {
         toast.remove();
@@ -112,12 +112,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function initializeCanvas() {
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let mousePosition = {
       x: window.innerWidth / 2,
-      y: window.innerHeight / 2
+      y: window.innerHeight / 2,
     };
 
     function setCanvasSize() {
@@ -140,10 +140,10 @@ document.addEventListener('DOMContentLoaded', () => {
         this.maxLife = Math.random() * 220 + 120;
 
         const colors = [
-          'rgba(16, 110, 190, 0.22)',
-          'rgba(24, 128, 212, 0.2)',
-          'rgba(15, 252, 190, 0.18)',
-          'rgba(96, 200, 245, 0.2)'
+          "rgba(16, 110, 190, 0.22)",
+          "rgba(24, 128, 212, 0.2)",
+          "rgba(15, 252, 190, 0.18)",
+          "rgba(96, 200, 245, 0.2)",
         ];
 
         this.color = colors[Math.floor(Math.random() * colors.length)];
@@ -196,12 +196,12 @@ document.addEventListener('DOMContentLoaded', () => {
         0,
         mousePosition.x,
         mousePosition.y,
-        190
+        190,
       );
 
-      mouseGradient.addColorStop(0, 'rgba(15, 252, 190, 0.12)');
-      mouseGradient.addColorStop(0.45, 'rgba(16, 110, 190, 0.08)');
-      mouseGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      mouseGradient.addColorStop(0, "rgba(15, 252, 190, 0.12)");
+      mouseGradient.addColorStop(0.45, "rgba(16, 110, 190, 0.08)");
+      mouseGradient.addColorStop(1, "rgba(255, 255, 255, 0)");
 
       ctx.fillStyle = mouseGradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -209,12 +209,12 @@ document.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(animate);
     }
 
-    window.addEventListener('resize', setCanvasSize);
+    window.addEventListener("resize", setCanvasSize);
 
-    window.addEventListener('mousemove', (event) => {
+    window.addEventListener("mousemove", (event) => {
       mousePosition = {
         x: event.clientX,
-        y: event.clientY
+        y: event.clientY,
       };
     });
 

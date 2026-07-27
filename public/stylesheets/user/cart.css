@@ -33,15 +33,25 @@
   --warning: #f59e0b;
   --success: #10b981;
 
-  --grad-primary: linear-gradient(135deg, var(--blue) 0%, var(--blue-mid) 55%, var(--blue-light) 100%);
-  --grad-accent: linear-gradient(135deg, var(--mint) 0%, var(--blue-light) 100%);
+  --grad-primary: linear-gradient(
+    135deg,
+    var(--blue) 0%,
+    var(--blue-mid) 55%,
+    var(--blue-light) 100%
+  );
+  --grad-accent: linear-gradient(
+    135deg,
+    var(--mint) 0%,
+    var(--blue-light) 100%
+  );
 
   --radius-sm: 8px;
   --radius: 16px;
   --radius-lg: 26px;
   --nav-h: 72px;
 
-  --font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 html {
@@ -53,8 +63,16 @@ body {
   min-height: 100vh;
   font-family: var(--font-body);
   background:
-    radial-gradient(circle at 12% 18%, rgba(15, 252, 190, 0.16), transparent 28%),
-    radial-gradient(circle at 88% 10%, rgba(16, 110, 190, 0.16), transparent 28%),
+    radial-gradient(
+      circle at 12% 18%,
+      rgba(15, 252, 190, 0.16),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 88% 10%,
+      rgba(16, 110, 190, 0.16),
+      transparent 28%
+    ),
     linear-gradient(135deg, #f4faff 0%, #eaf6ff 45%, #f7fffd 100%);
   color: var(--ink);
   overflow-x: hidden;
@@ -102,7 +120,10 @@ img {
   box-shadow: 0 8px 30px rgba(16, 110, 190, 0.08);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  transition: transform 0.32s ease, box-shadow 0.25s ease, background 0.25s ease;
+  transition:
+    transform 0.32s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
 }
 
 .navbar.scrolled {
@@ -149,7 +170,9 @@ img {
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  transition: color 0.2s ease, background 0.2s ease;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
 }
 
 .nav-link:hover,
@@ -179,7 +202,10 @@ img {
   align-items: center;
   justify-content: center;
   font-size: 1rem;
-  transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .icon-btn:hover,
@@ -229,7 +255,9 @@ img {
   height: 2px;
   border-radius: 99px;
   background: var(--blue);
-  transition: transform 0.25s ease, opacity 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
 }
 
 .hamburger.open span:nth-child(1) {
@@ -256,7 +284,9 @@ img {
   transform: translateY(-8px);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.22s ease, transform 0.22s ease;
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease;
 }
 
 .search-overlay.open {
@@ -302,7 +332,9 @@ img {
   background: transparent;
   padding: 0.4rem;
   border-radius: var(--radius-sm);
-  transition: color 0.2s ease, background 0.2s ease;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
 }
 
 .search-submit:hover,
@@ -383,7 +415,10 @@ img {
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  transition: color 0.2s ease, background 0.2s ease, padding-left 0.2s ease;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    padding-left 0.2s ease;
 }
 
 .drawer-nav a:hover {
@@ -405,7 +440,9 @@ img {
   opacity: 0;
   pointer-events: none;
   transform: translateY(-8px);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .cat-dropdown.open {
@@ -444,7 +481,9 @@ img {
   display: block;
   color: var(--muted);
   font-size: 0.9rem;
-  transition: color 0.2s ease, padding-left 0.2s ease;
+  transition:
+    color 0.2s ease,
+    padding-left 0.2s ease;
 }
 
 .cat-dropdown-col a:hover {
@@ -465,8 +504,17 @@ img {
   overflow: hidden;
   border-radius: var(--radius-lg);
   background:
-    linear-gradient(135deg, rgba(10, 85, 154, 0.92), rgba(16, 110, 190, 0.78), rgba(96, 200, 245, 0.58)),
-    radial-gradient(circle at top right, rgba(15, 252, 190, 0.28), transparent 38%);
+    linear-gradient(
+      135deg,
+      rgba(10, 85, 154, 0.92),
+      rgba(16, 110, 190, 0.78),
+      rgba(96, 200, 245, 0.58)
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(15, 252, 190, 0.28),
+      transparent 38%
+    );
   color: var(--white);
   padding: 4rem 2.5rem;
   margin-bottom: 1.5rem;
@@ -539,7 +587,11 @@ img {
   padding: 1rem;
   border-radius: var(--radius);
   background:
-    radial-gradient(circle at top right, rgba(15, 252, 190, 0.07), transparent 34%),
+    radial-gradient(
+      circle at top right,
+      rgba(15, 252, 190, 0.07),
+      transparent 34%
+    ),
     rgba(255, 255, 255, 0.86);
   border: 1px solid var(--border);
   box-shadow:
@@ -547,7 +599,10 @@ img {
     0 0 0 1px rgba(255, 255, 255, 0.6) inset;
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+  transition:
+    transform 0.24s ease,
+    box-shadow 0.24s ease,
+    border-color 0.24s ease;
 }
 
 .cart-item:hover {
@@ -561,7 +616,11 @@ img {
 .cart-item.out-of-stock-item {
   border-color: rgba(239, 68, 68, 0.28);
   background:
-    radial-gradient(circle at top right, rgba(239, 68, 68, 0.08), transparent 34%),
+    radial-gradient(
+      circle at top right,
+      rgba(239, 68, 68, 0.08),
+      transparent 34%
+    ),
     rgba(255, 255, 255, 0.86);
 }
 
@@ -670,7 +729,9 @@ img {
   color: var(--danger);
   font-size: 0.82rem;
   font-weight: 900;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .remove-link:hover {
@@ -705,7 +766,10 @@ img {
   align-items: center;
   justify-content: center;
   box-shadow: 0 6px 14px rgba(16, 110, 190, 0.08);
-  transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .quantity-btn:hover:not(:disabled) {
@@ -736,7 +800,11 @@ img {
   padding: 1.3rem;
   border-radius: var(--radius-lg);
   background:
-    radial-gradient(circle at top right, rgba(15, 252, 190, 0.1), transparent 34%),
+    radial-gradient(
+      circle at top right,
+      rgba(15, 252, 190, 0.1),
+      transparent 34%
+    ),
     rgba(255, 255, 255, 0.9);
   border: 1px solid var(--border);
   box-shadow:
@@ -774,7 +842,9 @@ img {
   color: var(--ink);
   padding: 0 1rem;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .coupon-input::placeholder {
@@ -794,7 +864,9 @@ img {
   font-size: 0.78rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .redeem-btn {
@@ -839,7 +911,9 @@ img {
   opacity: 0;
   pointer-events: none;
   transform: translateY(-8px);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .coupon-suggestions.open {
@@ -880,7 +954,10 @@ img {
   background: var(--surface-2);
   color: var(--ink-2);
   margin-bottom: 0.65rem;
-  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 .coupon-item:hover {
@@ -966,7 +1043,9 @@ img {
   justify-content: center;
   gap: 0.6rem;
   box-shadow: 0 14px 30px rgba(16, 110, 190, 0.28);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .checkout-btn:hover {
@@ -986,7 +1065,11 @@ img {
   padding: 4rem 2rem;
   border-radius: var(--radius-lg);
   background:
-    radial-gradient(circle at top right, rgba(15, 252, 190, 0.12), transparent 34%),
+    radial-gradient(
+      circle at top right,
+      rgba(15, 252, 190, 0.12),
+      transparent 34%
+    ),
     rgba(255, 255, 255, 0.88);
   border: 1px solid var(--border);
   box-shadow: 0 22px 58px rgba(16, 110, 190, 0.12);
@@ -1065,7 +1148,9 @@ img {
 .footer-section a {
   display: block;
   margin-bottom: 0.45rem;
-  transition: color 0.2s ease, padding-left 0.2s ease;
+  transition:
+    color 0.2s ease,
+    padding-left 0.2s ease;
 }
 
 .footer-section a:hover {
@@ -1097,7 +1182,9 @@ img {
   box-shadow: 0 16px 36px rgba(12, 31, 58, 0.22);
   transform: translateX(110%);
   opacity: 0;
-  transition: transform 0.28s ease, opacity 0.28s ease;
+  transition:
+    transform 0.28s ease,
+    opacity 0.28s ease;
   font-size: 0.9rem;
   font-weight: 800;
 }
@@ -1122,7 +1209,9 @@ img {
 .reveal {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
 }
 
 .reveal.visible {

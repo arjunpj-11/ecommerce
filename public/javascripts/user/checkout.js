@@ -1,28 +1,28 @@
-const RAZORPAY_KEY = 'rzp_test_EoM9R5cEQq0ViU';
+const RAZORPAY_KEY = "rzp_test_EoM9R5cEQq0ViU";
 
-document.addEventListener('DOMContentLoaded', () => {
-  const navbar = document.getElementById('navbar');
-  const searchToggle = document.querySelector('.search-toggle');
-  const searchOverlay = document.getElementById('searchOverlay');
-  const searchClose = document.getElementById('searchClose');
+document.addEventListener("DOMContentLoaded", () => {
+  const navbar = document.getElementById("navbar");
+  const searchToggle = document.querySelector(".search-toggle");
+  const searchOverlay = document.getElementById("searchOverlay");
+  const searchClose = document.getElementById("searchClose");
 
-  const hamburger = document.getElementById('hamburger');
-  const mobileDrawer = document.getElementById('mobileDrawer');
-  const mobileOverlay = document.getElementById('mobileOverlay');
-  const drawerClose = document.getElementById('drawerClose');
+  const hamburger = document.getElementById("hamburger");
+  const mobileDrawer = document.getElementById("mobileDrawer");
+  const mobileOverlay = document.getElementById("mobileOverlay");
+  const drawerClose = document.getElementById("drawerClose");
 
-  const categoriesDataEl = document.getElementById('arni-categories-data');
-  const canvas = document.getElementById('backgroundCanvas');
+  const categoriesDataEl = document.getElementById("arni-categories-data");
+  const canvas = document.getElementById("backgroundCanvas");
 
   let lastScrollY = 0;
   let arniCategories = [];
 
   try {
     arniCategories = categoriesDataEl
-      ? JSON.parse(categoriesDataEl.textContent || '[]')
+      ? JSON.parse(categoriesDataEl.textContent || "[]")
       : [];
   } catch (error) {
-    console.error('Failed to parse ARNI categories:', error);
+    console.error("Failed to parse ARNI categories:", error);
     arniCategories = [];
   }
 
@@ -43,110 +43,122 @@ document.addEventListener('DOMContentLoaded', () => {
   function initializeNavbar() {
     if (!navbar) return;
 
-    window.addEventListener('scroll', () => {
-      const currentY = window.scrollY;
+    window.addEventListener(
+      "scroll",
+      () => {
+        const currentY = window.scrollY;
 
-      navbar.classList.toggle('scrolled', currentY > 20);
-      navbar.style.transform =
-        currentY > lastScrollY && currentY > 140
-          ? 'translateY(-100%)'
-          : 'translateY(0)';
+        navbar.classList.toggle("scrolled", currentY > 20);
+        navbar.style.transform =
+          currentY > lastScrollY && currentY > 140
+            ? "translateY(-100%)"
+            : "translateY(0)";
 
-      lastScrollY = currentY;
-    }, { passive: true });
+        lastScrollY = currentY;
+      },
+      { passive: true },
+    );
   }
 
   function initializeSearch() {
-    searchToggle?.addEventListener('click', () => {
-      const isOpen = searchOverlay?.classList.toggle('open');
+    searchToggle?.addEventListener("click", () => {
+      const isOpen = searchOverlay?.classList.toggle("open");
 
       if (isOpen) {
-        searchOverlay?.querySelector('.search-input')?.focus();
+        searchOverlay?.querySelector(".search-input")?.focus();
       }
     });
 
-    searchClose?.addEventListener('click', () => {
-      searchOverlay?.classList.remove('open');
+    searchClose?.addEventListener("click", () => {
+      searchOverlay?.classList.remove("open");
     });
 
-    document.addEventListener('click', (event) => {
+    document.addEventListener("click", (event) => {
       if (
-        searchOverlay?.classList.contains('open') &&
+        searchOverlay?.classList.contains("open") &&
         !searchOverlay.contains(event.target) &&
         !searchToggle?.contains(event.target)
       ) {
-        searchOverlay.classList.remove('open');
+        searchOverlay.classList.remove("open");
       }
     });
   }
 
   function initializeMobileDrawer() {
     function openDrawer() {
-      mobileDrawer?.classList.add('open');
-      mobileOverlay?.classList.add('visible');
-      hamburger?.classList.add('open');
-      document.body.style.overflow = 'hidden';
+      mobileDrawer?.classList.add("open");
+      mobileOverlay?.classList.add("visible");
+      hamburger?.classList.add("open");
+      document.body.style.overflow = "hidden";
     }
 
     function closeDrawer() {
-      mobileDrawer?.classList.remove('open');
-      mobileOverlay?.classList.remove('visible');
-      hamburger?.classList.remove('open');
-      document.body.style.overflow = '';
+      mobileDrawer?.classList.remove("open");
+      mobileOverlay?.classList.remove("visible");
+      hamburger?.classList.remove("open");
+      document.body.style.overflow = "";
     }
 
-    hamburger?.addEventListener('click', () => {
-      if (mobileDrawer?.classList.contains('open')) {
+    hamburger?.addEventListener("click", () => {
+      if (mobileDrawer?.classList.contains("open")) {
         closeDrawer();
       } else {
         openDrawer();
       }
     });
 
-    mobileOverlay?.addEventListener('click', closeDrawer);
-    drawerClose?.addEventListener('click', closeDrawer);
+    mobileOverlay?.addEventListener("click", closeDrawer);
+    drawerClose?.addEventListener("click", closeDrawer);
 
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
         closeDrawer();
         closeAddressModal();
-        searchOverlay?.classList.remove('open');
+        searchOverlay?.classList.remove("open");
       }
     });
   }
 
   function initializeCategoryDropdown() {
-    const navLinks = document.querySelector('.nav-links');
+    const navLinks = document.querySelector(".nav-links");
     if (!navLinks || !arniCategories.length) return;
 
     let dropdownMenu = null;
 
     function buildDropdown(categories) {
       if (!dropdownMenu) {
-        dropdownMenu = document.createElement('div');
-        dropdownMenu.className = 'cat-dropdown';
+        dropdownMenu = document.createElement("div");
+        dropdownMenu.className = "cat-dropdown";
         document.body.appendChild(dropdownMenu);
       }
 
       dropdownMenu.innerHTML = `
         <div class="cat-dropdown-inner">
-          ${categories.map((category) => `
+          ${categories
+            .map(
+              (category) => `
             <div class="cat-dropdown-col">
-              <a href="/subcategories?main=${escapeHtml(category._id || '')}" class="cat-dropdown-title">
-                ${escapeHtml(category.mainCategoryName || 'Category')}
+              <a href="/subcategories?main=${escapeHtml(category._id || "")}" class="cat-dropdown-title">
+                ${escapeHtml(category.mainCategoryName || "Category")}
               </a>
 
               <ul>
-                ${(category.subcategories || []).map((subcategory) => `
+                ${(category.subcategories || [])
+                  .map(
+                    (subcategory) => `
                   <li>
-                    <a href="/products?sub=${escapeHtml(subcategory._id || '')}">
-                      ${escapeHtml(subcategory.subCategoryName || 'Subcategory')}
+                    <a href="/products?sub=${escapeHtml(subcategory._id || "")}">
+                      ${escapeHtml(subcategory.subCategoryName || "Subcategory")}
                     </a>
                   </li>
-                `).join('')}
+                `,
+                  )
+                  .join("")}
               </ul>
             </div>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </div>
       `;
     }
@@ -155,21 +167,18 @@ document.addEventListener('DOMContentLoaded', () => {
       buildDropdown(arniCategories);
 
       const rect = link.getBoundingClientRect();
-      const left = Math.min(
-        Math.max(12, rect.left),
-        window.innerWidth - 360
-      );
+      const left = Math.min(Math.max(12, rect.left), window.innerWidth - 360);
 
       dropdownMenu.style.top = `${rect.bottom + 10}px`;
       dropdownMenu.style.left = `${left}px`;
-      dropdownMenu.classList.add('open');
+      dropdownMenu.classList.add("open");
     }
 
     function closeDropdown() {
-      dropdownMenu?.classList.remove('open');
+      dropdownMenu?.classList.remove("open");
     }
 
-    navLinks.addEventListener('mouseover', (event) => {
+    navLinks.addEventListener("mouseover", (event) => {
       const link = event.target.closest('a[data-category="true"]');
 
       if (link) {
@@ -177,49 +186,54 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    document.addEventListener('mouseover', (event) => {
+    document.addEventListener("mouseover", (event) => {
       if (
-        dropdownMenu?.classList.contains('open') &&
-        !event.target.closest('.cat-dropdown') &&
+        dropdownMenu?.classList.contains("open") &&
+        !event.target.closest(".cat-dropdown") &&
         !event.target.closest('[data-category="true"]')
       ) {
         closeDropdown();
       }
     });
 
-    window.addEventListener('scroll', closeDropdown, { passive: true });
-    window.addEventListener('resize', closeDropdown);
+    window.addEventListener("scroll", closeDropdown, { passive: true });
+    window.addEventListener("resize", closeDropdown);
   }
 
   function initializeColorCircles() {
-    document.querySelectorAll('.color-circle[data-color-value]').forEach((circle) => {
-      circle.style.backgroundColor = circle.dataset.colorValue || '#d1d5db';
-    });
+    document
+      .querySelectorAll(".color-circle[data-color-value]")
+      .forEach((circle) => {
+        circle.style.backgroundColor = circle.dataset.colorValue || "#d1d5db";
+      });
   }
 
   function initializeReveal() {
     const revealEls = document.querySelectorAll(
-      '.checkout-hero, .card, .summary, .footer-section'
+      ".checkout-hero, .card, .summary, .footer-section",
     );
 
     if (!revealEls.length) return;
 
     revealEls.forEach((el, index) => {
-      el.classList.add('reveal');
+      el.classList.add("reveal");
       el.style.transitionDelay = `${Math.min(index * 55, 240)}ms`;
     });
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
 
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      });
-    }, {
-      threshold: 0.1,
-      rootMargin: '0px 0px -40px 0px'
-    });
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: "0px 0px -40px 0px",
+      },
+    );
 
     revealEls.forEach((el) => observer.observe(el));
   }
@@ -233,8 +247,11 @@ document.addEventListener('DOMContentLoaded', () => {
       setupPlaceOrderButton();
       setupModalCloseHandlers();
     } catch (error) {
-      console.error('Checkout initialization error:', error);
-      showToast('Failed to initialize checkout. Please refresh the page.', 'error');
+      console.error("Checkout initialization error:", error);
+      showToast(
+        "Failed to initialize checkout. Please refresh the page.",
+        "error",
+      );
     }
   }
 
@@ -245,14 +262,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
 
       script.onload = resolve;
 
       script.onerror = () => {
-        showToast('Failed to load payment gateway. Please try again.', 'error');
-        reject(new Error('Razorpay load failed'));
+        showToast("Failed to load payment gateway. Please try again.", "error");
+        reject(new Error("Razorpay load failed"));
       };
 
       document.body.appendChild(script);
@@ -260,39 +277,45 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showAddAddressModal() {
-    const modal = document.getElementById('addressModal');
+    const modal = document.getElementById("addressModal");
 
     if (!modal) {
-      showToast('Could not open address form. Please refresh the page.', 'error');
+      showToast(
+        "Could not open address form. Please refresh the page.",
+        "error",
+      );
       return;
     }
 
-    modal.classList.add('open');
-    modal.setAttribute('aria-hidden', 'false');
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
   }
 
   function closeAddressModal() {
-    const modal = document.getElementById('addressModal');
+    const modal = document.getElementById("addressModal");
 
     if (!modal) return;
 
-    modal.classList.remove('open');
-    modal.setAttribute('aria-hidden', 'true');
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
   }
 
   async function fetchAddresses() {
     try {
-      const response = await fetch('/users/checkout/addresses');
+      const response = await fetch("/users/checkout/addresses");
 
       if (!response.ok) {
-        throw new Error('Failed to fetch addresses');
+        throw new Error("Failed to fetch addresses");
       }
 
       const addresses = await response.json();
-      const addressList = document.querySelector('.address-list');
+      const addressList = document.querySelector(".address-list");
 
       if (!addressList) {
-        showToast('Address list container not found. Please refresh the page.', 'error');
+        showToast(
+          "Address list container not found. Please refresh the page.",
+          "error",
+        );
         return;
       }
 
@@ -306,38 +329,42 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      addressList.innerHTML = addresses.map((address) => `
-        <div class="address-card ${address.isPrimary ? 'selected' : ''}" data-address-id="${escapeHtml(address._id)}">
+      addressList.innerHTML = addresses
+        .map(
+          (address) => `
+        <div class="address-card ${address.isPrimary ? "selected" : ""}" data-address-id="${escapeHtml(address._id)}">
           <input
             type="radio"
             name="shipping-address"
             value="${escapeHtml(address._id)}"
-            ${address.isPrimary ? 'checked' : ''}
+            ${address.isPrimary ? "checked" : ""}
           >
 
           <div class="address-details">
-            <h3>${escapeHtml(address.name || address.street || 'Saved Address')}</h3>
-            <p>${escapeHtml(address.street || '')}</p>
-            <p>${escapeHtml(address.city || '')}, ${escapeHtml(address.state || '')} ${escapeHtml(address.postalCode || '')}</p>
+            <h3>${escapeHtml(address.name || address.street || "Saved Address")}</h3>
+            <p>${escapeHtml(address.street || "")}</p>
+            <p>${escapeHtml(address.city || "")}, ${escapeHtml(address.state || "")} ${escapeHtml(address.postalCode || "")}</p>
           </div>
         </div>
-      `).join('');
+      `,
+        )
+        .join("");
 
       attachAddressCardListeners();
     } catch (error) {
-      showToast('Failed to load addresses. Please try again.', 'error');
-      console.error('Address fetch error:', error);
+      showToast("Failed to load addresses. Please try again.", "error");
+      console.error("Address fetch error:", error);
     }
   }
 
   function attachAddressCardListeners() {
-    document.querySelectorAll('.address-card').forEach((card) => {
-      card.addEventListener('click', () => {
-        document.querySelectorAll('.address-card').forEach((item) => {
-          item.classList.remove('selected');
+    document.querySelectorAll(".address-card").forEach((card) => {
+      card.addEventListener("click", () => {
+        document.querySelectorAll(".address-card").forEach((item) => {
+          item.classList.remove("selected");
         });
 
-        card.classList.add('selected');
+        card.classList.add("selected");
 
         const radio = card.querySelector('input[type="radio"]');
 
@@ -350,21 +377,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function updateAddressList() {
     try {
-      const response = await fetch('/users/checkout/addresses/primary');
+      const response = await fetch("/users/checkout/addresses/primary");
 
       if (!response.ok) {
         if (response.status === 404) {
-          showToast('Please select a primary address to continue.', 'warning');
+          showToast("Please select a primary address to continue.", "warning");
           return;
         }
 
-        throw new Error('Failed to update address list');
+        throw new Error("Failed to update address list");
       }
 
       await fetchAddresses();
     } catch (error) {
-      showToast(error.message || 'Failed to update address.', 'error');
-      console.error('Address update error:', error);
+      showToast(error.message || "Failed to update address.", "error");
+      console.error("Address update error:", error);
     }
   }
 
@@ -372,43 +399,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalAmount = getTotalAmount();
     const isCODAllowed = totalAmount <= 1000;
 
-    const codMethod = document.querySelector('.payment-method[data-method="cod"]');
+    const codMethod = document.querySelector(
+      '.payment-method[data-method="cod"]',
+    );
 
     if (codMethod) {
       const codRadio = codMethod.querySelector('input[type="radio"]');
-      const codLabel = codMethod.querySelector('label');
+      const codLabel = codMethod.querySelector("label");
 
-      if (!isCODAllowed && codRadio && codLabel && !codMethod.querySelector('.cod-warning')) {
+      if (
+        !isCODAllowed &&
+        codRadio &&
+        codLabel &&
+        !codMethod.querySelector(".cod-warning")
+      ) {
         codRadio.disabled = true;
-        codMethod.classList.add('disabled');
+        codMethod.classList.add("disabled");
 
-        const warningMessage = document.createElement('p');
-        warningMessage.className = 'text-red-500 cod-warning';
-        warningMessage.textContent = 'Cash on Delivery not available for orders above ₹1,000';
+        const warningMessage = document.createElement("p");
+        warningMessage.className = "text-red-500 cod-warning";
+        warningMessage.textContent =
+          "Cash on Delivery not available for orders above ₹1,000";
 
-        codLabel.querySelector('span:last-child')?.appendChild(warningMessage);
+        codLabel.querySelector("span:last-child")?.appendChild(warningMessage);
       }
     }
 
-    document.querySelectorAll('.payment-method').forEach((method) => {
-      method.addEventListener('click', () => {
+    document.querySelectorAll(".payment-method").forEach((method) => {
+      method.addEventListener("click", () => {
         const radio = method.querySelector('input[type="radio"]');
 
-        if (method.dataset.method === 'cod' && !isCODAllowed) {
-          showToast('Cash on Delivery is not available for orders above ₹1,000.', 'warning');
+        if (method.dataset.method === "cod" && !isCODAllowed) {
+          showToast(
+            "Cash on Delivery is not available for orders above ₹1,000.",
+            "warning",
+          );
           return;
         }
 
         if (radio?.disabled) {
-          showToast('This payment method is not available.', 'warning');
+          showToast("This payment method is not available.", "warning");
           return;
         }
 
-        document.querySelectorAll('.payment-method').forEach((item) => {
-          item.classList.remove('selected');
+        document.querySelectorAll(".payment-method").forEach((item) => {
+          item.classList.remove("selected");
         });
 
-        method.classList.add('selected');
+        method.classList.add("selected");
 
         if (radio) {
           radio.checked = true;
@@ -419,23 +457,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function initializeWalletPayment() {
     try {
-      const response = await fetch('/users/checkout/wallet/balance');
+      const response = await fetch("/users/checkout/wallet/balance");
 
       if (!response.ok) {
-        throw new Error('Failed to fetch wallet balance');
+        throw new Error("Failed to fetch wallet balance");
       }
 
       const { balance } = await response.json();
-      const paymentMethodsDiv = document.querySelector('.payment-methods');
+      const paymentMethodsDiv = document.querySelector(".payment-methods");
 
       if (!paymentMethodsDiv) return;
 
       const totalAmount = getTotalAmount();
       const hasEnoughBalance = Number(balance) >= totalAmount;
 
-      const walletMethod = document.createElement('div');
-      walletMethod.className = `payment-method ${!hasEnoughBalance ? 'disabled' : ''}`;
-      walletMethod.dataset.method = 'wallet';
+      const walletMethod = document.createElement("div");
+      walletMethod.className = `payment-method ${!hasEnoughBalance ? "disabled" : ""}`;
+      walletMethod.dataset.method = "wallet";
 
       walletMethod.innerHTML = `
         <input
@@ -443,7 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
           name="payment"
           value="wallet"
           id="wallet"
-          ${!hasEnoughBalance ? 'disabled' : ''}
+          ${!hasEnoughBalance ? "disabled" : ""}
         >
 
         <label for="wallet">
@@ -454,24 +492,24 @@ document.addEventListener('DOMContentLoaded', () => {
           <span>
             <h3>Pay with Wallet</h3>
             <p>Available Balance: ₹${Number(balance).toFixed(2)}</p>
-            ${!hasEnoughBalance ? '<p class="text-red-500">Insufficient balance for this order</p>' : ''}
+            ${!hasEnoughBalance ? '<p class="text-red-500">Insufficient balance for this order</p>' : ""}
           </span>
         </label>
       `;
 
       paymentMethodsDiv.appendChild(walletMethod);
 
-      walletMethod.addEventListener('click', function () {
+      walletMethod.addEventListener("click", function () {
         if (!hasEnoughBalance) {
-          showToast('Insufficient wallet balance.', 'warning');
+          showToast("Insufficient wallet balance.", "warning");
           return;
         }
 
-        document.querySelectorAll('.payment-method').forEach((method) => {
-          method.classList.remove('selected');
+        document.querySelectorAll(".payment-method").forEach((method) => {
+          method.classList.remove("selected");
         });
 
-        this.classList.add('selected');
+        this.classList.add("selected");
 
         const radio = this.querySelector('input[type="radio"]');
 
@@ -480,65 +518,75 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     } catch (error) {
-      console.error('Wallet initialization error:', error);
+      console.error("Wallet initialization error:", error);
     }
   }
 
   function setupPlaceOrderButton() {
-    const placeOrderBtn = document.getElementById('placeOrderBtn');
+    const placeOrderBtn = document.getElementById("placeOrderBtn");
 
     if (!placeOrderBtn) {
-      showToast('Place order button not found. Please refresh the page.', 'error');
+      showToast(
+        "Place order button not found. Please refresh the page.",
+        "error",
+      );
       return;
     }
 
-    placeOrderBtn.addEventListener('click', async (event) => {
+    placeOrderBtn.addEventListener("click", async (event) => {
       event.preventDefault();
 
-      const selectedAddressRadio = document.querySelector('input[name="shipping-address"]:checked');
-      const selectedPaymentMethod = document.querySelector('input[name="payment"]:checked')?.value;
+      const selectedAddressRadio = document.querySelector(
+        'input[name="shipping-address"]:checked',
+      );
+      const selectedPaymentMethod = document.querySelector(
+        'input[name="payment"]:checked',
+      )?.value;
       const totalAmount = getTotalAmount();
 
       if (!selectedAddressRadio) {
-        showToast('Please select a shipping address.', 'warning');
+        showToast("Please select a shipping address.", "warning");
         return;
       }
 
       if (!selectedPaymentMethod) {
-        showToast('Please select a payment method.', 'warning');
+        showToast("Please select a payment method.", "warning");
         return;
       }
 
-      if (selectedPaymentMethod === 'cod' && totalAmount > 1000) {
-        showToast('Cash on Delivery is not available for orders above ₹1,000.', 'error');
+      if (selectedPaymentMethod === "cod" && totalAmount > 1000) {
+        showToast(
+          "Cash on Delivery is not available for orders above ₹1,000.",
+          "error",
+        );
         return;
       }
 
       const orderData = {
         shippingAddressId: selectedAddressRadio.value,
-        paymentMethod: selectedPaymentMethod
+        paymentMethod: selectedPaymentMethod,
       };
 
       try {
         switch (selectedPaymentMethod) {
-          case 'razorpay':
+          case "razorpay":
             await handleRazorpayPayment(orderData);
             break;
 
-          case 'wallet':
+          case "wallet":
             await handleWalletPayment(orderData);
             break;
 
-          case 'cod':
+          case "cod":
             await handleCODPayment(orderData);
             break;
 
           default:
-            showToast('Invalid payment method selected.', 'error');
+            showToast("Invalid payment method selected.", "error");
         }
       } catch (error) {
-        console.error('Order placement error:', error);
-        showToast('Failed to process order. Please try again.', 'error');
+        console.error("Order placement error:", error);
+        showToast("Failed to process order. Please try again.", "error");
       }
     });
   }
@@ -547,16 +595,16 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       await loadRazorpay();
 
-      const response = await fetch('/users/checkout/create-razorpay-order', {
-        method: 'POST',
+      const response = await fetch("/users/checkout/create-razorpay-order", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(orderData)
+        body: JSON.stringify(orderData),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create order');
+        throw new Error("Failed to create order");
       }
 
       const { order, userInfo } = await response.json();
@@ -565,13 +613,13 @@ document.addEventListener('DOMContentLoaded', () => {
         key: RAZORPAY_KEY,
         amount: order.amount,
         currency: order.currency,
-        name: 'ARNI',
-        description: 'Purchase Payment',
+        name: "ARNI",
+        description: "Purchase Payment",
         order_id: order.id,
         prefill: {
           name: userInfo?.name,
           email: userInfo?.email,
-          contact: userInfo?.phone
+          contact: userInfo?.phone,
         },
         handler: async function (paymentResponse) {
           await handlePaymentCompletion(orderData, paymentResponse);
@@ -581,245 +629,269 @@ document.addEventListener('DOMContentLoaded', () => {
             await handlePaymentCompletion(orderData, {
               razorpay_order_id: order.id,
               razorpay_payment_id: null,
-              razorpay_signature: null
+              razorpay_signature: null,
             });
-          }
-        }
+          },
+        },
       };
 
       const razorpay = new Razorpay(options);
       razorpay.open();
     } catch (error) {
-      showToast('Payment initialization failed.', 'error');
-      console.error('Razorpay error:', error);
+      showToast("Payment initialization failed.", "error");
+      console.error("Razorpay error:", error);
     }
   }
 
   async function handlePaymentCompletion(orderData, paymentResponse) {
     try {
-      showToast('Processing payment...', 'info');
+      showToast("Processing payment...", "info");
 
-      const verifyResponse = await fetch('/users/checkout/verify-payment', {
-        method: 'POST',
+      const verifyResponse = await fetch("/users/checkout/verify-payment", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...orderData,
           razorpay_payment_id: paymentResponse.razorpay_payment_id,
           razorpay_order_id: paymentResponse.razorpay_order_id,
-          razorpay_signature: paymentResponse.razorpay_signature
-        })
+          razorpay_signature: paymentResponse.razorpay_signature,
+        }),
       });
 
       const result = await verifyResponse.json();
 
       if (verifyResponse.ok) {
-        showToast('Payment successful! Redirecting...', 'success');
+        showToast("Payment successful! Redirecting...", "success");
       } else {
-        showToast('Payment unsuccessful. Redirecting to orders...', 'error');
+        showToast("Payment unsuccessful. Redirecting to orders...", "error");
       }
 
       setTimeout(() => {
-        window.location.href = result.redirect || '/users/order';
+        window.location.href = result.redirect || "/users/order";
       }, 1500);
     } catch (error) {
-      console.error('Payment completion error:', error);
-      showToast('Payment processing failed. Redirecting...', 'error');
-      window.location.href = '/users/order';
+      console.error("Payment completion error:", error);
+      showToast("Payment processing failed. Redirecting...", "error");
+      window.location.href = "/users/order";
     }
   }
 
   async function handleWalletPayment(orderData) {
-    const placeOrderBtn = document.getElementById('placeOrderBtn');
+    const placeOrderBtn = document.getElementById("placeOrderBtn");
 
     try {
       const totalAmount = getTotalAmount();
 
       if (placeOrderBtn) {
         placeOrderBtn.disabled = true;
-        placeOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        placeOrderBtn.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> Processing...';
       }
 
-      showToast('Processing wallet payment...', 'info');
+      showToast("Processing wallet payment...", "info");
 
-      const response = await fetch('/users/checkout/wallet/pay', {
-        method: 'POST',
+      const response = await fetch("/users/checkout/wallet/pay", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           amount: totalAmount,
-          shippingAddressId: orderData.shippingAddressId
-        })
+          shippingAddressId: orderData.shippingAddressId,
+        }),
       });
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Payment failed');
+        throw new Error(result.error || "Payment failed");
       }
 
-      showToast('Payment successful! Redirecting to orders...', 'success');
+      showToast("Payment successful! Redirecting to orders...", "success");
 
       setTimeout(() => {
-        window.location.href = '/users/order';
+        window.location.href = "/users/order";
       }, 1500);
     } catch (error) {
-      showToast(error.message || 'Wallet payment failed. Please try again.', 'error');
-      console.error('Wallet payment error:', error);
+      showToast(
+        error.message || "Wallet payment failed. Please try again.",
+        "error",
+      );
+      console.error("Wallet payment error:", error);
 
       if (placeOrderBtn) {
         placeOrderBtn.disabled = false;
-        placeOrderBtn.innerHTML = 'Place Order <i class="fas fa-arrow-right"></i>';
+        placeOrderBtn.innerHTML =
+          'Place Order <i class="fas fa-arrow-right"></i>';
       }
     }
   }
 
   async function handleCODPayment(orderData) {
     try {
-      showToast('Processing your order...', 'info');
+      showToast("Processing your order...", "info");
 
-      const response = await fetch('/users/checkout/place-order', {
-        method: 'POST',
+      const response = await fetch("/users/checkout/place-order", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(orderData)
+        body: JSON.stringify(orderData),
       });
 
       const responseData = await response.json();
 
       if (!response.ok) {
-        if (responseData.stock === 'out') {
-          showToast('Some items in your cart are out of stock.', 'error');
+        if (responseData.stock === "out") {
+          showToast("Some items in your cart are out of stock.", "error");
 
           setTimeout(() => {
-            window.location.href = '/users/cart';
+            window.location.href = "/users/cart";
           }, 1500);
 
           return;
         }
 
-        throw new Error(responseData.error || 'Order placement failed');
+        throw new Error(responseData.error || "Order placement failed");
       }
 
-      showToast('Order placed successfully! Redirecting...', 'success');
+      showToast("Order placed successfully! Redirecting...", "success");
 
       setTimeout(() => {
-        window.location.href = '/users/order';
+        window.location.href = "/users/order";
       }, 1500);
     } catch (error) {
-      showToast(error.message || 'Failed to place order. Please try again.', 'error');
-      console.error('COD payment error:', error);
+      showToast(
+        error.message || "Failed to place order. Please try again.",
+        "error",
+      );
+      console.error("COD payment error:", error);
     }
   }
 
   async function selectAddress(addressId) {
     try {
-      showToast('Updating selected address...', 'info');
+      showToast("Updating selected address...", "info");
 
-      const response = await fetch(`/users/checkout/addresses/${addressId}/select`, {
-        method: 'PATCH'
-      });
+      const response = await fetch(
+        `/users/checkout/addresses/${addressId}/select`,
+        {
+          method: "PATCH",
+        },
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to select address');
+        throw new Error("Failed to select address");
       }
 
       await updateAddressList();
-      showToast('Delivery address updated successfully.', 'success');
+      showToast("Delivery address updated successfully.", "success");
     } catch (error) {
-      showToast('Failed to update delivery address. Please try again.', 'error');
-      console.error('Address selection error:', error);
+      showToast(
+        "Failed to update delivery address. Please try again.",
+        "error",
+      );
+      console.error("Address selection error:", error);
     }
   }
 
   function setupFormSubmissionHandlers() {
-    const addAddressForm = document.getElementById('addAddressForm');
+    const addAddressForm = document.getElementById("addAddressForm");
 
     if (!addAddressForm) return;
 
-    addAddressForm.addEventListener('submit', async (event) => {
+    addAddressForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
       try {
-        showToast('Adding new address...', 'info');
+        showToast("Adding new address...", "info");
 
         const formData = {
-          name: document.getElementById('name')?.value.trim(),
-          street: document.getElementById('street')?.value.trim(),
-          city: document.getElementById('city')?.value.trim(),
-          state: document.getElementById('state')?.value.trim(),
-          postalCode: document.getElementById('zip')?.value.trim()
+          name: document.getElementById("name")?.value.trim(),
+          street: document.getElementById("street")?.value.trim(),
+          city: document.getElementById("city")?.value.trim(),
+          state: document.getElementById("state")?.value.trim(),
+          postalCode: document.getElementById("zip")?.value.trim(),
         };
 
-        if (!formData.name || !formData.street || !formData.city || !formData.state || !formData.postalCode) {
-          showToast('Please fill all address fields.', 'warning');
+        if (
+          !formData.name ||
+          !formData.street ||
+          !formData.city ||
+          !formData.state ||
+          !formData.postalCode
+        ) {
+          showToast("Please fill all address fields.", "warning");
           return;
         }
 
-        const response = await fetch('/users/checkout/addresses', {
-          method: 'POST',
+        const response = await fetch("/users/checkout/addresses", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData)
+          body: JSON.stringify(formData),
         });
 
         if (!response.ok) {
-          throw new Error('Failed to add address');
+          throw new Error("Failed to add address");
         }
 
-        showToast('Address added successfully.', 'success');
+        showToast("Address added successfully.", "success");
         closeAddressModal();
 
         await fetchAddresses();
         addAddressForm.reset();
       } catch (error) {
-        showToast('Failed to add address. Please try again.', 'error');
-        console.error('Add address error:', error);
+        showToast("Failed to add address. Please try again.", "error");
+        console.error("Add address error:", error);
       }
     });
   }
 
   function setupModalCloseHandlers() {
-    document.addEventListener('click', (event) => {
-      if (event.target.classList.contains('modal')) {
+    document.addEventListener("click", (event) => {
+      if (event.target.classList.contains("modal")) {
         closeAddressModal();
       }
     });
   }
 
   function getTotalAmount() {
-    const totalAmountElement = document.getElementById('totalAmount');
+    const totalAmountElement = document.getElementById("totalAmount");
 
     if (!totalAmountElement) return 0;
 
-    return Number.parseFloat(totalAmountElement.textContent.replace(/[₹,\s]/g, '')) || 0;
+    return (
+      Number.parseFloat(
+        totalAmountElement.textContent.replace(/[₹,\s]/g, ""),
+      ) || 0
+    );
   }
 
-  function showToast(message, type = 'info') {
-    let toastContainer = document.querySelector('.toast-container');
+  function showToast(message, type = "info") {
+    let toastContainer = document.querySelector(".toast-container");
 
     if (!toastContainer) {
-      toastContainer = document.createElement('div');
-      toastContainer.className = 'toast-container';
+      toastContainer = document.createElement("div");
+      toastContainer.className = "toast-container";
       document.body.appendChild(toastContainer);
     }
 
-    const toast = document.createElement('div');
+    const toast = document.createElement("div");
     toast.className = `toast ${type}`;
     toast.textContent = message;
 
     toastContainer.appendChild(toast);
 
     requestAnimationFrame(() => {
-      toast.classList.add('show');
+      toast.classList.add("show");
     });
 
     setTimeout(() => {
-      toast.classList.remove('show');
+      toast.classList.remove("show");
 
       setTimeout(() => {
         toast.remove();
@@ -833,22 +905,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function escapeHtml(value) {
     return String(value)
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#039;');
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
   }
 
   function initializeCanvas() {
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let mousePosition = {
       x: window.innerWidth / 2,
-      y: window.innerHeight / 2
+      y: window.innerHeight / 2,
     };
 
     function setCanvasSize() {
@@ -871,10 +943,10 @@ document.addEventListener('DOMContentLoaded', () => {
         this.maxLife = Math.random() * 220 + 120;
 
         const colors = [
-          'rgba(16, 110, 190, 0.22)',
-          'rgba(24, 128, 212, 0.2)',
-          'rgba(15, 252, 190, 0.18)',
-          'rgba(96, 200, 245, 0.2)'
+          "rgba(16, 110, 190, 0.22)",
+          "rgba(24, 128, 212, 0.2)",
+          "rgba(15, 252, 190, 0.18)",
+          "rgba(96, 200, 245, 0.2)",
         ];
 
         this.color = colors[Math.floor(Math.random() * colors.length)];
@@ -927,12 +999,12 @@ document.addEventListener('DOMContentLoaded', () => {
         0,
         mousePosition.x,
         mousePosition.y,
-        190
+        190,
       );
 
-      mouseGradient.addColorStop(0, 'rgba(15, 252, 190, 0.12)');
-      mouseGradient.addColorStop(0.45, 'rgba(16, 110, 190, 0.08)');
-      mouseGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      mouseGradient.addColorStop(0, "rgba(15, 252, 190, 0.12)");
+      mouseGradient.addColorStop(0.45, "rgba(16, 110, 190, 0.08)");
+      mouseGradient.addColorStop(1, "rgba(255, 255, 255, 0)");
 
       ctx.fillStyle = mouseGradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -940,20 +1012,20 @@ document.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(animate);
     }
 
-    window.addEventListener('resize', setCanvasSize);
+    window.addEventListener("resize", setCanvasSize);
 
-    window.addEventListener('mousemove', (event) => {
+    window.addEventListener("mousemove", (event) => {
       mousePosition = {
         x: event.clientX,
-        y: event.clientY
+        y: event.clientY,
       };
     });
 
     animate();
   }
 
-  window.addEventListener('unhandledrejection', (event) => {
-    console.error('Unhandled promise rejection:', event.reason);
-    showToast('An unexpected error occurred. Please try again.', 'error');
+  window.addEventListener("unhandledrejection", (event) => {
+    console.error("Unhandled promise rejection:", event.reason);
+    showToast("An unexpected error occurred. Please try again.", "error");
   });
 });

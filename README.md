@@ -16,7 +16,24 @@ The frontend is rendered using EJS, while Node.js, Express.js, and MongoDB handl
 
 The main purpose of Arni was to understand how a complete full-stack application works.
 
+  HEAD
 During development, I learned how:
+
+- 🔐 User registration & login
+- 🏠 Home page with featured products
+- 🔍 Product search functionality
+- 🗂️ Browse by categories & subcategories
+- 📦 Product listing & detailed product view
+- 🛒 Cart management (add / update / remove)
+- 💳 Secure checkout & payment integration
+- 💰 Razorpay payment gateway
+- 🎟️ Apply coupons & discounts
+- 📍 Address management
+- 📦 Order management (My Orders)
+- 👤 User profile management
+- 💼 Wallet system
+- 🔁 Order cancellation & returns
+
 
 * Frontend pages communicate with backend routes
 * Controllers handle application logic
@@ -28,7 +45,19 @@ During development, I learned how:
 * Admin and user workflows are separated
 * A large application can be divided into routes, controllers, models, and views
 
+  HEAD
 I faced many challenges while building the project, especially during the early stages. Solving those problems helped me gain a much clearer understanding of full-stack development.
+  
+- 🔐 Admin authentication
+- 📊 Dashboard with sales analytics
+- 👥 User management
+- 📦 Order management
+- 🛍️ Product & variant management
+- 🏷️ Category & subcategory management
+- 🎟️ Coupon management
+- 🎨 Banner management
+- 📊 Sales & offer management
+   af16d00 (Format code with Prettier and clean up controller comments)
 
 ---
 
@@ -253,14 +282,25 @@ This project gave me the foundation I needed to move into React, TypeScript, mod
 
 ## Project Scope
 
+  HEAD
 Arni was built as a learning-focused full-stack project.
 
 It demonstrates a complete e-commerce workflow, but it should not be considered a finished commercial e-commerce service. Some areas would require additional security reviews, automated testing, accessibility improvements, performance optimization, and operational monitoring before being used in a real production business.
+  
+- 🧩 MVC pattern via Express Generator
+- 🛍️ Complete end-to-end e-commerce workflow
+- 💳 Razorpay payment integration
+- 🎟️ Coupon & discount system
+- 📊 Advanced admin dashboard
+- ⚡ Server-side rendering with EJS
+- 📦 Scalable and modular architecture
+   af16d00 (Format code with Prettier and clean up controller comments)
 
 ---
 
 ## Possible Improvements
 
+  HEAD
 * Responsive mobile experience
 * Product reviews and ratings
 * Invoice generation
@@ -273,6 +313,14 @@ It demonstrates a complete e-commerce workflow, but it should not be considered 
 * Better product recommendation features
 * Improved reporting and sales analytics
 
+- [ ] Product reviews & ratings
+- [ ] Real-time notifications
+- [ ] Live order tracking
+- [ ] Fully responsive mobile UI
+- [ ] REST API for React / Next.js frontend
+- [ ] Invoice generation
+   af16d00 (Format code with Prettier and clean up controller comments)
+
 ---
 
 ## Repository Purpose
@@ -283,4 +331,18 @@ This repository is shared to showcase my first complete full-stack project and d
 
 > Arni was the project that helped me understand how frontend, backend, databases, authentication, payments, and business logic come together inside a complete application.
 
+  HEAD
 
+  
+This project is licensed under the MIT License.
+
+---
+
+## 👨‍💻 Author
+
+**Arjun PJ** — https://github.com/arjunpj-11
+
+---
+
+> 💡 Built as a full-stack implementation of a real-world e-commerce platform to explore scalable architecture, payment integration, and admin management systems.
+   af16d00 (Format code with Prettier and clean up controller comments)

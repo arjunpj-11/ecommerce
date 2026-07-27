@@ -1,8 +1,8 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const otpInputs = Array.from(document.querySelectorAll('.otp-inputs input'));
-  const resendBtn = document.getElementById('resendBtn');
-  const timerDisplay = document.getElementById('timer');
-  const canvas = document.getElementById('backgroundCanvas');
+document.addEventListener("DOMContentLoaded", () => {
+  const otpInputs = Array.from(document.querySelectorAll(".otp-inputs input"));
+  const resendBtn = document.getElementById("resendBtn");
+  const timerDisplay = document.getElementById("timer");
+  const canvas = document.getElementById("backgroundCanvas");
 
   const RESEND_WAIT_SECONDS = 60;
   const MAX_RESEND_ATTEMPTS = 5;
@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
     otpInputs[0].focus();
 
     otpInputs.forEach((input, index) => {
-      input.addEventListener('input', (event) => {
-        const cleanValue = event.target.value.replace(/\D/g, '').slice(0, 1);
+      input.addEventListener("input", (event) => {
+        const cleanValue = event.target.value.replace(/\D/g, "").slice(0, 1);
         event.target.value = cleanValue;
 
         if (cleanValue && index < otpInputs.length - 1) {
@@ -30,32 +30,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      input.addEventListener('keydown', (event) => {
-        if (event.key === 'Backspace' && !event.target.value && index > 0) {
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Backspace" && !event.target.value && index > 0) {
           otpInputs[index - 1].focus();
         }
 
-        if (event.key === 'ArrowLeft' && index > 0) {
+        if (event.key === "ArrowLeft" && index > 0) {
           otpInputs[index - 1].focus();
         }
 
-        if (event.key === 'ArrowRight' && index < otpInputs.length - 1) {
+        if (event.key === "ArrowRight" && index < otpInputs.length - 1) {
           otpInputs[index + 1].focus();
         }
       });
 
-      input.addEventListener('paste', (event) => {
+      input.addEventListener("paste", (event) => {
         event.preventDefault();
 
         const pastedData = event.clipboardData
-          .getData('text')
-          .replace(/\D/g, '')
+          .getData("text")
+          .replace(/\D/g, "")
           .slice(0, otpInputs.length);
 
         if (!pastedData) return;
 
         otpInputs.forEach((otpInput, otpIndex) => {
-          otpInput.value = pastedData[otpIndex] || '';
+          otpInput.value = pastedData[otpIndex] || "";
         });
 
         const focusIndex = Math.min(pastedData.length, otpInputs.length - 1);
@@ -67,55 +67,64 @@ document.addEventListener('DOMContentLoaded', () => {
   function initializeResendOtp() {
     if (!resendBtn || !timerDisplay) return;
 
-    if (!localStorage.getItem('otpResendCount')) {
-      localStorage.setItem('otpResendCount', '0');
+    if (!localStorage.getItem("otpResendCount")) {
+      localStorage.setItem("otpResendCount", "0");
     }
 
     resetCountIfExpired();
     startTimer();
 
-    resendBtn.addEventListener('click', handleResendOtp);
+    resendBtn.addEventListener("click", handleResendOtp);
   }
 
   async function handleResendOtp() {
-    const count = Number.parseInt(localStorage.getItem('otpResendCount') || '0', 10);
+    const count = Number.parseInt(
+      localStorage.getItem("otpResendCount") || "0",
+      10,
+    );
 
     if (count >= MAX_RESEND_ATTEMPTS) {
-      showToast('You have reached the maximum resend attempts. Try again after 12 hours.', 'error');
+      showToast(
+        "You have reached the maximum resend attempts. Try again after 12 hours.",
+        "error",
+      );
       lockResendButton();
       return;
     }
 
     try {
       resendBtn.disabled = true;
-      timerDisplay.textContent = 'Sending OTP...';
+      timerDisplay.textContent = "Sending OTP...";
 
-      const response = await fetch('/auth/otp/resendOtp', {
-        method: 'POST',
+      const response = await fetch("/auth/otp/resendOtp", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
-        }
+          "Content-Type": "application/json",
+        },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to resend OTP');
+        throw new Error("Failed to resend OTP");
       }
 
       const nextCount = count + 1;
-      localStorage.setItem('otpResendCount', String(nextCount));
+      localStorage.setItem("otpResendCount", String(nextCount));
 
       if (nextCount >= MAX_RESEND_ATTEMPTS) {
         setExpiryTime();
-        showToast('OTP resent. Maximum attempts reached. Please wait 12 hours after this.', 'error');
+        showToast(
+          "OTP resent. Maximum attempts reached. Please wait 12 hours after this.",
+          "error",
+        );
       } else {
-        showToast('OTP resent successfully.', 'success');
+        showToast("OTP resent successfully.", "success");
       }
 
       countdown = RESEND_WAIT_SECONDS;
       startTimer();
     } catch (error) {
-      console.error('OTP resend error:', error);
-      showToast('Failed to resend OTP. Please try again.', 'error');
+      console.error("OTP resend error:", error);
+      showToast("Failed to resend OTP. Please try again.", "error");
       countdown = 10;
       startTimer();
     }
@@ -124,11 +133,21 @@ document.addEventListener('DOMContentLoaded', () => {
   function startTimer() {
     clearInterval(timerInterval);
 
-    const count = Number.parseInt(localStorage.getItem('otpResendCount') || '0', 10);
-    const expiryTime = Number.parseInt(localStorage.getItem('otpResendExpiryTime') || '0', 10);
+    const count = Number.parseInt(
+      localStorage.getItem("otpResendCount") || "0",
+      10,
+    );
+    const expiryTime = Number.parseInt(
+      localStorage.getItem("otpResendExpiryTime") || "0",
+      10,
+    );
     const currentTime = Date.now();
 
-    if (count >= MAX_RESEND_ATTEMPTS && expiryTime && currentTime < expiryTime) {
+    if (
+      count >= MAX_RESEND_ATTEMPTS &&
+      expiryTime &&
+      currentTime < expiryTime
+    ) {
       lockResendButton();
       return;
     }
@@ -142,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (countdown <= 0) {
         clearInterval(timerInterval);
         resendBtn.disabled = false;
-        timerDisplay.textContent = 'You can now resend the OTP.';
+        timerDisplay.textContent = "You can now resend the OTP.";
         countdown = RESEND_WAIT_SECONDS;
         return;
       }
@@ -154,7 +173,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function lockResendButton() {
     clearInterval(timerInterval);
 
-    const expiryTime = Number.parseInt(localStorage.getItem('otpResendExpiryTime') || '0', 10);
+    const expiryTime = Number.parseInt(
+      localStorage.getItem("otpResendExpiryTime") || "0",
+      10,
+    );
     const remainingMs = Math.max(expiryTime - Date.now(), 0);
     const remainingMinutes = Math.ceil(remainingMs / 60000);
 
@@ -162,51 +184,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (remainingMinutes > 60) {
       const hours = Math.ceil(remainingMinutes / 60);
-      timerDisplay.textContent = `Try again after ${hours} hour${hours > 1 ? 's' : ''}.`;
+      timerDisplay.textContent = `Try again after ${hours} hour${hours > 1 ? "s" : ""}.`;
     } else if (remainingMinutes > 0) {
-      timerDisplay.textContent = `Try again after ${remainingMinutes} minute${remainingMinutes > 1 ? 's' : ''}.`;
+      timerDisplay.textContent = `Try again after ${remainingMinutes} minute${remainingMinutes > 1 ? "s" : ""}.`;
     } else {
-      localStorage.setItem('otpResendCount', '0');
-      localStorage.removeItem('otpResendExpiryTime');
+      localStorage.setItem("otpResendCount", "0");
+      localStorage.removeItem("otpResendExpiryTime");
       countdown = RESEND_WAIT_SECONDS;
       startTimer();
     }
   }
 
   function setExpiryTime() {
-    localStorage.setItem('otpResendExpiryTime', String(Date.now() + LOCK_DURATION_MS));
+    localStorage.setItem(
+      "otpResendExpiryTime",
+      String(Date.now() + LOCK_DURATION_MS),
+    );
   }
 
   function resetCountIfExpired() {
-    const expiryTime = Number.parseInt(localStorage.getItem('otpResendExpiryTime') || '0', 10);
+    const expiryTime = Number.parseInt(
+      localStorage.getItem("otpResendExpiryTime") || "0",
+      10,
+    );
 
     if (expiryTime && Date.now() > expiryTime) {
-      localStorage.setItem('otpResendCount', '0');
-      localStorage.removeItem('otpResendExpiryTime');
+      localStorage.setItem("otpResendCount", "0");
+      localStorage.removeItem("otpResendExpiryTime");
     }
   }
 
-  function showToast(message, type = 'info') {
-    let toastContainer = document.querySelector('.toast-container');
+  function showToast(message, type = "info") {
+    let toastContainer = document.querySelector(".toast-container");
 
     if (!toastContainer) {
-      toastContainer = document.createElement('div');
-      toastContainer.className = 'toast-container';
+      toastContainer = document.createElement("div");
+      toastContainer.className = "toast-container";
       document.body.appendChild(toastContainer);
     }
 
-    const toast = document.createElement('div');
+    const toast = document.createElement("div");
     toast.className = `toast ${type}`;
     toast.textContent = message;
 
     toastContainer.appendChild(toast);
 
     requestAnimationFrame(() => {
-      toast.classList.add('show');
+      toast.classList.add("show");
     });
 
     setTimeout(() => {
-      toast.classList.remove('show');
+      toast.classList.remove("show");
 
       setTimeout(() => {
         toast.remove();
@@ -221,12 +249,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function initializeCanvas() {
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let mousePosition = {
       x: window.innerWidth / 2,
-      y: window.innerHeight / 2
+      y: window.innerHeight / 2,
     };
 
     function setCanvasSize() {
@@ -249,10 +277,10 @@ document.addEventListener('DOMContentLoaded', () => {
         this.maxLife = Math.random() * 220 + 120;
 
         const colors = [
-          'rgba(16, 110, 190, 0.22)',
-          'rgba(24, 128, 212, 0.2)',
-          'rgba(15, 252, 190, 0.18)',
-          'rgba(96, 200, 245, 0.2)'
+          "rgba(16, 110, 190, 0.22)",
+          "rgba(24, 128, 212, 0.2)",
+          "rgba(15, 252, 190, 0.18)",
+          "rgba(96, 200, 245, 0.2)",
         ];
 
         this.color = colors[Math.floor(Math.random() * colors.length)];
@@ -305,12 +333,12 @@ document.addEventListener('DOMContentLoaded', () => {
         0,
         mousePosition.x,
         mousePosition.y,
-        190
+        190,
       );
 
-      mouseGradient.addColorStop(0, 'rgba(15, 252, 190, 0.12)');
-      mouseGradient.addColorStop(0.45, 'rgba(16, 110, 190, 0.08)');
-      mouseGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      mouseGradient.addColorStop(0, "rgba(15, 252, 190, 0.12)");
+      mouseGradient.addColorStop(0.45, "rgba(16, 110, 190, 0.08)");
+      mouseGradient.addColorStop(1, "rgba(255, 255, 255, 0)");
 
       ctx.fillStyle = mouseGradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -318,12 +346,12 @@ document.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(animate);
     }
 
-    window.addEventListener('resize', setCanvasSize);
+    window.addEventListener("resize", setCanvasSize);
 
-    window.addEventListener('mousemove', (event) => {
+    window.addEventListener("mousemove", (event) => {
       mousePosition = {
         x: event.clientX,
-        y: event.clientY
+        y: event.clientY,
       };
     });
 

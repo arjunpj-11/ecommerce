@@ -1,28 +1,28 @@
-const Product = require('../../models/product');
-const User = require('../../models/user');
-const mainCategory = require('../../models/mainCategory');
-const subCategory = require('../../models/subCategory');
-const Variant = require('../../models/variant');
-const mongoose = require('mongoose');
+const Product = require("../../models/product");
+const User = require("../../models/user");
+const mainCategory = require("../../models/mainCategory");
+const subCategory = require("../../models/subCategory");
+const Variant = require("../../models/variant");
+const mongoose = require("mongoose");
 
 // GET products by main category
 const getProductsByMainCategory = async (req, res, next) => {
   try {
     const sub = req.query.sub; // Get subcategory ID from query parameters
-    console.log('Subcategory ID:', sub);
+    console.log("Subcategory ID:", sub);
 
     if (!sub) {
-      return res.status(400).json({ error: 'Subcategory ID is required' }); // Check if subcategory ID is provided
+      return res.status(400).json({ error: "Subcategory ID is required" }); // Check if subcategory ID is provided
     }
 
     // Validate subcategory ID format
     if (!mongoose.Types.ObjectId.isValid(sub)) {
-      return res.status(400).json({ error: 'Invalid subcategory ID format' });
+      return res.status(400).json({ error: "Invalid subcategory ID format" });
     }
 
     const subcategory = await subCategory.findById(sub); // Fetch subcategory details
     if (!subcategory) {
-      return res.status(404).json({ error: 'Subcategory not found' }); // Handle case where subcategory does not exist
+      return res.status(404).json({ error: "Subcategory not found" }); // Handle case where subcategory does not exist
     }
     const subcategoryName = subcategory.subCategoryName; // Get subcategory name
 
@@ -33,20 +33,20 @@ const getProductsByMainCategory = async (req, res, next) => {
           from: "products",
           localField: "productId",
           foreignField: "_id",
-          as: "productDetails"
-        }
+          as: "productDetails",
+        },
       },
       {
         $unwind: {
           path: "$productDetails",
-          preserveNullAndEmptyArrays: false
-        }
+          preserveNullAndEmptyArrays: false,
+        },
       },
       {
         $match: {
           "productDetails.subCategory": new mongoose.Types.ObjectId(sub), // Match by subcategory ID
-          "productDetails.status": "active" // Filter for active products
-        }
+          "productDetails.status": "active", // Filter for active products
+        },
       },
       {
         $project: {
@@ -60,59 +60,62 @@ const getProductsByMainCategory = async (req, res, next) => {
             _id: 1,
             name: 1,
             price: 1,
-            discountPrice: { 
-              $ifNull: ["$productDetails.discountPrice", "$productDetails.price"] // Use discount price if available
+            discountPrice: {
+              $ifNull: [
+                "$productDetails.discountPrice",
+                "$productDetails.price",
+              ], // Use discount price if available
             },
             description: 1,
             subCategory: 1,
-            status: 1
-          }
-        }
+            status: 1,
+          },
+        },
       },
       {
-        $sort: { "productDetails.price": 1 } // Sort by price
-      }
+        $sort: { "productDetails.price": 1 }, // Sort by price
+      },
     ]);
 
-    console.log('Found variants:', variants.length);
+    console.log("Found variants:", variants.length);
 
     // Transform the data to ensure all required fields are present
-    const processedCards = variants.map(card => ({
+    const processedCards = variants.map((card) => ({
       ...card,
       productDetails: {
         ...card.productDetails,
-        discountPrice: card.productDetails.discountPrice || card.productDetails.price,
-        price: card.productDetails.price || 0
-      }
+        discountPrice:
+          card.productDetails.discountPrice || card.productDetails.price,
+        price: card.productDetails.price || 0,
+      },
     }));
 
     // Get all categories with subcategories for hover menu
     const categoriesWithSubs = await mainCategory.aggregate([
       {
-          $match: { status: 'active' }
+        $match: { status: "active" },
       },
       {
-          $lookup: {
-              from: 'subcategories',
-              localField: '_id',
-              foreignField: 'mainCategory',
-              pipeline: [{ $match: { status: 'active' } }],
-              as: 'subcategories'
-          }
-      }
+        $lookup: {
+          from: "subcategories",
+          localField: "_id",
+          foreignField: "mainCategory",
+          pipeline: [{ $match: { status: "active" } }],
+          as: "subcategories",
+        },
+      },
     ]);
 
     const authentication = req.session.isAuthenticated; // Check authentication status
-    res.render('../views/pages/index/products', { 
+    res.render("../views/pages/index/products", {
       cards: processedCards,
       authentication,
       noProducts: processedCards.length === 0, // Flag for no products
       title: subcategoryName,
-      categoriesWithSubs
+      categoriesWithSubs,
     });
-
   } catch (err) {
-    console.error('Error in getProductsByMainCategory:', err);
+    console.error("Error in getProductsByMainCategory:", err);
     next(err); // Forward error to the next middleware
   }
 };

@@ -1,40 +1,46 @@
-const User = require('../../models/user');
-const bcrypt = require('bcryptjs');
+const User = require("../../models/user");
+const bcrypt = require("bcryptjs");
 
 // Render the reset password page
 exports.getResetPasswordPage = (req, res, next) => {
-    res.render('../views/pages/authentication/resetPassword'); // Render the reset password page
+  res.render("../views/pages/authentication/resetPassword"); // Render the reset password page
 };
 
 // Handle password reset confirmation
 exports.resetPasswordConfirm = async (req, res) => {
-    try {
-        if (!req.session.value) {
-            return res.status(400).send("Session expired. Please restart password reset process.");
-        }
-        const newPassword = req.body.newPassword || req.body.password;
-        if (!newPassword || newPassword.length < 6) {
-            return res.status(400).send("Password must be at least 6 characters long.");
-        }
-
-        // Hash the password
-        const salt = await bcrypt.genSalt(10); // Generate salt
-        const hashedPassword = await bcrypt.hash(newPassword, salt); // Hash the new password
-        console.log(req.session.value);
-
-        // Determine query based on session value (email or phone)
-        const query = isNaN(req.session.value)
-            ? { email: req.session.value } // Query by email if value is not a number
-            : { phone: req.session.value }; // Query by phone if value is a number
-        console.log(query);
-
-        // Update the user's password
-        const result = await User.updateOne(query, { $set: { password: hashedPassword } });
-        console.log(result);
-
-        res.send("done"); // Indicate successful password reset
-    } catch (error) {
-        console.error("Error resetting password:", error);
-        res.status(500).send("An error occurred while resetting the password"); // Return error message
+  try {
+    if (!req.session.value) {
+      return res
+        .status(400)
+        .send("Session expired. Please restart password reset process.");
     }
+    const newPassword = req.body.newPassword || req.body.password;
+    if (!newPassword || newPassword.length < 6) {
+      return res
+        .status(400)
+        .send("Password must be at least 6 characters long.");
+    }
+
+    // Hash the password
+    const salt = await bcrypt.genSalt(10); // Generate salt
+    const hashedPassword = await bcrypt.hash(newPassword, salt); // Hash the new password
+    console.log(req.session.value);
+
+    // Determine query based on session value (email or phone)
+    const query = isNaN(req.session.value)
+      ? { email: req.session.value } // Query by email if value is not a number
+      : { phone: req.session.value }; // Query by phone if value is a number
+    console.log(query);
+
+    // Update the user's password
+    const result = await User.updateOne(query, {
+      $set: { password: hashedPassword },
+    });
+    console.log(result);
+
+    res.send("done"); // Indicate successful password reset
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    res.status(500).send("An error occurred while resetting the password"); // Return error message
+  }
 };

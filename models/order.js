@@ -1,107 +1,117 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
-    orderId: {
-        type: String,
-        unique: true,
+  orderId: {
+    type: String,
+    unique: true,
+  },
+  userId: {
+    type: String,
+    required: true,
+  },
+  productId: {
+    type: Number,
+    required: true,
+  },
+  name: { type: String, required: true },
+  image: { type: String, required: true },
+  price: { type: Number, required: true },
+  originalPrice: { type: Number },
+  quantity: { type: Number, required: true },
+  size: { type: String, required: true },
+  variant: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Variant",
+    required: true,
+  },
+  orderDate: { type: Date, default: Date.now },
+  paymentMethod: {
+    type: String,
+    enum: ["cod", "credit", "debit", "upi", "razorpay", "wallet"],
+    required: true,
+  },
+  status: {
+    type: String,
+    default: "Pending",
+    enum: [
+      "Pending",
+      "Processing",
+      "Shipped",
+      "Delivered",
+      "Cancelled",
+      "Refund Requested",
+      "refunded",
+      "Returned",
+      "Payment Failed",
+    ],
+  },
+  previousStatus: {
+    type: String,
+    default: "null",
+    enum: ["Pending", "Processing", "Shipped", "Delivered", "null"],
+  },
+  reasonForRefund: {
+    type: String,
+  },
+  address: {
+    street: {
+      type: String,
+      required: [true, "Street address is required"],
+      trim: true,
     },
-    userId: {
-        type: String,
-        required: true,
+    city: {
+      type: String,
+      required: [true, "City is required"],
+      trim: true,
     },
-    productId: {
-        type: Number,
-        required: true,
+    state: {
+      type: String,
+      required: [true, "State is required"],
+      trim: true,
     },
-    name: { type: String, required: true },
-    image: { type: String, required: true },
-    price: { type: Number, required: true },
-    originalPrice: { type: Number },
-    quantity: { type: Number, required: true },
-    size: { type: String, required: true },
-    variant: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Variant', 
-        required: true 
-    }, 
-    orderDate: { type: Date, default: Date.now },
-    paymentMethod: {
-        type: String,
-        enum: ['cod', 'credit', 'debit', 'upi','razorpay','wallet'],
-        required: true
+    postalCode: {
+      type: String,
+      required: [true, "Postal code is required"],
     },
-    status: {
-        type: String,
-        default: 'Pending',
-        enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled','Refund Requested','refunded','Returned','Payment Failed']
+    country: {
+      type: String,
+      trim: true,
     },
-    previousStatus: {
-        type: String,
-        default: 'null',
-        enum: ['Pending', 'Processing', 'Shipped', 'Delivered','null']
-    },
-    reasonForRefund: {
-        type: String,
-    },
-    address: {
-        street: {
-            type: String,
-            required: [true, 'Street address is required'],
-            trim: true,
-        },
-        city: {
-            type: String,
-            required: [true, 'City is required'],
-            trim: true,
-        },
-        state: {
-            type: String,
-            required: [true, 'State is required'],
-            trim: true,
-        },
-        postalCode: {
-            type: String,
-            required: [true, 'Postal code is required'],
-        },
-        country: {
-            type: String,
-            trim: true,
-        }
-    },
-    couponApplied: {
-        type: String, 
-        default: null
-    },
-    paymentStatus: {
-        type: String,
-        enum: ['Pending', 'Paid', 'Failed', 'Refunded'],
-        default: 'Pending'
-    },
-    paymentDetails: {
-        type: Object,
-        default: null
-    },
-    couponDiscountApplied: { type: Number, default: 0 }
+  },
+  couponApplied: {
+    type: String,
+    default: null,
+  },
+  paymentStatus: {
+    type: String,
+    enum: ["Pending", "Paid", "Failed", "Refunded"],
+    default: "Pending",
+  },
+  paymentDetails: {
+    type: Object,
+    default: null,
+  },
+  couponDiscountApplied: { type: Number, default: 0 },
 });
 
 // Use findOneAndUpdate with upsert for atomic orderId generation
-orderSchema.statics.generateOrderId = async function() {
-    const orders = await this.find({}, 'orderId').lean();
-    let maxNumber = 100000;
-    
-    for (const ord of orders) {
-        if (ord && ord.orderId) {
-            const parts = ord.orderId.split('/');
-            if (parts.length === 2) {
-                const num = parseInt(parts[1], 10);
-                if (!isNaN(num) && num > maxNumber) {
-                    maxNumber = num;
-                }
-            }
-        }
-    }
+orderSchema.statics.generateOrderId = async function () {
+  const orders = await this.find({}, "orderId").lean();
+  let maxNumber = 100000;
 
-    return `order/${maxNumber + 1}`;
+  for (const ord of orders) {
+    if (ord && ord.orderId) {
+      const parts = ord.orderId.split("/");
+      if (parts.length === 2) {
+        const num = parseInt(parts[1], 10);
+        if (!isNaN(num) && num > maxNumber) {
+          maxNumber = num;
+        }
+      }
+    }
+  }
+
+  return `order/${maxNumber + 1}`;
 };
 
-module.exports = mongoose.model('Order', orderSchema);
+module.exports = mongoose.model("Order", orderSchema);

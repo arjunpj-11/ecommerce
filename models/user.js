@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 // Define the User schema
 const userSchema = new mongoose.Schema({
@@ -29,22 +29,22 @@ const userSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    enum: ['Male', 'Female', 'Other'],
+    enum: ["Male", "Female", "Other"],
     default: null,
   },
   profileImage: {
     type: String,
-    default: '/images/avatars/avatar-1.png'
-},
+    default: "/images/avatars/avatar-1.png",
+  },
   role: {
     type: String,
-    enum: ['User', 'Admin', 'Manager'],
-    default: 'User',
+    enum: ["User", "Admin", "Manager"],
+    default: "User",
   },
   status: {
     type: String,
-    enum: ['Active', 'Inactive', 'Suspended'],
-    default: 'Active',
+    enum: ["Active", "Inactive", "Suspended"],
+    default: "Active",
   },
   createdAt: {
     type: Date,
@@ -56,19 +56,17 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-
-
 // Pre-save hook to generate userId and hash password
-userSchema.pre('save', async function (next) {
+userSchema.pre("save", async function (next) {
   try {
     // Generate a unique userId if it doesn't exist
     if (!this.userId) {
-      const generateUniqueUserId = require('../utilities/generateUserId');
+      const generateUniqueUserId = require("../utilities/generateUserId");
       this.userId = await generateUniqueUserId();
     }
 
     // Hash password only if modified
-    if (this.isModified('password')) {
+    if (this.isModified("password")) {
       const salt = await bcrypt.genSalt(10);
       this.password = await bcrypt.hash(this.password, salt);
     }
@@ -85,6 +83,6 @@ userSchema.methods.comparePassword = async function (password) {
 };
 
 // Create the model for the User schema
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;

@@ -1,41 +1,43 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('profile-form');
-  const editButton = document.querySelector('.edit-button');
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("profile-form");
+  const editButton = document.querySelector(".edit-button");
   const usernameInput = form?.querySelector('input[name="username"]');
-  const inputs = form ? Array.from(form.querySelectorAll('input:not([type="hidden"]), select')) : [];
+  const inputs = form
+    ? Array.from(form.querySelectorAll('input:not([type="hidden"]), select'))
+    : [];
 
-  const navbar = document.getElementById('navbar');
-  const searchToggle = document.querySelector('.search-toggle');
-  const searchOverlay = document.getElementById('searchOverlay');
-  const searchClose = document.getElementById('searchClose');
+  const navbar = document.getElementById("navbar");
+  const searchToggle = document.querySelector(".search-toggle");
+  const searchOverlay = document.getElementById("searchOverlay");
+  const searchClose = document.getElementById("searchClose");
 
-  const hamburger = document.getElementById('hamburger');
-  const mobileDrawer = document.getElementById('mobileDrawer');
-  const mobileOverlay = document.getElementById('mobileOverlay');
-  const drawerClose = document.getElementById('drawerClose');
+  const hamburger = document.getElementById("hamburger");
+  const mobileDrawer = document.getElementById("mobileDrawer");
+  const mobileOverlay = document.getElementById("mobileOverlay");
+  const drawerClose = document.getElementById("drawerClose");
 
-  const categoriesDataEl = document.getElementById('arni-categories-data');
-  const canvas = document.getElementById('backgroundCanvas');
+  const categoriesDataEl = document.getElementById("arni-categories-data");
+  const canvas = document.getElementById("backgroundCanvas");
 
-  const avatarModal = document.getElementById('avatarModal');
-  const profileImage = document.querySelector('.profile-image');
-  const changePhotoBtn = document.querySelector('.change-photo-btn');
-  const avatarCancelButton = document.getElementById('avatarCancelButton');
-  const cancelAvatarButton = document.getElementById('cancelAvatarButton');
-  const saveAvatarButton = document.getElementById('saveAvatarButton');
-  const avatarOptions = Array.from(document.querySelectorAll('.avatar-option'));
+  const avatarModal = document.getElementById("avatarModal");
+  const profileImage = document.querySelector(".profile-image");
+  const changePhotoBtn = document.querySelector(".change-photo-btn");
+  const avatarCancelButton = document.getElementById("avatarCancelButton");
+  const cancelAvatarButton = document.getElementById("cancelAvatarButton");
+  const saveAvatarButton = document.getElementById("saveAvatarButton");
+  const avatarOptions = Array.from(document.querySelectorAll(".avatar-option"));
 
   let isEditing = false;
   let lastScrollY = 0;
   let arniCategories = [];
-  let selectedAvatarUrl = profileImage?.getAttribute('src') || '';
+  let selectedAvatarUrl = profileImage?.getAttribute("src") || "";
 
   try {
     arniCategories = categoriesDataEl
-      ? JSON.parse(categoriesDataEl.textContent || '[]')
+      ? JSON.parse(categoriesDataEl.textContent || "[]")
       : [];
   } catch (error) {
-    console.error('Failed to parse ARNI categories:', error);
+    console.error("Failed to parse ARNI categories:", error);
     arniCategories = [];
   }
 
@@ -51,110 +53,122 @@ document.addEventListener('DOMContentLoaded', () => {
   function initializeNavbar() {
     if (!navbar) return;
 
-    window.addEventListener('scroll', () => {
-      const currentY = window.scrollY;
+    window.addEventListener(
+      "scroll",
+      () => {
+        const currentY = window.scrollY;
 
-      navbar.classList.toggle('scrolled', currentY > 20);
-      navbar.style.transform =
-        currentY > lastScrollY && currentY > 140
-          ? 'translateY(-100%)'
-          : 'translateY(0)';
+        navbar.classList.toggle("scrolled", currentY > 20);
+        navbar.style.transform =
+          currentY > lastScrollY && currentY > 140
+            ? "translateY(-100%)"
+            : "translateY(0)";
 
-      lastScrollY = currentY;
-    }, { passive: true });
+        lastScrollY = currentY;
+      },
+      { passive: true },
+    );
   }
 
   function initializeSearch() {
-    searchToggle?.addEventListener('click', () => {
-      const isOpen = searchOverlay?.classList.toggle('open');
+    searchToggle?.addEventListener("click", () => {
+      const isOpen = searchOverlay?.classList.toggle("open");
 
       if (isOpen) {
-        searchOverlay?.querySelector('.search-input')?.focus();
+        searchOverlay?.querySelector(".search-input")?.focus();
       }
     });
 
-    searchClose?.addEventListener('click', () => {
-      searchOverlay?.classList.remove('open');
+    searchClose?.addEventListener("click", () => {
+      searchOverlay?.classList.remove("open");
     });
 
-    document.addEventListener('click', (event) => {
+    document.addEventListener("click", (event) => {
       if (
-        searchOverlay?.classList.contains('open') &&
+        searchOverlay?.classList.contains("open") &&
         !searchOverlay.contains(event.target) &&
         !searchToggle?.contains(event.target)
       ) {
-        searchOverlay.classList.remove('open');
+        searchOverlay.classList.remove("open");
       }
     });
   }
 
   function initializeMobileDrawer() {
     function openDrawer() {
-      mobileDrawer?.classList.add('open');
-      mobileOverlay?.classList.add('visible');
-      hamburger?.classList.add('open');
-      document.body.style.overflow = 'hidden';
+      mobileDrawer?.classList.add("open");
+      mobileOverlay?.classList.add("visible");
+      hamburger?.classList.add("open");
+      document.body.style.overflow = "hidden";
     }
 
     function closeDrawer() {
-      mobileDrawer?.classList.remove('open');
-      mobileOverlay?.classList.remove('visible');
-      hamburger?.classList.remove('open');
-      document.body.style.overflow = '';
+      mobileDrawer?.classList.remove("open");
+      mobileOverlay?.classList.remove("visible");
+      hamburger?.classList.remove("open");
+      document.body.style.overflow = "";
     }
 
-    hamburger?.addEventListener('click', () => {
-      if (mobileDrawer?.classList.contains('open')) {
+    hamburger?.addEventListener("click", () => {
+      if (mobileDrawer?.classList.contains("open")) {
         closeDrawer();
       } else {
         openDrawer();
       }
     });
 
-    mobileOverlay?.addEventListener('click', closeDrawer);
-    drawerClose?.addEventListener('click', closeDrawer);
+    mobileOverlay?.addEventListener("click", closeDrawer);
+    drawerClose?.addEventListener("click", closeDrawer);
 
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
         closeDrawer();
         closeAvatarModal();
-        searchOverlay?.classList.remove('open');
+        searchOverlay?.classList.remove("open");
       }
     });
   }
 
   function initializeCategoryDropdown() {
-    const navLinks = document.querySelector('.nav-links');
+    const navLinks = document.querySelector(".nav-links");
     if (!navLinks || !arniCategories.length) return;
 
     let dropdownMenu = null;
 
     function buildDropdown(categories) {
       if (!dropdownMenu) {
-        dropdownMenu = document.createElement('div');
-        dropdownMenu.className = 'cat-dropdown';
+        dropdownMenu = document.createElement("div");
+        dropdownMenu.className = "cat-dropdown";
         document.body.appendChild(dropdownMenu);
       }
 
       dropdownMenu.innerHTML = `
         <div class="cat-dropdown-inner">
-          ${categories.map((category) => `
+          ${categories
+            .map(
+              (category) => `
             <div class="cat-dropdown-col">
-              <a href="/subcategories?main=${escapeHtml(category._id || '')}" class="cat-dropdown-title">
-                ${escapeHtml(category.mainCategoryName || 'Category')}
+              <a href="/subcategories?main=${escapeHtml(category._id || "")}" class="cat-dropdown-title">
+                ${escapeHtml(category.mainCategoryName || "Category")}
               </a>
 
               <ul>
-                ${(category.subcategories || []).map((subcategory) => `
+                ${(category.subcategories || [])
+                  .map(
+                    (subcategory) => `
                   <li>
-                    <a href="/products?sub=${escapeHtml(subcategory._id || '')}">
-                      ${escapeHtml(subcategory.subCategoryName || 'Subcategory')}
+                    <a href="/products?sub=${escapeHtml(subcategory._id || "")}">
+                      ${escapeHtml(subcategory.subCategoryName || "Subcategory")}
                     </a>
                   </li>
-                `).join('')}
+                `,
+                  )
+                  .join("")}
               </ul>
             </div>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </div>
       `;
     }
@@ -163,21 +177,18 @@ document.addEventListener('DOMContentLoaded', () => {
       buildDropdown(arniCategories);
 
       const rect = link.getBoundingClientRect();
-      const left = Math.min(
-        Math.max(12, rect.left),
-        window.innerWidth - 360
-      );
+      const left = Math.min(Math.max(12, rect.left), window.innerWidth - 360);
 
       dropdownMenu.style.top = `${rect.bottom + 10}px`;
       dropdownMenu.style.left = `${left}px`;
-      dropdownMenu.classList.add('open');
+      dropdownMenu.classList.add("open");
     }
 
     function closeDropdown() {
-      dropdownMenu?.classList.remove('open');
+      dropdownMenu?.classList.remove("open");
     }
 
-    navLinks.addEventListener('mouseover', (event) => {
+    navLinks.addEventListener("mouseover", (event) => {
       const link = event.target.closest('a[data-category="true"]');
 
       if (link) {
@@ -185,18 +196,18 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    document.addEventListener('mouseover', (event) => {
+    document.addEventListener("mouseover", (event) => {
       if (
-        dropdownMenu?.classList.contains('open') &&
-        !event.target.closest('.cat-dropdown') &&
+        dropdownMenu?.classList.contains("open") &&
+        !event.target.closest(".cat-dropdown") &&
         !event.target.closest('[data-category="true"]')
       ) {
         closeDropdown();
       }
     });
 
-    window.addEventListener('scroll', closeDropdown, { passive: true });
-    window.addEventListener('resize', closeDropdown);
+    window.addEventListener("scroll", closeDropdown, { passive: true });
+    window.addEventListener("resize", closeDropdown);
   }
 
   function initializeProfileEditing() {
@@ -204,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setFormEditable(false);
 
-    editButton.addEventListener('click', async () => {
+    editButton.addEventListener("click", async () => {
       if (isEditing) {
         const isValid = validateUsername();
 
@@ -212,30 +223,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
           editButton.disabled = true;
-          editButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+          editButton.innerHTML =
+            '<i class="fas fa-spinner fa-spin"></i> Saving...';
 
-          const response = await fetch('/users/pI/update', {
-            method: 'POST',
+          const response = await fetch("/users/pI/update", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json'
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              username: usernameInput.value.trim()
-            })
+              username: usernameInput.value.trim(),
+            }),
           });
 
           if (!response.ok) {
             const result = await safeJson(response);
-            throw new Error(result?.message || result?.error || 'Failed to update profile');
+            throw new Error(
+              result?.message || result?.error || "Failed to update profile",
+            );
           }
 
-          showToast('Profile updated successfully.', 'success');
+          showToast("Profile updated successfully.", "success");
           isEditing = false;
           setFormEditable(false);
           editButton.innerHTML = '<i class="fas fa-pen"></i> Edit Profile';
           return;
         } catch (error) {
-          showToast(error.message || 'Failed to update profile.', 'error');
+          showToast(error.message || "Failed to update profile.", "error");
         } finally {
           editButton.disabled = false;
         }
@@ -248,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
       editButton.innerHTML = '<i class="fas fa-check"></i> Save Profile';
     });
 
-    usernameInput.addEventListener('input', () => {
+    usernameInput.addEventListener("input", () => {
       if (isEditing) validateUsername();
     });
   }
@@ -267,47 +281,51 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!usernameInput) return true;
 
     const username = usernameInput.value.trim();
-    const message = document.getElementById('usernameMessage');
+    const message = document.getElementById("usernameMessage");
 
     if (username.length < 3) {
-      if (message) message.textContent = 'Username must be at least 3 characters.';
-      usernameInput.classList.add('input-error');
+      if (message)
+        message.textContent = "Username must be at least 3 characters.";
+      usernameInput.classList.add("input-error");
       return false;
     }
 
     if (username.length > 30) {
-      if (message) message.textContent = 'Username must be less than 30 characters.';
-      usernameInput.classList.add('input-error');
+      if (message)
+        message.textContent = "Username must be less than 30 characters.";
+      usernameInput.classList.add("input-error");
       return false;
     }
 
     if (!/^[a-zA-Z0-9_ ]+$/.test(username)) {
-      if (message) message.textContent = 'Username can only contain letters, numbers, spaces, and underscores.';
-      usernameInput.classList.add('input-error');
+      if (message)
+        message.textContent =
+          "Username can only contain letters, numbers, spaces, and underscores.";
+      usernameInput.classList.add("input-error");
       return false;
     }
 
-    if (message) message.textContent = '';
-    usernameInput.classList.remove('input-error');
+    if (message) message.textContent = "";
+    usernameInput.classList.remove("input-error");
     return true;
   }
 
   function initializeAvatarPicker() {
-    changePhotoBtn?.addEventListener('click', openAvatarModal);
-    avatarCancelButton?.addEventListener('click', closeAvatarModal);
-    cancelAvatarButton?.addEventListener('click', closeAvatarModal);
-    saveAvatarButton?.addEventListener('click', saveSelectedAvatar);
+    changePhotoBtn?.addEventListener("click", openAvatarModal);
+    avatarCancelButton?.addEventListener("click", closeAvatarModal);
+    cancelAvatarButton?.addEventListener("click", closeAvatarModal);
+    saveAvatarButton?.addEventListener("click", saveSelectedAvatar);
 
     avatarOptions.forEach((option) => {
-      option.addEventListener('click', () => {
-        avatarOptions.forEach((item) => item.classList.remove('selected'));
+      option.addEventListener("click", () => {
+        avatarOptions.forEach((item) => item.classList.remove("selected"));
 
-        option.classList.add('selected');
-        selectedAvatarUrl = option.dataset.avatarUrl || '';
+        option.classList.add("selected");
+        selectedAvatarUrl = option.dataset.avatarUrl || "";
       });
     });
 
-    avatarModal?.addEventListener('click', (event) => {
+    avatarModal?.addEventListener("click", (event) => {
       if (event.target === avatarModal) {
         closeAvatarModal();
       }
@@ -318,46 +336,49 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!avatarModal) return;
 
     avatarOptions.forEach((option) => {
-      const avatarUrl = option.dataset.avatarUrl || '';
-      option.classList.toggle('selected', avatarUrl === selectedAvatarUrl);
+      const avatarUrl = option.dataset.avatarUrl || "";
+      option.classList.toggle("selected", avatarUrl === selectedAvatarUrl);
     });
 
-    avatarModal.classList.add('open');
-    avatarModal.setAttribute('aria-hidden', 'false');
+    avatarModal.classList.add("open");
+    avatarModal.setAttribute("aria-hidden", "false");
   }
 
   function closeAvatarModal() {
     if (!avatarModal) return;
 
-    avatarModal.classList.remove('open');
-    avatarModal.setAttribute('aria-hidden', 'true');
+    avatarModal.classList.remove("open");
+    avatarModal.setAttribute("aria-hidden", "true");
   }
 
   async function saveSelectedAvatar() {
     if (!selectedAvatarUrl) {
-      showToast('Please select an avatar first.', 'error');
+      showToast("Please select an avatar first.", "error");
       return;
     }
 
     try {
       if (saveAvatarButton) {
         saveAvatarButton.disabled = true;
-        saveAvatarButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        saveAvatarButton.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> Saving...';
       }
 
-      const response = await fetch('/users/pI/update-avatar', {
-        method: 'POST',
+      const response = await fetch("/users/pI/update-avatar", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          avatarUrl: selectedAvatarUrl
-        })
+          avatarUrl: selectedAvatarUrl,
+        }),
       });
 
       if (!response.ok) {
         const result = await safeJson(response);
-        throw new Error(result?.message || result?.error || 'Failed to save avatar');
+        throw new Error(
+          result?.message || result?.error || "Failed to save avatar",
+        );
       }
 
       if (profileImage) {
@@ -365,65 +386,68 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       closeAvatarModal();
-      showToast('Avatar updated successfully.', 'success');
+      showToast("Avatar updated successfully.", "success");
     } catch (error) {
-      showToast(error.message || 'Failed to update avatar.', 'error');
+      showToast(error.message || "Failed to update avatar.", "error");
     } finally {
       if (saveAvatarButton) {
         saveAvatarButton.disabled = false;
-        saveAvatarButton.textContent = 'Save Avatar';
+        saveAvatarButton.textContent = "Save Avatar";
       }
     }
   }
 
   function initializeReveal() {
     const revealEls = document.querySelectorAll(
-      '.profile-hero, .sidebar, .content-area, .info-card, .footer-section'
+      ".profile-hero, .sidebar, .content-area, .info-card, .footer-section",
     );
 
     if (!revealEls.length) return;
 
     revealEls.forEach((el, index) => {
-      el.classList.add('reveal');
+      el.classList.add("reveal");
       el.style.transitionDelay = `${Math.min(index * 55, 240)}ms`;
     });
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
 
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      });
-    }, {
-      threshold: 0.1,
-      rootMargin: '0px 0px -40px 0px'
-    });
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: "0px 0px -40px 0px",
+      },
+    );
 
     revealEls.forEach((el) => observer.observe(el));
   }
 
-  function showToast(message, type = 'info') {
-    let toastContainer = document.querySelector('.toast-container');
+  function showToast(message, type = "info") {
+    let toastContainer = document.querySelector(".toast-container");
 
     if (!toastContainer) {
-      toastContainer = document.createElement('div');
-      toastContainer.className = 'toast-container';
+      toastContainer = document.createElement("div");
+      toastContainer.className = "toast-container";
       document.body.appendChild(toastContainer);
     }
 
-    const toast = document.createElement('div');
+    const toast = document.createElement("div");
     toast.className = `toast ${type}`;
     toast.textContent = message;
 
     toastContainer.appendChild(toast);
 
     requestAnimationFrame(() => {
-      toast.classList.add('show');
+      toast.classList.add("show");
     });
 
     setTimeout(() => {
-      toast.classList.remove('show');
+      toast.classList.remove("show");
 
       setTimeout(() => {
         toast.remove();
@@ -445,22 +469,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function escapeHtml(value) {
     return String(value)
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#039;');
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
   }
 
   function initializeCanvas() {
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let mousePosition = {
       x: window.innerWidth / 2,
-      y: window.innerHeight / 2
+      y: window.innerHeight / 2,
     };
 
     function setCanvasSize() {
@@ -483,10 +507,10 @@ document.addEventListener('DOMContentLoaded', () => {
         this.maxLife = Math.random() * 220 + 120;
 
         const colors = [
-          'rgba(16, 110, 190, 0.22)',
-          'rgba(24, 128, 212, 0.2)',
-          'rgba(15, 252, 190, 0.18)',
-          'rgba(96, 200, 245, 0.2)'
+          "rgba(16, 110, 190, 0.22)",
+          "rgba(24, 128, 212, 0.2)",
+          "rgba(15, 252, 190, 0.18)",
+          "rgba(96, 200, 245, 0.2)",
         ];
 
         this.color = colors[Math.floor(Math.random() * colors.length)];
@@ -539,12 +563,12 @@ document.addEventListener('DOMContentLoaded', () => {
         0,
         mousePosition.x,
         mousePosition.y,
-        190
+        190,
       );
 
-      mouseGradient.addColorStop(0, 'rgba(15, 252, 190, 0.12)');
-      mouseGradient.addColorStop(0.45, 'rgba(16, 110, 190, 0.08)');
-      mouseGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      mouseGradient.addColorStop(0, "rgba(15, 252, 190, 0.12)");
+      mouseGradient.addColorStop(0.45, "rgba(16, 110, 190, 0.08)");
+      mouseGradient.addColorStop(1, "rgba(255, 255, 255, 0)");
 
       ctx.fillStyle = mouseGradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -552,12 +576,12 @@ document.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(animate);
     }
 
-    window.addEventListener('resize', setCanvasSize);
+    window.addEventListener("resize", setCanvasSize);
 
-    window.addEventListener('mousemove', (event) => {
+    window.addEventListener("mousemove", (event) => {
       mousePosition = {
         x: event.clientX,
-        y: event.clientY
+        y: event.clientY,
       };
     });
 

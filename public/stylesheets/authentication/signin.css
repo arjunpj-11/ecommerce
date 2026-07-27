@@ -2,37 +2,46 @@
    ARNI Auth — Blue & Mint Theme
    ================================================ */
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
 :root {
-  --blue: #106EBE;
-  --blue-dark: #0A559A;
-  --blue-mid: #1880D4;
-  --blue-light: #5AAEE8;
-  --blue-pale: #D6EEFF;
-  --mint: #0FFCBE;
-  --mint-dark: #00D99E;
-  --mint-pale: #D0FFF3;
-  --sky: #60C8F5;
-  --bg: #F4FAFF;
-  --surface: #FFFFFF;
-  --surface-2: #EBF5FF;
-  --surface-3: #DCEEFA;
+  --blue: #106ebe;
+  --blue-dark: #0a559a;
+  --blue-mid: #1880d4;
+  --blue-light: #5aaee8;
+  --blue-pale: #d6eeff;
+  --mint: #0ffcbe;
+  --mint-dark: #00d99e;
+  --mint-pale: #d0fff3;
+  --sky: #60c8f5;
+  --bg: #f4faff;
+  --surface: #ffffff;
+  --surface-2: #ebf5ff;
+  --surface-3: #dceefa;
   --border: rgba(16, 110, 190, 0.14);
-  --ink: #0C1F3A;
-  --ink-2: #2A4A6E;
-  --muted: #6892B8;
-  --muted-2: #9BBDD8;
+  --ink: #0c1f3a;
+  --ink-2: #2a4a6e;
+  --muted: #6892b8;
+  --muted-2: #9bbdd8;
   --danger: #ef4444;
   --success: #10b981;
-  --grad-primary: linear-gradient(135deg, var(--blue) 0%, var(--blue-mid) 52%, var(--sky) 100%);
+  --grad-primary: linear-gradient(
+    135deg,
+    var(--blue) 0%,
+    var(--blue-mid) 52%,
+    var(--sky) 100%
+  );
   --grad-accent: linear-gradient(135deg, var(--mint) 0%, var(--sky) 100%);
-  --font-display: 'Bebas Neue', sans-serif;
-  --font-body: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: "Bebas Neue", sans-serif;
+  --font-body:
+    "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --radius: 18px;
   --radius-lg: 30px;
@@ -47,13 +56,22 @@ body {
   font-family: var(--font-body);
   color: var(--ink);
   background:
-    radial-gradient(circle at 12% 12%, rgba(15, 252, 190, 0.18), transparent 28%),
-    radial-gradient(circle at 88% 18%, rgba(16, 110, 190, 0.22), transparent 32%),
-    linear-gradient(135deg, #F4FAFF 0%, #EAF7FF 48%, #F8FFFD 100%);
+    radial-gradient(
+      circle at 12% 12%,
+      rgba(15, 252, 190, 0.18),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 88% 18%,
+      rgba(16, 110, 190, 0.22),
+      transparent 32%
+    ),
+    linear-gradient(135deg, #f4faff 0%, #eaf7ff 48%, #f8fffd 100%);
   overflow-x: hidden;
 }
 
-button, input {
+button,
+input {
   font: inherit;
 }
 
@@ -106,15 +124,19 @@ a {
   justify-content: space-between;
   background:
     linear-gradient(135deg, rgba(10, 85, 154, 0.92), rgba(16, 110, 190, 0.78)),
-    url('/images/authentication/signin image.jpg') center / cover no-repeat;
+    url("/images/authentication/signin image.jpg") center / cover no-repeat;
 }
 
 .auth-brand-panel::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 20% 22%, rgba(15, 252, 190, 0.25), transparent 32%),
+    radial-gradient(
+      circle at 20% 22%,
+      rgba(15, 252, 190, 0.25),
+      transparent 32%
+    ),
     linear-gradient(0deg, rgba(12, 31, 58, 0.55), transparent 58%);
   pointer-events: none;
 }
@@ -197,7 +219,11 @@ a {
   position: absolute;
   inset: auto -20% -50% 15%;
   height: 110px;
-  background: radial-gradient(circle, rgba(15, 252, 190, 0.34), transparent 62%);
+  background: radial-gradient(
+    circle,
+    rgba(15, 252, 190, 0.34),
+    transparent 62%
+  );
 }
 
 .form-section {
@@ -267,7 +293,10 @@ a {
   background: var(--surface-2);
   color: var(--ink);
   font-size: 0.95rem;
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    background 0.2s;
 }
 
 .input-wrap input::placeholder {
@@ -297,7 +326,9 @@ a {
   background: transparent;
   color: var(--muted);
   cursor: pointer;
-  transition: color 0.2s, background 0.2s;
+  transition:
+    color 0.2s,
+    background 0.2s;
 }
 
 .toggle-password:hover {
@@ -325,9 +356,18 @@ a {
   overflow: hidden;
   border: 1px solid transparent;
   border-radius: 16px;
-  background: linear-gradient(135deg, rgba(214, 238, 255, 0.72), rgba(208, 255, 243, 0.58));
+  background: linear-gradient(
+    135deg,
+    rgba(214, 238, 255, 0.72),
+    rgba(208, 255, 243, 0.58)
+  );
   opacity: 0;
-  transition: opacity 0.25s var(--ease), max-height 0.3s var(--ease), padding 0.25s var(--ease), margin 0.25s var(--ease), border-color 0.25s;
+  transition:
+    opacity 0.25s var(--ease),
+    max-height 0.3s var(--ease),
+    padding 0.25s var(--ease),
+    margin 0.25s var(--ease),
+    border-color 0.25s;
 }
 
 .password-criteria.visible {
@@ -359,7 +399,7 @@ a {
 }
 
 .password-criteria li::before {
-  content: '✗';
+  content: "✗";
   width: 18px;
   height: 18px;
   display: inline-flex;
@@ -377,7 +417,7 @@ a {
 }
 
 .password-criteria li.valid::before {
-  content: '✓';
+  content: "✓";
   background: rgba(16, 185, 129, 0.14);
   color: var(--success);
 }
@@ -403,7 +443,10 @@ a {
   text-transform: uppercase;
   cursor: pointer;
   box-shadow: 0 14px 32px rgba(16, 110, 190, 0.28);
-  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s,
+    opacity 0.2s;
 }
 
 .submit-btn:hover {
@@ -453,7 +496,7 @@ a {
 }
 
 .divider::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 0;
@@ -487,7 +530,10 @@ a {
   color: var(--ink-2);
   font-size: 0.88rem;
   font-weight: 800;
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s,
+    border-color 0.2s;
 }
 
 .social-btn:hover {
@@ -531,8 +577,14 @@ a {
 }
 
 @keyframes toastIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 920px) {
