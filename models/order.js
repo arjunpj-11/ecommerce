@@ -86,20 +86,22 @@ const orderSchema = new mongoose.Schema({
 
 // Use findOneAndUpdate with upsert for atomic orderId generation
 orderSchema.statics.generateOrderId = async function() {
-    const highestOrder = await this.findOne()
-        .sort({ orderId: -1 })
-        .select('orderId');
-
-    let lastNumber = 100000;
-    if (highestOrder && highestOrder.orderId) {
-        const parts = highestOrder.orderId.split('/');
-        if (parts.length === 2 && !isNaN(parts[1])) {
-            lastNumber = parseInt(parts[1]);
+    const orders = await this.find({}, 'orderId').lean();
+    let maxNumber = 100000;
+    
+    for (const ord of orders) {
+        if (ord && ord.orderId) {
+            const parts = ord.orderId.split('/');
+            if (parts.length === 2) {
+                const num = parseInt(parts[1], 10);
+                if (!isNaN(num) && num > maxNumber) {
+                    maxNumber = num;
+                }
+            }
         }
     }
 
-    // Generate next orderId
-    return `order/${lastNumber + 1}`;
+    return `order/${maxNumber + 1}`;
 };
 
 module.exports = mongoose.model('Order', orderSchema);

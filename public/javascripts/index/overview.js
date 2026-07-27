@@ -511,13 +511,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const result = await response.json();
-            if (!response.ok) throw new Error(result.message || 'Failed to add item to cart');
 
             if (result.exists) {
                 showToast('This item is already in your cart', 'error');
-            } else {
-                showToast(`Added ${quantity} item${quantity > 1 ? 's' : ''} to cart`);
+                return;
             }
+
+            if (!response.ok) throw new Error(result.message || 'Failed to add item to cart');
+
+            showToast(`Added ${quantity} item${quantity > 1 ? 's' : ''} to cart`);
         } catch (error) {
             console.error('Error adding to cart:', error);
             showToast('Failed to add item to cart. Please login and try again.', 'error');

@@ -17,7 +17,7 @@ const variantSchema = new mongoose.Schema({
     default: [],
     validate: {
       validator: function (value) {
-        return value.every((url) => /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/i.test(url));
+        return value.every((url) => /^https?:\/\/[^\s]+$/i.test(url));
       },
       message: 'One or more image URLs are invalid.',
     },

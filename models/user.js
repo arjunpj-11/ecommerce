@@ -63,6 +63,7 @@ userSchema.pre('save', async function (next) {
   try {
     // Generate a unique userId if it doesn't exist
     if (!this.userId) {
+      const generateUniqueUserId = require('../utilities/generateUserId');
       this.userId = await generateUniqueUserId();
     }
 

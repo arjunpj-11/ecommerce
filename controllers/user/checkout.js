@@ -495,7 +495,7 @@ exports.placeOrder = async (req, res) => {
                     postalCode: shippingAddress.postalCode,
                     country: shippingAddress.country
                 },
-                paymentStatus: paymentMethod === 'razorpay' || paymentMethod === 'wallet' ? 'Paid' : 'Pending',
+                paymentStatus: paymentStatus === 'Failed' ? 'Failed' : (paymentMethod === 'razorpay' || paymentMethod === 'wallet' ? 'Paid' : 'Pending'),
                 couponApplied: cart.couponApplied || null
             };
 
@@ -507,18 +507,20 @@ exports.placeOrder = async (req, res) => {
             orders.push(order._id);
         }
 
+        if (paymentStatus === 'Failed') {
+            return res.status(400).json({ 
+                success: false,
+                error: 'Order creation failed',
+                message: 'Payment process failed. Your cart items have been kept so you can try again.',
+                orders: orders 
+            });    
+        }
+
         // Clear cart after successful order creation
         await Cart.findOneAndUpdate(
             { user: userId },
             { items: [], couponApplied: null }
         );
-
-        if (paymentStatus === 'Failed') {
-            return res.status(500).json({ 
-                error: 'Order creation failed',
-                message: 'Payment process failed' 
-            });    
-        }
 
         res.status(200).json({
             success: true,

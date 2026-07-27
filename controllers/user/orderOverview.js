@@ -112,7 +112,8 @@ exports.getOrderDetails = async (req, res) => {
 
         if (!order) {
             return res.status(404).render('error', {
-                message: 'Order not found'
+                message: 'Order not found',
+                error: { status: 404, stack: '' }
             });
         }
 
@@ -134,7 +135,8 @@ exports.getOrderDetails = async (req, res) => {
         res.render('../views/pages/user/orderOverview', { order, categoriesWithSubs, isThere });
     } catch (error) {
         res.status(500).render('error', {
-            message: 'Error fetching order details'
+            message: 'Error fetching order details',
+            error
         });
     }
 };
@@ -189,34 +191,61 @@ exports.createRefundRequest = async (req, res) => {
 // Cancel a specific order
 exports.cancelOrder = async (req, res) => {
     try {
+        const userId = req.session.userId;
         const order = await Order.findOne({ _id: req.params.orderId });
         if (!order) {
-            return res.status(404).json({ success: false });
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
+        if (order.status === 'Delivered' || order.status === 'Cancelled' || order.status === 'Returned') {
+            return res.status(400).json({ success: false, message: 'Order cannot be cancelled' });
         }
 
         // Restore inventory quantity
-        const updateQuery = {};
-        updateQuery[`sizes.${order.size}`] = order.quantity;
+        if (order.variant && order.size && order.quantity) {
+            const updateQuery = {};
+            updateQuery[`sizes.${order.size}`] = order.quantity;
+            await Variant.findByIdAndUpdate(order.variant, { $inc: updateQuery });
+        }
 
-        const updatedVariant = await Variant.findByIdAndUpdate(
-            order.variant,
-            { $inc: updateQuery },
-            { new: true, runValidators: true }
-        );
+        let message = 'Order cancelled successfully';
 
-        if (!updatedVariant) {
-            return res.status(400).json({ 
-                success: false,
-                message: 'Failed to restore inventory'
-            });
+        // Refund money to Wallet if paid
+        if (order.paymentStatus === 'Paid' && userId) {
+            const refundAmount = order.price * order.quantity;
+            let wallet = await Wallet.findOne({ user: userId });
+            if (!wallet) {
+                wallet = new Wallet({
+                    user: userId,
+                    balance: refundAmount,
+                    transactions: [{
+                        type: 'credited',
+                        amount: refundAmount,
+                        reason: `Refund for cancelled order ${order.orderId}`
+                    }]
+                });
+            } else {
+                wallet.balance += refundAmount;
+                wallet.transactions.push({
+                    type: 'credited',
+                    amount: refundAmount,
+                    reason: `Refund for cancelled order ${order.orderId}`
+                });
+            }
+            await wallet.save();
+            order.paymentStatus = 'Refunded';
+            message = `Order cancelled successfully and ₹${refundAmount} refunded to your wallet`;
         }
 
         order.status = 'Cancelled';
-        order.cancellationReason = req.body.reason;
+        if (req.body.reason) {
+            order.cancellationReason = req.body.reason;
+        }
         await order.save();
 
-        res.json({ success: true });
+        res.json({ success: true, message });
     } catch (error) {
-        res.status(500).json({ success: false });
+        console.error('Error cancelling order overview:', error);
+        res.status(500).json({ success: false, message: 'Server error while cancelling order' });
     }
 };

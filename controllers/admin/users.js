@@ -71,8 +71,8 @@ exports.unblockUser  = async (req, res) => {
         const { id } = req.body; // Get user ID
         
         await Promise.all([
-            BlockUser .deleteOne({ user: id }), // Remove block entry
-            User.findByIdAndUpdate(id, { status: "Inactive" }) // Update user status to Inactive
+            BlockUser.deleteOne({ user: id }), // Remove block entry
+            User.findByIdAndUpdate(id, { status: "Active" }) // Update user status to Active
         ]);
 
         res.json({ success: true, message: 'User  unblocked successfully' });

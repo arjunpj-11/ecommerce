@@ -68,7 +68,7 @@ exports.searchSubCategories = async (req, res, next) => {
             { $group: { _id: "$subCategory", count: { $sum: 1 } } }
         ]).exec();
         console.log(subCategories, mainCategories, products);
-        res.render('adminSubcategory/table', { mainCategories, subCategories, products });
+        res.render('../views/partials/admin/subCategoryTable', { mainCategories, subCategories, products });
     } catch (error) {
         console.error('Error searching subcategories:', error);
         next(error); // Forward error to the next middleware
@@ -134,7 +134,7 @@ exports.inactivateSubCategory = async (req, res, next) => {
     try {
         const id = req.body.id;
         await subCategory.updateOne({ _id: id }, { status: "inactive" });
-        await productDB.updateOne({ subCategory: id }, { status: "inactive" });
+        await productDB.updateMany({ subCategory: id }, { status: "inactive" });
         res.send("ok");
     } catch (error) {
         console.error('Error inactivating subcategory:', error);
@@ -151,7 +151,7 @@ exports.activateSubCategory = async (req, res, next) => {
     try {
         const id = req.body.id;
         await subCategory.updateOne({ _id: id }, { status: "active" });
-        await productDB.updateOne({ subCategory: id }, { status: "active" });
+        await productDB.updateMany({ subCategory: id }, { status: "active" });
         res.send("done");
     } catch (error) {
         console.error('Error activating subcategory:', error);

@@ -40,8 +40,6 @@ app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ limit: '100mb', extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(errorHandler);
-
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your_secret_key',
   resave: false,
@@ -61,18 +59,27 @@ passport.deserializeUser((user, done) => {
   done(null, user);
 });
 
+const isProduction = process.env.NODE_ENV === 'production';
+const googleCallback = isProduction 
+  ? (process.env.GOOGLE_CALLBACK_URL || 'https://arni-w5qe.onrender.com/api/google/auth/google/callback')
+  : '/api/google/auth/google/callback';
+
+const facebookCallback = isProduction
+  ? (process.env.FACEBOOK_CALLBACK_URL || 'https://arni-w5qe.onrender.com/api/facebook/auth/facebook/callback')
+  : '/api/facebook/auth/facebook/callback';
+
 passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: process.env.GOOGLE_CALLBACK_URL
+  clientID: process.env.GOOGLE_CLIENT_ID || 'dummy',
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'dummy',
+  callbackURL: googleCallback
 }, (accessToken, refreshToken, profile, done) => {
   return done(null, profile);
 }));
 
 passport.use(new FacebookStrategy({
-  clientID: process.env.FACEBOOK_APP_ID,
-  clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: process.env.FACEBOOK_CALLBACK_URL,
+  clientID: process.env.FACEBOOK_APP_ID || 'dummy',
+  clientSecret: process.env.FACEBOOK_APP_SECRET || 'dummy',
+  callbackURL: facebookCallback,
   profileFields: ['id', 'displayName', 'email', 'picture.type(large)'],
   scope: ['email']
 }, (accessToken, refreshToken, profile, done) => {
@@ -96,11 +103,7 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
-app.use(function(err, req, res, next) {
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.status(err.status || 500);
-  res.render('error');
-});
+// Error handling middleware (placed after routes)
+app.use(errorHandler);
 
 module.exports = app;

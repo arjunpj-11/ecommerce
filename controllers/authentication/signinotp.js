@@ -1,25 +1,7 @@
 const generateRandomOTP = require('../../utilities/generateOtp');
 const emailOtp = require('../../utilities/emailOtp');
-const User = require('../../models/user'); // Import the User model
-
-// Function to generate a unique userId
-async function generateUniqueUserId() {
-  let uniqueId;
-  let isUnique = false;
-
-  while (!isUnique) {
-    const randomNum = Math.floor(100000 + Math.random() * 900000); // Generate a 6-digit number
-    uniqueId = `Arni/${randomNum}`;
-
-    // Check if the generated userId already exists
-    const existingUser  = await User.findOne({ userId: uniqueId });
-    if (!existingUser ) {
-      isUnique = true; // Unique ID found
-    }
-  }
-
-  return uniqueId; // Return the unique userId
-}
+const User = require('../../models/user');
+const generateUniqueUserId = require('../../utilities/generateUserId');
 
 // GET users listing
 exports.getSigninOtp = async (req, res) => {

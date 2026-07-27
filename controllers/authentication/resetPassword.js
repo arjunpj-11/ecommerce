@@ -9,8 +9,13 @@ exports.getResetPasswordPage = (req, res, next) => {
 // Handle password reset confirmation
 exports.resetPasswordConfirm = async (req, res) => {
     try {
-        const newPassword = req.body.newPassword || req.body.password; // Support both field names
-        console.log(newPassword);
+        if (!req.session.value) {
+            return res.status(400).send("Session expired. Please restart password reset process.");
+        }
+        const newPassword = req.body.newPassword || req.body.password;
+        if (!newPassword || newPassword.length < 6) {
+            return res.status(400).send("Password must be at least 6 characters long.");
+        }
 
         // Hash the password
         const salt = await bcrypt.genSalt(10); // Generate salt

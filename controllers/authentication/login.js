@@ -14,56 +14,61 @@ exports.getLoginPage = (req, res) => {
 
 // POST login authentication
 exports.loginAuth = async (req, res) => {
-    req.session.value = req.body.emailOrPhone; // Store email or phone in session
-    req.session.password = req.body.password; // Store password in session
+    const inputVal = req.body.emailOrPhone;
+    const plainPassword = req.body.password;
+    req.session.value = inputVal;
 
     try {
-        let user;
-        const isBlocked = await User.findOne({ email: req.session.value, status: 'Suspended' });
-        if (isBlocked) {
-            req.session.isAuthenticated = false; // Set authentication status to false
-            return res.redirect('/auth/blocked'); // Redirect to blocked page
+        if (!inputVal || !plainPassword) {
+            req.session.error = "Email/Phone and Password are required";
+            return res.send("undone");
         }
 
-        // Check if the input is an email or phone number
-        if (isNaN(req.session.value)) {
-            user = await User.findOne({ email: req.session.value }); // Find user by email
+        let user;
+        const isBlocked = await User.findOne({ 
+            $or: [{ email: inputVal }, { phone: inputVal }], 
+            status: 'Suspended' 
+        });
+
+        if (isBlocked) {
+            req.session.isAuthenticated = false;
+            return res.send("blocked");
+        }
+
+        if (isNaN(inputVal)) {
+            user = await User.findOne({ email: inputVal });
         } else {
-            user = await User.findOne({ phone: req.session.value }); // Find user by phone
+            user = await User.findOne({ phone: inputVal });
         }
 
         if (!user) {
-            console.log("User  not found");
-            req.session.emailError = "User  not found"; // Set error message if user is not found
-            return res.send("new"); // Indicate user not found
+            console.log("User not found");
+            req.session.emailError = "User not found";
+            return res.send("new");
         }
 
-        const isMatch = await user.comparePassword(req.session.password); // Compare password
-        console.log("Password Match:", isMatch);
+        const isMatch = await user.comparePassword(plainPassword);
 
-        console.log("Role:", user.role);
-
-        // Check user role and authentication
         if (user.role === "Admin" && isMatch) {
-            clearSession(req); // Clear session data
-            req.session.isChecked = true; // Set session checked status
-            return res.send("admin"); // Indicate admin login
+            clearSession(req);
+            req.session.isChecked = true;
+            return res.send("admin");
         }
 
         if (isMatch) {
             console.log("Authentication Successful!");
-            clearSession(req); // Clear session data
-            req.session.isAuthenticated = true; // Set authentication status to true
-            req.session.userId = user._id; // Store user ID in session
-            return res.send("done"); // Indicate successful login
+            clearSession(req);
+            req.session.isAuthenticated = true;
+            req.session.userId = user._id;
+            return res.send("done");
         } else {
-            req.session.error = "Invalid credentials"; // Set error message for invalid credentials
-            return res.send("undone"); // Indicate failed login
+            req.session.error = "Invalid credentials";
+            return res.send("undone");
         }
     } catch (err) {
         console.error("Error during login:", err);
-        req.session.error = err.message || "Internal Server Error"; // Set error message
-        return res.status(500).send("Internal Server Error"); // Return server error
+        req.session.error = err.message || "Internal Server Error";
+        return res.status(500).send("Internal Server Error");
     }
 };
 

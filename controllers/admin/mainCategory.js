@@ -63,7 +63,7 @@ exports.getAdminCategorySearch = async (req, res, next) => {
     try {
         let mainCategories = await MainCategory.find({ mainCategoryName: { $regex: `${req.query.value}`, $options: 'i' } });
         let subcategoriesCount = await SubCategory.aggregate([{ $group: { _id: "$mainCategory", count: { $sum: 1 } } }]).exec();
-        res.render('adminCategory/table', { mainCategories, subcategoriesCount });
+        res.render('../views/partials/admin/mainCategoryTable', { mainCategories, subcategoriesCount });
     } catch (error) {
         console.error('Error searching admin categories:', error);
         next(error); // Forward error to the next middleware

@@ -78,7 +78,7 @@ const homeController = {
             });
         } catch (error) {
             console.error('Home page error:', error);
-            res.status(500).render('error', { message: 'Error loading home page' }); // Handle errors
+            res.status(500).render('error', { message: 'Error loading home page', error }); // Handle errors
         }
     }
 };

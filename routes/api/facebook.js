@@ -2,27 +2,9 @@ const express = require('express');
 const passport = require('passport');
 const User = require('../../models/user');
 const Cart = require('../../models/cart');
+const generateUniqueUserId = require('../../utilities/generateUserId');
 
 const router = express.Router();
-
-// Function to generate a unique userId
-async function generateUniqueUserId() {
-  let uniqueId;
-  let isUnique = false;
-
-  while (!isUnique) {
-    const randomNum = Math.floor(100000 + Math.random() * 900000); // 6-digit number
-    uniqueId = `Arni/${randomNum}`;
-
-    // Check if the generated userId already exists
-    const existingUser = await User.findOne({ userId: uniqueId });
-    if (!existingUser) {
-      isUnique = true;
-    }
-  }
-
-  return uniqueId;
-}
 
 // 👉 Facebook Authentication Route
 router.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));

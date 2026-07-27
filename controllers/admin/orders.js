@@ -118,13 +118,15 @@ exports.approveRefund = async (req, res) => {
         order.paymentStatus = 'Refunded';
         await order.save();
 
-        const userId = await User.findOne({ userId: order.userId });
-        const user = userId._id;
+        const dbUser = await User.findOne({ userId: order.userId });
+        if (!dbUser) {
+            return res.status(404).json({ success: false, message: 'User not found for this order' });
+        }
 
-        let wallet = await Wallet.findOne({ user: user });
+        let wallet = await Wallet.findOne({ user: dbUser._id });
         if (!wallet) {
             wallet = new Wallet({
-                user: order.userId,
+                user: dbUser._id,
                 balance: refundAmount,
                 transactions: [{
                     type: 'credited',
@@ -137,7 +139,7 @@ exports.approveRefund = async (req, res) => {
             wallet.transactions.push({
                 type: 'credited',
                 amount: refundAmount,
-                reason: `Refund for order ${order.orderId}: ${req.body.reason}`
+                reason: `Refund for order ${order.orderId}: ${req.body.reason || 'Approved'}`
             });
         }
 

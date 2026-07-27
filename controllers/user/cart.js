@@ -79,7 +79,7 @@ exports.getCart = async (req, res) => {
         });
         
         // Get all orders by this user to check which coupons they've used
-        const userOrders = await Order.find({ userId: user.userId });
+        const userOrders = (user && user.userId) ? await Order.find({ userId: user.userId }) : [];
         
         // Extract all coupon codes the user has already used
         const usedCouponCodes = userOrders
@@ -217,7 +217,11 @@ exports.removeItem = async (req, res) => {
 // Apply coupon to cart
 exports.applyCoupon = async (req, res) => {
     try {
-        const { code } = req.body;
+        const rawCode = req.body.code || req.body.couponCode;
+        if (!rawCode) {
+            return res.status(400).json({ error: 'Coupon code is required' });
+        }
+        const code = rawCode.trim().toUpperCase();
         
         // Find active coupon
         const coupon = await Coupon.findOne({

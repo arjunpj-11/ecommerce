@@ -3,7 +3,7 @@ var router = express.Router();
 
 const google = require('./api/google')
 const facebook = require('./api/facebook')
-const razorpay = require('./api/razropay')
+const razorpay = require('./api/razorpay')
 
 
 
