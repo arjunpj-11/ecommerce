@@ -48,7 +48,7 @@ const getVariantWithProductDetails = async (req, res) => {
       },
     ]);
 
-    // Get related products through variants and subcategory
+    // Recommend one representative variant per other product.
     const relatedProducts = await Variant.aggregate([
       {
         $lookup: {
@@ -61,22 +61,31 @@ const getVariantWithProductDetails = async (req, res) => {
       { $unwind: "$productDetails" }, // Flatten the productDetails array
       {
         $match: {
-          "productDetails.subCategory": currentProduct.subCategory, // Match by current product's subcategory
-          "productDetails.status": "active", // Filter active products
+          productId: { $ne: currentVariant.productId },
+          "productDetails.subCategory": currentProduct.subCategory,
+          "productDetails.status": "active",
         },
       },
+      { $sort: { "productDetails.review": -1, _id: 1 } },
+      {
+        $group: {
+          _id: "$productId",
+          variant: { $first: "$$ROOT" },
+        },
+      },
+      { $replaceRoot: { newRoot: "$variant" } },
       {
         $project: {
           _id: 1,
           productId: 1,
           color: 1,
-          images: { $arrayElemAt: ["$images", 0] }, // Include only the first image
+          images: { $arrayElemAt: ["$images", 0] },
           sizes: 1,
           tags: 1,
           productDetails: 1,
         },
       },
-      { $limit: 6 }, // Limit the number of related products
+      { $limit: 6 },
     ]);
 
     const authentication = req.session.isAuthenticated;

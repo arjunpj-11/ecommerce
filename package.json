@@ -8,6 +8,7 @@
     "test": "npm run check",
     "test:integration": "node --test --test-concurrency=1 ./test/integration.test.js",
     "test:fixtures": "node ./scripts/qa-fixtures.js",
+    "seed:fresh": "node ./seed.js --fresh",
     "format": "prettier --write \"**/*.{js,json,css,md}\"",
     "format:check": "prettier --check \"**/*.{js,json,css,md}\""
   },
