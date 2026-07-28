@@ -419,7 +419,6 @@ function attachInfoListeners() {
     button.addEventListener("click", function (e) {
       e.stopPropagation();
       const reason = this.getAttribute("data-refund-reason");
-      console.log(reason);
 
       Swal.fire({
         title: "Refund Reason",
@@ -759,7 +758,25 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (result.isConfirmed) {
-        window.location.href = "/admin/logout";
+        try {
+          const response = await fetch("/admin/logout", {
+            method: "POST",
+            credentials: "same-origin",
+          });
+          const data = await response.json();
+
+          if (!response.ok || !data.success) {
+            throw new Error(data.message || "Logout failed");
+          }
+
+          window.location.href = data.redirect;
+        } catch (error) {
+          Swal.fire({
+            title: "Could not log out",
+            text: "Please try again.",
+            icon: "error",
+          });
+        }
       }
     });
   }

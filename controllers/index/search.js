@@ -100,8 +100,6 @@ exports.getSearchRecommendations = async (req, res, next) => {
       return a.localeCompare(b);
     });
 
-    console.log(tags); // Debug log for tags
-
     res.json(tags.slice(0, 10)); // Return top 10 tags as JSON
   } catch (err) {
     console.error("Error fetching recommendations:", err);
@@ -122,8 +120,6 @@ exports.getProducts = async (req, res, next) => {
       sizes = [],
       search = req.session.search || "",
     } = req.query;
-
-    console.log("Sort parameter:", sort); // Debug log for sort parameter
 
     const categoriesArray = Array.isArray(categories)
       ? categories
@@ -273,7 +269,6 @@ exports.getProducts = async (req, res, next) => {
     });
 
     const products = await Variant.aggregate(aggregationPipeline); // Execute the aggregation pipeline
-    console.log("Sort applied:", sortStage); // Debug log for applied sort
     res.json(products); // Return the products as JSON
   } catch (err) {
     console.error("Error fetching products:", err);

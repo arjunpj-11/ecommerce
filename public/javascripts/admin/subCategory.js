@@ -231,17 +231,12 @@ const catModal = {
 hamburgerMenu?.addEventListener("click", () => {
   sidebar?.classList.toggle("sidebar-visible");
   overlay?.classList.toggle("overlay-visible");
-  console.log(
-    "Hamburger clicked, sidebar visible:",
-    sidebar?.classList.contains("sidebar-visible"),
-  );
 });
 
 // Close sidebar when clicking on overlay
 overlay?.addEventListener("click", () => {
   sidebar?.classList.remove("sidebar-visible");
   overlay?.classList.remove("overlay-visible");
-  console.log("Overlay clicked, sidebar closed");
 });
 
 // Close sidebar when clicking outside on mobile
@@ -269,7 +264,6 @@ window.addEventListener("resize", () => {
 // Close sidebar when clicking on a nav link
 document.querySelectorAll(".nav-links a").forEach((link) => {
   link.addEventListener("click", function () {
-    console.log("Nav link clicked");
     sidebar?.classList.remove("sidebar-visible");
     overlay?.classList.remove("overlay-visible");
   });

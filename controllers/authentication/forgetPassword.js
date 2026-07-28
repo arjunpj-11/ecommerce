@@ -17,34 +17,36 @@ exports.getForgetPasswordPage = (req, res, next) => {
 // POST send OTP
 exports.sendOtp = async (req, res) => {
   try {
-    req.session.value = req.body.emailOrPhone; // Store the email or phone in session
-    let field = isNaN(req.session.value) ? "email" : "phone"; // Determine if the input is an email or phone
-    let query = isNaN(req.session.value)
-      ? { email: req.session.value }
-      : { phone: req.session.value };
+    const rawValue = String(req.body.emailOrPhone || "").trim();
+    req.session.value = rawValue.toLowerCase();
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    const user = await User.findOne(query); // Find the user by email or phone
-    if (!user) {
-      req.session.error = "User  not found"; // Set error if user is not found
-      return res.redirect("/auth/forgetPassword"); // Redirect back to the forget password page
+    if (!emailPattern.test(req.session.value)) {
+      req.session.error = "Enter the email address registered to your account.";
+      return res.redirect("/auth/forgetPassword");
     }
 
-    req.session.otp = await generateRandomOTP(); // Generate a random OTP
-    emailOtp(req.session.otp, req.session.value); // Send OTP to email or phone number
+    const query = { email: req.session.value };
 
-    // OTP expires in 10 minutes
-    setTimeout(
-      () => {
-        delete req.session.otp; // Clear OTP from session after expiration
-        delete req.session.enteredOtp; // Clear entered OTP from session
-      },
-      1000 * 60 * 10,
-    ); // 10 minutes expiration
+    const user = await User.findOne(query);
+    if (!user) {
+      req.session.error = "No account matches those details.";
+      return res.redirect("/auth/forgetPassword");
+    }
 
-    res.redirect("/auth/forgetPasswordOtp"); // Redirect to OTP verification page
+    req.session.otp = await generateRandomOTP();
+    req.session.otpExpiresAt = Date.now() + 10 * 60 * 1000;
+    req.session.otpAttempts = 0;
+    delete req.session.passwordResetVerifiedAt;
+    const delivery = await emailOtp(req.session.otp, req.session.value);
+    if (!delivery.success) {
+      throw new Error("OTP email delivery failed.");
+    }
+
+    res.redirect("/auth/forgetPasswordOtp");
   } catch (error) {
     console.error("Error in sending OTP:", error);
-    req.session.error = "Something went wrong. Please try again."; // Set error message
-    res.redirect("/auth/forgetPassword"); // Redirect back to the forget password page
+    req.session.error = "We could not send the code. Please try again.";
+    res.redirect("/auth/forgetPassword");
   }
 };

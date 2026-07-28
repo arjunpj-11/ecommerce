@@ -15,10 +15,22 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// Generate invoice for a specific order
+async function findOwnedOrder(req, orderId) {
+  const user = await User.findById(req.session.userId).select(
+    "userId username email profileImage",
+  );
+  if (!user) return { user: null, order: null };
+
+  const order = await Order.findOne({
+    _id: orderId,
+    userId: user.userId,
+  }).populate("variant");
+  return { user, order };
+}
+
 exports.generateInvoice = async (req, res) => {
   try {
-    const order = await Order.findOne({ _id: req.params.orderId });
+    const { order } = await findOwnedOrder(req, req.params.orderId);
     if (!order) return res.status(404).send("Order not found");
 
     const doc = new PDFDocument();
@@ -34,24 +46,21 @@ exports.generateInvoice = async (req, res) => {
     doc.fontSize(20).text("Invoice", { align: "center" });
     doc.moveDown();
 
-    // Order details
     doc.fontSize(12);
     doc.text(`Order ID: ${order.orderId}`);
     doc.text(`Date: ${order.orderDate.toLocaleDateString()}`);
     doc.moveDown();
 
-    // Product details
     doc.text(`Product: ${order.name}`);
     doc.text(`Size: ${order.size}`);
     doc.text(`Quantity: ${order.quantity}`);
-    doc.text(`Price per item: $${order.price.toFixed(2)}`);
-    doc.text(`Shipping: $20.00`);
+    doc.text(`Price per item: ₹${order.price.toFixed(2)}`);
+    doc.text("Shipping: ₹20.00");
     doc.moveDown();
 
-    // Total amount
     doc.fontSize(14);
     doc.text(
-      `Total Amount: $${(order.price * order.quantity + 20).toFixed(2)}`,
+      `Total Amount: ₹${(order.price * order.quantity + 20).toFixed(2)}`,
       { bold: true },
     );
 
@@ -61,10 +70,15 @@ exports.generateInvoice = async (req, res) => {
   }
 };
 
-// Retry payment for a specific order
 exports.retryPayment = async (req, res) => {
   try {
-    const order = await Order.findOne({ _id: req.params.orderId });
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+      return res
+        .status(503)
+        .json({ success: false, message: "Online payments are unavailable." });
+    }
+
+    const { order } = await findOwnedOrder(req, req.params.orderId);
     if (!order) return res.status(404).json({ success: false });
 
     const amount = (order.price * order.quantity + 20) * 100; // Amount in paise
@@ -74,6 +88,11 @@ exports.retryPayment = async (req, res) => {
       receipt: order.orderId,
       payment_capture: 1,
     });
+    order.paymentDetails = {
+      ...(order.paymentDetails || {}),
+      retryOrderId: razorpayOrder.id,
+    };
+    await order.save();
 
     res.json({
       success: true,
@@ -85,17 +104,26 @@ exports.retryPayment = async (req, res) => {
   }
 };
 
-// Verify the retry payment
 exports.verifyRetryPayment = async (req, res) => {
   try {
     const { razorpay_payment_id, razorpay_order_id, orderId } = req.body;
 
-    const order = await Order.findOne({ _id: orderId });
+    const { order } = await findOwnedOrder(req, orderId);
     if (!order) return res.status(404).json({ success: false });
 
     const payment = await razorpay.payments.fetch(razorpay_payment_id);
+    const expectedAmount = Math.round(
+      (order.price * order.quantity + 20) * 100,
+    );
+    const retryOrderId = order.paymentDetails?.retryOrderId;
 
-    if (payment.status === "captured") {
+    if (
+      retryOrderId &&
+      razorpay_order_id === retryOrderId &&
+      payment.order_id === retryOrderId &&
+      payment.amount === expectedAmount &&
+      payment.status === "captured"
+    ) {
       order.status = "Pending";
       order.paymentStatus = "Paid";
       await order.save();
@@ -109,14 +137,9 @@ exports.verifyRetryPayment = async (req, res) => {
   }
 };
 
-// Get details of a specific order
 exports.getOrderDetails = async (req, res) => {
   try {
-    const order = await Order.findOne({ _id: req.params.orderId }).populate(
-      "variant",
-    );
-    const existence = await Refund.findOne({ order: req.params.orderId });
-    const isThere = existence ? true : false;
+    const { user, order } = await findOwnedOrder(req, req.params.orderId);
 
     if (!order) {
       return res.status(404).render("error", {
@@ -124,6 +147,8 @@ exports.getOrderDetails = async (req, res) => {
         error: { status: 404, stack: "" },
       });
     }
+    const existence = await Refund.findOne({ order: order._id });
+    const isThere = Boolean(existence);
 
     const categoriesWithSubs = await MainCategory.aggregate([
       {
@@ -142,6 +167,7 @@ exports.getOrderDetails = async (req, res) => {
 
     res.render("../views/pages/user/orderOverview", {
       order,
+      user,
       categoriesWithSubs,
       isThere,
     });
@@ -153,11 +179,10 @@ exports.getOrderDetails = async (req, res) => {
   }
 };
 
-// Create a refund request for a specific order
 exports.createRefundRequest = async (req, res) => {
   try {
     const session = req.session.userId;
-    const order = await Order.findOne({ _id: req.params.orderId });
+    const { order } = await findOwnedOrder(req, req.params.orderId);
     if (!order) {
       return res.status(404).json({
         success: false,

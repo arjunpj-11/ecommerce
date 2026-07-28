@@ -23,14 +23,15 @@ router.use("/wallet", isAuthenticated, wallet);
 router.use("/orderOverview", isAuthenticated, orderOverview);
 
 router.post("/logout", async (req, res) => {
-  try {
-    // Only clear admin-specific session data
-    req.session.isAuthenticated = false; // Clear admin authentication
-    res.redirect("/auth/login");
-  } catch (error) {
-    console.error("Logout error:", error);
-    res.status(500).json({ message: "Internal server error during logout" });
-  }
+  req.session.destroy((error) => {
+    if (error) {
+      console.error("Logout error:", error);
+      return res.status(500).json({ message: "We could not log you out." });
+    }
+
+    res.clearCookie("arni.sid");
+    return res.redirect("/auth/login");
+  });
 });
 
 module.exports = router;

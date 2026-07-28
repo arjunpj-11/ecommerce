@@ -22,19 +22,31 @@ exports.getSigninOtp = async (req, res) => {
 // POST route for OTP verification
 exports.verifyOtp = async (req, res) => {
   try {
-    // Ensure the OTP and session OTP exist
-    if (!req.session.otp) {
+    if (
+      !req.session.otp ||
+      !req.session.otpExpiresAt ||
+      Date.now() > req.session.otpExpiresAt
+    ) {
+      delete req.session.otp;
+      delete req.session.otpExpiresAt;
       req.session.error = "Session expired. Please request a new OTP.";
-      return res.redirect("/auth/otp"); // Redirect to OTP page if session OTP is missing
+      return res.redirect("/auth/otp");
     }
 
-    // Extract and combine entered OTP from req.body
-    req.session.enteredOtp = Object.values(req.body).join("").trim();
+    const enteredOtp = Object.values(req.body).join("").trim();
+    req.session.otpAttempts = (req.session.otpAttempts || 0) + 1;
 
-    // Compare entered OTP with session OTP
-    if (req.session.enteredOtp === req.session.otp) {
-      // Clear OTP-related session data after successful verification
+    if (req.session.otpAttempts > 5) {
       delete req.session.otp;
+      delete req.session.otpExpiresAt;
+      req.session.error = "Too many attempts. Please request a new code.";
+      return res.redirect("/auth/otp");
+    }
+
+    if (enteredOtp === req.session.otp) {
+      delete req.session.otp;
+      delete req.session.otpExpiresAt;
+      delete req.session.otpAttempts;
 
       try {
         // Ensure all required registration data exists
@@ -51,7 +63,6 @@ exports.verifyOtp = async (req, res) => {
           password: req.session.password,
         });
 
-        console.log("User  created:", user);
         req.session.userId = user._id; // Store user ID in session
         req.session.isAuthenticated = true; // Set authentication status
 
@@ -69,8 +80,8 @@ exports.verifyOtp = async (req, res) => {
         return res.redirect("/auth/register"); // Redirect to registration page on error
       }
     } else {
-      req.session.error = "Invalid OTP. Please try again.";
-      return res.redirect("/auth/otp"); // Redirect back to OTP page if OTP is invalid
+      req.session.error = "That code is incorrect. Please try again.";
+      return res.redirect("/auth/otp");
     }
   } catch (error) {
     console.error("Error in OTP verification:", error);
@@ -83,21 +94,21 @@ exports.verifyOtp = async (req, res) => {
 // POST route for resending OTP
 exports.resendOtp = async (req, res) => {
   try {
-    req.session.otp = await generateRandomOTP(); // Generate a new OTP
-    await emailOtp(req.session.otp, req.session.value); // Send OTP to email or phone number
-    console.log(req.session.otp);
-    console.log(req.session.value);
+    if (!req.session.value || !req.session.username || !req.session.password) {
+      return res.status(400).json({
+        message: "Your session expired. Please start registration again.",
+      });
+    }
 
-    // Clear OTP after 10 hours
-    setTimeout(
-      () => {
-        delete req.session.otp; // Clear OTP from session
-        delete req.session.enteredOtp; // Clear entered OTP from session
-      },
-      1000 * 60 * 60 * 10,
-    ); // 10 hours expiration
+    req.session.otp = await generateRandomOTP();
+    req.session.otpExpiresAt = Date.now() + 10 * 60 * 1000;
+    req.session.otpAttempts = 0;
+    const delivery = await emailOtp(req.session.otp, req.session.value);
+    if (!delivery.success) {
+      throw new Error("OTP email delivery failed.");
+    }
 
-    res.status(200).json({ message: "OTP resent successfully." }); // Return success message
+    res.status(200).json({ message: "A new verification code has been sent." });
   } catch (error) {
     console.error("Error resending OTP:", error);
     req.session.error = "Failed to resend OTP. Please try again later.";

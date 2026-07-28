@@ -3,14 +3,14 @@ const MainCategory = require("../../models/mainCategory");
 
 // Allowed pre-created avatars
 const ALLOWED_AVATARS = [
-  "/images/avatars/avatar-1.png",
-  "/images/avatars/avatar-2.png",
-  "/images/avatars/avatar-3.png",
-  "/images/avatars/avatar-4.png",
-  "/images/avatars/avatar-5.png",
-  "/images/avatars/avatar-6.png",
-  "/images/avatars/avatar-7.png",
-  "/images/avatars/avatar-8.png",
+  "/images/avatars/avatar-1.svg",
+  "/images/avatars/avatar-2.svg",
+  "/images/avatars/avatar-3.svg",
+  "/images/avatars/avatar-4.svg",
+  "/images/avatars/avatar-5.svg",
+  "/images/avatars/avatar-6.svg",
+  "/images/avatars/avatar-7.svg",
+  "/images/avatars/avatar-8.svg",
 ];
 
 // GET user profile

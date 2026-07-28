@@ -17,17 +17,14 @@ async function sendOtpToEmail(otp, email) {
       },
     });
 
-    // Mail options
     const mailOptions = {
-      from: process.env.EMAIL_USER, // Sender's email address
-      to: email, // Recipient's email address
-      subject: "Your OTP Code", // Email subject
-      text: `Your One-Time Password (OTP) is: ${otp}. It is valid for 15 minutes.`, // OTP message
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Your ARNI verification code",
+      text: `Your ARNI verification code is ${otp}. It is valid for 10 minutes. If you did not request this code, you can ignore this email.`,
     };
 
-    // Send OTP email
-    const info = await transporter.sendMail(mailOptions);
-    console.log("✅ OTP sent successfully:", info.response);
+    await transporter.sendMail(mailOptions);
 
     return { success: true, message: "OTP sent successfully" };
   } catch (error) {

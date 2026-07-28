@@ -122,6 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "Please fix the highlighted fields before logging in.",
         "error",
       );
+      (isEmailOrPhoneValid ? password : emailOrPhone)?.focus();
       return;
     }
 
@@ -136,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const formData = {
         emailOrPhone: emailOrPhone.value.trim(),
-        password: password.value.trim(),
+        password: password.value,
       };
 
       const response = await fetch("/auth/login/loginAuth", {
@@ -162,6 +163,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data === "admin") {
         showToast("Admin login successful. Redirecting...", "success");
         window.location.href = "/admin/dashboard";
+        return;
+      }
+
+      if (data === "blocked") {
+        window.location.href = "/auth/blocked";
         return;
       }
 
@@ -198,6 +204,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const toast = document.createElement("div");
     toast.className = `toast ${type}`;
     toast.textContent = message;
+    toast.setAttribute("role", type === "error" ? "alert" : "status");
+    toast.setAttribute("aria-live", type === "error" ? "assertive" : "polite");
 
     toastContainer.appendChild(toast);
 

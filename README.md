@@ -14,50 +14,16 @@ The frontend is rendered using EJS, while Node.js, Express.js, and MongoDB handl
 
 ## Why I Built It
 
-The main purpose of Arni was to understand how a complete full-stack application works.
+The main purpose of Arni was to understand how a complete full-stack application works in practice: how browser interactions reach controllers, how business rules shape database operations, and how authentication, payments, inventory, and order state fit together.
 
-  HEAD
-During development, I learned how:
+Building it gave me hands-on experience with:
 
-- 🔐 User registration & login
-- 🏠 Home page with featured products
-- 🔍 Product search functionality
-- 🗂️ Browse by categories & subcategories
-- 📦 Product listing & detailed product view
-- 🛒 Cart management (add / update / remove)
-- 💳 Secure checkout & payment integration
-- 💰 Razorpay payment gateway
-- 🎟️ Apply coupons & discounts
-- 📍 Address management
-- 📦 Order management (My Orders)
-- 👤 User profile management
-- 💼 Wallet system
-- 🔁 Order cancellation & returns
-
-
-* Frontend pages communicate with backend routes
-* Controllers handle application logic
-* MongoDB stores users, products, orders, and other data
-* Authentication and sessions maintain logged-in users
-* Products and variants are managed
-* Shopping carts and checkout flows work
-* Online payment gateways are integrated
-* Admin and user workflows are separated
-* A large application can be divided into routes, controllers, models, and views
-
-  HEAD
-I faced many challenges while building the project, especially during the early stages. Solving those problems helped me gain a much clearer understanding of full-stack development.
-  
-- 🔐 Admin authentication
-- 📊 Dashboard with sales analytics
-- 👥 User management
-- 📦 Order management
-- 🛍️ Product & variant management
-- 🏷️ Category & subcategory management
-- 🎟️ Coupon management
-- 🎨 Banner management
-- 📊 Sales & offer management
-   af16d00 (Format code with Prettier and clean up controller comments)
+- Designing separate customer and administrator workflows
+- Structuring a large Express application with routes, controllers, models, and views
+- Maintaining authenticated sessions and protected routes
+- Modelling products, variants, inventory, carts, orders, coupons, refunds, and wallets
+- Integrating Razorpay, Cloudinary, email OTPs, and social authentication
+- Handling validation, responsive interfaces, errors, and user feedback across a multi-step purchase journey
 
 ---
 
@@ -65,38 +31,38 @@ I faced many challenges while building the project, especially during the early 
 
 ### User Features
 
-* User registration and login
-* Session-based authentication
-* Home page with featured products
-* Product search
-* Category and subcategory browsing
-* Product listing and product details
-* Product variant selection
-* Shopping-cart management
-* Address management
-* Checkout flow
-* Razorpay payment integration
-* Cash-on-delivery support, where available
-* Coupon and discount application
-* Order placement and order history
-* Order cancellation
-* Product return requests
-* User profile management
-* Wallet system
+- User registration and login
+- Session-based authentication
+- Home page with featured products
+- Product search
+- Category and subcategory browsing
+- Product listing and product details
+- Product variant selection
+- Shopping-cart management
+- Address management
+- Checkout flow
+- Razorpay payment integration
+- Cash-on-delivery support, where available
+- Coupon and discount application
+- Order placement and order history
+- Order cancellation
+- Product return requests
+- User profile management
+- Wallet system
 
 ### Admin Features
 
-* Separate admin authentication
-* Sales and order dashboard
-* User management
-* Order management
-* Product management
-* Product variant management
-* Category and subcategory management
-* Coupon management
-* Offer management
-* Banner management
-* Sales analytics
+- Separate admin authentication
+- Sales and order dashboard
+- User management
+- Order management
+- Product management
+- Product variant management
+- Category and subcategory management
+- Coupon management
+- Offer management
+- Banner management
+- Sales analytics
 
 ---
 
@@ -211,9 +177,9 @@ The admin dashboard provides controls for products, users, categories, coupons, 
 
 Make sure the following are installed:
 
-* Node.js
-* npm
-* MongoDB, either locally or through MongoDB Atlas
+- Node.js
+- npm
+- MongoDB, either locally or through MongoDB Atlas
 
 ### 1. Clone the Repository
 
@@ -262,19 +228,19 @@ Arni was an important project in my development journey because it was the first
 
 Through this project, I gained practical experience with:
 
-* Node.js and Express.js
-* MongoDB schemas and database operations
-* EJS server-side rendering
-* MVC-style application structure
-* User and admin authentication
-* Session management
-* Frontend and backend integration
-* Payment-gateway integration
-* Cart and checkout logic
-* Coupon and discount calculations
-* Order-management workflows
-* Debugging a large application
-* Organizing code into reusable modules
+- Node.js and Express.js
+- MongoDB schemas and database operations
+- EJS server-side rendering
+- MVC-style application structure
+- User and admin authentication
+- Session management
+- Frontend and backend integration
+- Payment-gateway integration
+- Cart and checkout logic
+- Coupon and discount calculations
+- Order-management workflows
+- Debugging a large application
+- Organizing code into reusable modules
 
 This project gave me the foundation I needed to move into React, TypeScript, modern frontend development, and larger projects such as Imminiq.
 
@@ -282,44 +248,22 @@ This project gave me the foundation I needed to move into React, TypeScript, mod
 
 ## Project Scope
 
-  HEAD
-Arni was built as a learning-focused full-stack project.
+Arni is a portfolio-grade, end-to-end e-commerce application built as a learning project. It includes a complete purchase workflow, a separate administration surface, responsive server-rendered pages, payment and media integrations, and modular MVC-style organization.
 
-It demonstrates a complete e-commerce workflow, but it should not be considered a finished commercial e-commerce service. Some areas would require additional security reviews, automated testing, accessibility improvements, performance optimization, and operational monitoring before being used in a real production business.
-  
-- 🧩 MVC pattern via Express Generator
-- 🛍️ Complete end-to-end e-commerce workflow
-- 💳 Razorpay payment integration
-- 🎟️ Coupon & discount system
-- 📊 Advanced admin dashboard
-- ⚡ Server-side rendering with EJS
-- 📦 Scalable and modular architecture
-   af16d00 (Format code with Prettier and clean up controller comments)
+Before use as a real commercial store, the deployment should also include a persistent production session store, centralized monitoring, backups, payment-provider production credentials, and a formal security review.
 
 ---
 
 ## Possible Improvements
 
-  HEAD
-* Responsive mobile experience
-* Product reviews and ratings
-* Invoice generation
-* Real-time order notifications
-* Live delivery tracking
-* Improved accessibility
-* Automated unit and integration tests
-* Stronger input validation and security controls
-* REST API for a React or Next.js frontend
-* Better product recommendation features
-* Improved reporting and sales analytics
-
-- [ ] Product reviews & ratings
-- [ ] Real-time notifications
-- [ ] Live order tracking
-- [ ] Fully responsive mobile UI
-- [ ] REST API for React / Next.js frontend
-- [ ] Invoice generation
-   af16d00 (Format code with Prettier and clean up controller comments)
+- Product reviews and ratings
+- Real-time order notifications
+- Live delivery tracking
+- Broader automated unit and integration test coverage
+- Centralized logs and operational monitoring
+- REST API for a React or Next.js frontend
+- Better product recommendation features
+- Improved reporting and sales analytics
 
 ---
 
@@ -331,9 +275,6 @@ This repository is shared to showcase my first complete full-stack project and d
 
 > Arni was the project that helped me understand how frontend, backend, databases, authentication, payments, and business logic come together inside a complete application.
 
-  HEAD
-
-  
 This project is licensed under the MIT License.
 
 ---
@@ -345,4 +286,3 @@ This project is licensed under the MIT License.
 ---
 
 > 💡 Built as a full-stack implementation of a real-world e-commerce platform to explore scalable architecture, payment integration, and admin management systems.
-   af16d00 (Format code with Prettier and clean up controller comments)

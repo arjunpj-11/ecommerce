@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
   <link rel="stylesheet" href="/stylesheets/authentication/signin.css">
+  <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
   <canvas id="backgroundCanvas" aria-hidden="true"></canvas>
@@ -58,16 +59,17 @@
           </div>
 
           <div class="field-group">
-            <label for="emailOrPhone">Email or Phone Number</label>
+            <label for="emailOrPhone">Email Address</label>
             <div class="input-wrap">
               <i class="fas fa-envelope"></i>
               <input
                 type="text"
                 name="emailOrPhone"
-                placeholder="Email or Phone Number"
+                placeholder="Email Address"
                 id="emailOrPhone"
                 value="<%= typeof detail !== 'undefined' && detail.emailOrPhone ? detail.emailOrPhone : '' %>"
                 autocomplete="email"
+                inputmode="email"
                 required>
             </div>
             <p class="validation iValid" id="emailOrPhoneMessage"></p>

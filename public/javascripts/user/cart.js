@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     arniCategories = [];
   }
 
+  initializeCartActions();
   initializeCanvas();
   initializeNavbar();
   initializeSearch();
@@ -37,11 +38,30 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeColorCircles();
   initializeReveal();
 
-  window.updateQuantity = updateQuantity;
-  window.removeItem = removeItem;
-  window.selectCoupon = selectCoupon;
-  window.applyCoupon = applyCoupon;
-  window.proceedToCheckout = proceedToCheckout;
+  function initializeCartActions() {
+    document.addEventListener("click", (event) => {
+      const control = event.target.closest("[data-cart-action]");
+      if (!control) return;
+
+      const action = control.dataset.cartAction;
+
+      if (action === "quantity") {
+        updateQuantity(
+          control.dataset.variantId,
+          Number(control.dataset.change),
+          control.dataset.size,
+        );
+      } else if (action === "remove") {
+        removeItem(event, control.dataset.variantId);
+      } else if (action === "select-coupon") {
+        selectCoupon(control.dataset.couponCode);
+      } else if (action === "apply-coupon") {
+        applyCoupon();
+      } else if (action === "checkout") {
+        proceedToCheckout();
+      }
+    });
+  }
 
   function initializeNavbar() {
     if (!navbar) return;
@@ -264,8 +284,31 @@ document.addEventListener("DOMContentLoaded", () => {
     document
       .querySelectorAll(".color-circle[data-color-value]")
       .forEach((circle) => {
-        circle.style.backgroundColor = circle.dataset.colorValue || "#d1d5db";
+        circle.style.backgroundColor = resolveColorValue(
+          circle.dataset.colorValue,
+        );
       });
+  }
+
+  function resolveColorValue(value) {
+    const rawValue = String(value || "").trim();
+    if (!rawValue) return "#d1d5db";
+    if (window.CSS?.supports?.("color", rawValue)) return rawValue;
+
+    const normalized = rawValue
+      .toLowerCase()
+      .replace(
+        /\b(pure|onyx|forest|midnight|royal|deep|soft|classic|vintage)\b/g,
+        "",
+      )
+      .trim();
+    if (window.CSS?.supports?.("color", normalized)) return normalized;
+
+    const hash = [...rawValue].reduce(
+      (total, character) => total + character.charCodeAt(0),
+      0,
+    );
+    return `hsl(${hash % 360} 42% 48%)`;
   }
 
   function initializeReveal() {
@@ -535,6 +578,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const toast = document.createElement("div");
     toast.className = `toast ${type}`;
     toast.textContent = message;
+    toast.setAttribute("role", type === "error" ? "alert" : "status");
+    toast.setAttribute("aria-live", type === "error" ? "assertive" : "polite");
 
     toastContainer.appendChild(toast);
 

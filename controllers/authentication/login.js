@@ -18,68 +18,71 @@ exports.getLoginPage = (req, res) => {
 
 // POST login authentication
 exports.loginAuth = async (req, res) => {
-  const inputVal = req.body.emailOrPhone;
-  const plainPassword = req.body.password;
+  const rawInput = String(req.body.emailOrPhone || "").trim();
+  const inputVal = rawInput.includes("@") ? rawInput.toLowerCase() : rawInput;
+  const plainPassword = String(req.body.password || "");
   req.session.value = inputVal;
 
   try {
     if (!inputVal || !plainPassword) {
-      req.session.error = "Email/Phone and Password are required";
+      req.session.error = "Email or phone number and password are required.";
       return res.send("undone");
     }
 
-    let user;
-    const isBlocked = await User.findOne({
-      $or: [{ email: inputVal }, { phone: inputVal }],
-      status: "Suspended",
-    });
+    const user = await User.findOne(
+      inputVal.includes("@") ? { email: inputVal } : { phone: inputVal },
+    );
 
-    if (isBlocked) {
+    if (!user) {
+      req.session.emailError = "No account matches those details.";
+      return res.send("new");
+    }
+
+    if (user.status === "Suspended") {
       req.session.isAuthenticated = false;
       return res.send("blocked");
     }
 
-    if (isNaN(inputVal)) {
-      user = await User.findOne({ email: inputVal });
-    } else {
-      user = await User.findOne({ phone: inputVal });
-    }
-
-    if (!user) {
-      console.log("User not found");
-      req.session.emailError = "User not found";
-      return res.send("new");
+    if (!user.password) {
+      req.session.error =
+        "This account uses social login. Continue with Google or Facebook.";
+      return res.send("undone");
     }
 
     const isMatch = await user.comparePassword(plainPassword);
 
     if (user.role === "Admin" && isMatch) {
-      clearSession(req);
-      req.session.isChecked = true;
+      await establishSession(req, {
+        isChecked: true,
+      });
       return res.send("admin");
     }
 
     if (isMatch) {
-      console.log("Authentication Successful!");
-      clearSession(req);
-      req.session.isAuthenticated = true;
-      req.session.userId = user._id;
+      await establishSession(req, {
+        isAuthenticated: true,
+        userId: user._id,
+      });
       return res.send("done");
     } else {
-      req.session.error = "Invalid credentials";
+      req.session.error = "The password you entered is incorrect.";
       return res.send("undone");
     }
   } catch (err) {
     console.error("Error during login:", err);
-    req.session.error = err.message || "Internal Server Error";
-    return res.status(500).send("Internal Server Error");
+    req.session.error = "We could not log you in. Please try again.";
+    return res.status(500).send("error");
   }
 };
 
-// Helper function to clear session data
-function clearSession(req) {
-  delete req.session.username; // Clear username from session
-  delete req.session.phone; // Clear phone from session
-  delete req.session.password; // Clear password from session
-  delete req.session.value; // Clear email or phone from session
+function establishSession(req, values) {
+  return new Promise((resolve, reject) => {
+    req.session.regenerate((error) => {
+      if (error) return reject(error);
+      Object.assign(req.session, values);
+      req.session.save((saveError) =>
+        saveError ? reject(saveError) : resolve(),
+      );
+    });
+  });
 }

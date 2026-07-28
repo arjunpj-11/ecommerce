@@ -655,8 +655,8 @@ class addProductManager {
                 <div class="add-color-header">
                     <div class="add-color-preview" style="background-color: ${variant.color}"></div>
                     <span>Color: ${variant.color}</span>
-                    <button type="button" class="add-save-variant" onclick="productManager.saveVariant('${variant.id}')">Save</button>
-                    <button type="button" class="add-remove-variant" onclick="productManager.removeVariant('${variant.id}')">Remove</button>
+                    <button type="button" class="add-save-variant" data-variant-action="save" data-variant-id="${variant.id}">Save</button>
+                    <button type="button" class="add-remove-variant" data-variant-action="remove" data-variant-id="${variant.id}">Remove</button>
                 </div>
                 <div class="add-variant-content">
                     <div class="add-variant-images">
@@ -677,7 +677,9 @@ class addProductManager {
                                     <input type="number" 
                                            value="${sizeData.stock}"
                                            min="0"
-                                           onchange="productManager.updateStock('${variant.id}', ${sizeIndex}, this.value)"
+                                           data-variant-action="stock"
+                                           data-variant-id="${variant.id}"
+                                           data-size-index="${sizeIndex}"
                                            placeholder="Stock count">
                                 </div>
                             `,
@@ -692,7 +694,7 @@ class addProductManager {
                                     (tag, index) => `
                                     <span class="add-tag">
                                         ${tag}
-                                        <button onclick="productManager.removeTag('${variant.id}', ${index})">&times;</button>
+                                        <button type="button" data-variant-action="remove-tag" data-variant-id="${variant.id}" data-tag-index="${index}">&times;</button>
                                     </span>
                                 `,
                                   )
@@ -702,16 +704,8 @@ class addProductManager {
                                 <input type="text" 
                                        class="add-tag-input" 
                                        placeholder="Add a tag"
-                                       onkeypress="if(event.key === 'Enter') { 
-                                           event.preventDefault();
-                                           productManager.addTag('${variant.id}', this.value); 
-                                           this.value = ''; 
-                                       }">
-                                <button onclick="
-                                    const input = this.previousElementSibling;
-                                    productManager.addTag('${variant.id}', input.value);
-                                    input.value = '';
-                                ">Add</button>
+                                       data-variant-id="${variant.id}">
+                                <button type="button" data-variant-action="add-tag" data-variant-id="${variant.id}">Add</button>
                             </div>
                         </div>
                     </div>
@@ -734,6 +728,43 @@ class addProductManager {
 // Initialize the product manager when the DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
   window.productManager = new addProductManager();
+
+  const variantsContainer = document.getElementById("add-variantsContainer");
+  variantsContainer?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-variant-action]");
+    if (!button) return;
+
+    const { variantAction, variantId, tagIndex } = button.dataset;
+    if (variantAction === "save") {
+      productManager.saveVariant(variantId);
+    } else if (variantAction === "remove") {
+      productManager.removeVariant(variantId);
+    } else if (variantAction === "remove-tag") {
+      productManager.removeTag(variantId, Number(tagIndex));
+    } else if (variantAction === "add-tag") {
+      const input = button.previousElementSibling;
+      productManager.addTag(variantId, input.value);
+      input.value = "";
+    }
+  });
+
+  variantsContainer?.addEventListener("change", (event) => {
+    const input = event.target.closest('[data-variant-action="stock"]');
+    if (!input) return;
+    productManager.updateStock(
+      input.dataset.variantId,
+      Number(input.dataset.sizeIndex),
+      input.value,
+    );
+  });
+
+  variantsContainer?.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" || !event.target.matches(".add-tag-input"))
+      return;
+    event.preventDefault();
+    productManager.addTag(event.target.dataset.variantId, event.target.value);
+    event.target.value = "";
+  });
 });
 
 document.addEventListener("DOMContentLoaded", function () {

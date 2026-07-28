@@ -6,6 +6,7 @@
   <title>Enter OTP - ARNI</title>
 
   <link rel="stylesheet" href="/stylesheets/authentication/signinotp.css" />
+  <link rel="stylesheet" href="/stylesheets/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
 
@@ -40,7 +41,7 @@
             <a href="/auth/signin" class="change-email">Change Email</a>
           <% } else { %>
             <p>We have sent an OTP to <strong><%= value %></strong></p>
-            <a href="/auth/signin" class="change-email">Change Phone Number</a>
+            <a href="/auth/signin" class="change-email">Change Email Address</a>
           <% } %>
         </div>
 

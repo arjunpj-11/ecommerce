@@ -26,15 +26,18 @@ router.use("/sales", authMiddleware, salesRouter);
 router.use("/banner", authMiddleware, bannerRouter);
 
 router.post("/logout", async (req, res) => {
-  try {
-    // Only clear admin-specific session data
-    req.session.isChecked = false; // Clear admin authentication
+  req.session.destroy((error) => {
+    if (error) {
+      console.error("Logout error:", error);
+      return res.status(500).json({ message: "We could not log you out." });
+    }
 
-    res.status(200).json({ message: "Logged out successfully" });
-  } catch (error) {
-    console.error("Logout error:", error);
-    res.status(500).json({ message: "Internal server error during logout" });
-  }
+    res.clearCookie("arni.sid");
+    return res.status(200).json({
+      success: true,
+      redirect: "/auth/login",
+    });
+  });
 });
 
 module.exports = router;

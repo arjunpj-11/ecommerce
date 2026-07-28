@@ -26,6 +26,7 @@
   <title>Shopping Cart - ARNI</title>
 
   <link rel="stylesheet" href="/stylesheets/user/cart.css" />
+  <link rel="stylesheet" href="/stylesheets/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
 
@@ -198,7 +199,8 @@
                 <button
                   type="button"
                   class="remove-link"
-                  onclick="removeItem(event, '<%= item.variantId %>')"
+                  data-cart-action="remove"
+                  data-variant-id="<%= item.variantId %>"
                 >
                   <i class="fas fa-trash"></i>
                   Remove
@@ -213,7 +215,10 @@
                 <button
                   class="quantity-btn"
                   type="button"
-                  onclick="updateQuantity('<%= item.variantId %>', -1, '<%= item.size %>')"
+                  data-cart-action="quantity"
+                  data-variant-id="<%= item.variantId %>"
+                  data-size="<%= item.size %>"
+                  data-change="-1"
                   <%= !item.inStock ? 'disabled' : '' %>
                   aria-label="Decrease quantity"
                 >
@@ -233,7 +238,10 @@
                 <button
                   class="quantity-btn"
                   type="button"
-                  onclick="updateQuantity('<%= item.variantId %>', 1, '<%= item.size %>')"
+                  data-cart-action="quantity"
+                  data-variant-id="<%= item.variantId %>"
+                  data-size="<%= item.size %>"
+                  data-change="1"
                   <%= !item.inStock ? 'disabled' : '' %>
                   aria-label="Increase quantity"
                 >
@@ -257,7 +265,7 @@
                 autocomplete="off"
               />
 
-              <button type="button" class="redeem-btn" onclick="applyCoupon()">
+              <button type="button" class="redeem-btn" data-cart-action="apply-coupon">
                 Apply
               </button>
             </div>
@@ -280,7 +288,8 @@
                   <button
                     type="button"
                     class="coupon-item"
-                    onclick="selectCoupon('<%= coupon.couponCode %>')"
+                    data-cart-action="select-coupon"
+                    data-coupon-code="<%= coupon.couponCode %>"
                   >
                     <span class="coupon-code"><%= coupon.couponCode %></span>
                     <span class="coupon-name"><%= coupon.couponName %></span>
@@ -318,7 +327,7 @@
             </div>
           </div>
 
-          <button class="checkout-btn full" type="button" onclick="proceedToCheckout()">
+          <button class="checkout-btn full" type="button" data-cart-action="checkout">
             Proceed to Checkout
             <i class="fas fa-arrow-right"></i>
           </button>
@@ -349,9 +358,7 @@
       <div class="footer-section">
         <h3>Follow Us</h3>
         <div class="social-links">
-          <a href="#">Instagram</a>
-          <a href="#">Facebook</a>
-          <a href="#">Twitter</a>
+          <a href="mailto:info@arni.com">Email ARNI</a>
         </div>
       </div>
     </div>

@@ -174,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "Please fix the highlighted fields before resetting your password.",
         "error",
       );
+      (isPasswordValid ? passwordConfirm : password)?.focus();
       return;
     }
 
@@ -192,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          password: password.value.trim(),
+          password: password.value,
         }),
       });
 
@@ -232,6 +233,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const toast = document.createElement("div");
     toast.className = `toast ${type}`;
     toast.textContent = message;
+    toast.setAttribute("role", type === "error" ? "alert" : "status");
+    toast.setAttribute("aria-live", type === "error" ? "assertive" : "polite");
 
     toastContainer.appendChild(toast);
 

@@ -17,22 +17,22 @@ router.use("/resetPassword", resetPasswordRouter);
 
 router.get("/terms", function (req, res, next) {
   res.render("../views/pages/authentication/terms", {
-    siteName: "Your Store Name",
-    currency: "USD",
-    returnPeriod: "30",
-    contactEmail: "support@yourstore.com",
-    contactPhone: "+1 (555) 123-4567",
-    lastUpdated: "December 29, 2024",
+    siteName: "ARNI",
+    currency: "INR",
+    returnPeriod: "7",
+    contactEmail: "info@arni.com",
+    contactPhone: null,
+    lastUpdated: "July 28, 2026",
   });
 });
 
 router.get("/privacy", function (req, res, next) {
   res.render("../views/pages/authentication/privacy", {
-    siteName: "Your Store Name",
-    minAge: "13",
-    privacyEmail: "privacy@yourstore.com",
-    companyAddress: "123 Fashion Street, City, Country",
-    lastUpdated: "December 29, 2024",
+    siteName: "ARNI",
+    minAge: "18",
+    privacyEmail: "info@arni.com",
+    companyAddress: "Kerala, India",
+    lastUpdated: "July 28, 2026",
   });
 });
 

@@ -7,7 +7,6 @@ const productDB = require("../../models/product");
 
 exports.getHomePage = async (req, res, next) => {
   req.session.mainCategoryId = req.query.id;
-  console.log("id:", req.query.id);
   try {
     let mainCategories = await mainCategory.find({});
     res.render("../views/pages/admin/subCategory", { mainCategories });
@@ -44,7 +43,6 @@ exports.getTableData = async (req, res, next) => {
 exports.updateOffer = async (req, res, next) => {
   let offer = req.body.offer;
   let Id = req.body.Id;
-  console.log(offer);
   try {
     await subCategory.updateOne(
       { _id: Id },
@@ -85,7 +83,6 @@ exports.searchSubCategories = async (req, res, next) => {
     let products = await productDB
       .aggregate([{ $group: { _id: "$subCategory", count: { $sum: 1 } } }])
       .exec();
-    console.log(subCategories, mainCategories, products);
     res.render("../views/partials/admin/subCategoryTable", {
       mainCategories,
       subCategories,
@@ -104,7 +101,6 @@ exports.createSubCategory = async (req, res, next) => {
       subCategoryName: name,
       mainCategory: req.session.mainCategoryId,
     });
-    console.log(exist);
     if (exist) {
       return res.send("exists");
     }
@@ -132,14 +128,12 @@ exports.createSubCategory = async (req, res, next) => {
 
 exports.editSubCategory = async (req, res, next) => {
   try {
-    console.log(req.body);
     let { croppedImage, name, id } = req.body;
     name = name.toLowerCase();
     const exist = await subCategory.findOne({
       subCategoryName: name,
       _id: { $ne: id },
     });
-    console.log(exist);
     if (exist) {
       return res.send("exists");
     }
@@ -149,7 +143,6 @@ exports.editSubCategory = async (req, res, next) => {
         .json({ error: "ID and Name are required fields." });
     }
     if (!croppedImage) {
-      console.log("No image provided, updating name only");
       await subCategory.updateOne({ _id: id }, { subCategoryName: name });
       return res.send("done");
     }
@@ -180,9 +173,7 @@ exports.inactivateSubCategory = async (req, res, next) => {
 };
 
 exports.activateSubCategory = async (req, res, next) => {
-  console.log(req.session.mainCategoryStatus);
   if (req.session.mainCategoryStatus === "inactive") {
-    console.log("main");
     return res.send("main");
   }
   try {

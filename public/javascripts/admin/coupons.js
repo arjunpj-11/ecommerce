@@ -42,19 +42,19 @@ function renderPagination() {
   if (totalPages > 1) {
     paginationHTML += `
             <button class="page-btn" ${currentPage === 1 ? "disabled" : ""} 
-                onclick="changePage(${currentPage - 1})">Previous</button>
+                data-page="${currentPage - 1}">Previous</button>
         `;
 
     for (let i = 1; i <= totalPages; i++) {
       paginationHTML += `
                 <button class="page-btn ${currentPage === i ? "active" : ""}" 
-                    onclick="changePage(${i})">${i}</button>
+                    data-page="${i}">${i}</button>
             `;
     }
 
     paginationHTML += `
             <button class="page-btn" ${currentPage === totalPages ? "disabled" : ""} 
-                onclick="changePage(${currentPage + 1})">Next</button>
+                data-page="${currentPage + 1}">Next</button>
         `;
   }
 
@@ -127,8 +127,8 @@ function renderCoupons() {
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <button class="action-btn" onclick="editCoupon('${coupon._id}')">Edit</button>
-                            <button class="action-btn" onclick="confirmDelete('${coupon._id}')">Delete</button>
+                            <button class="action-btn" data-coupon-action="edit" data-coupon-id="${coupon._id}">Edit</button>
+                            <button class="action-btn" data-coupon-action="delete" data-coupon-id="${coupon._id}">Delete</button>
                         </div>
                     </td>
                 </tr>
@@ -325,6 +325,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialize pagination and fetch initial data
   initPagination();
+  document.querySelector(".pagination")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-page]");
+    if (button && !button.disabled) changePage(Number(button.dataset.page));
+  });
+  document
+    .getElementById("couponsTableBody")
+    ?.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-coupon-action]");
+      if (!button) return;
+      if (button.dataset.couponAction === "edit") {
+        editCoupon(button.dataset.couponId);
+      } else {
+        confirmDelete(button.dataset.couponId);
+      }
+    });
   fetchCoupons();
 });
 

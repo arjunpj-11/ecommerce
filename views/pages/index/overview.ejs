@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="/stylesheets/index/overview.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
     <!-- ========== NAVBAR ========== -->
@@ -199,8 +200,9 @@
     type="button"
     data-variant-id="<%= v._id %>"
     data-color-value="<%= v.color || '#d1d5db' %>"
-    data-color="<%= v.tags && v.tags[0] ? v.tags[0] : 'color' %>"
-    aria-label="Select <%= v.tags && v.tags[0] ? v.tags[0] : 'color' %>">
+    data-color="<%= v.color || 'Color' %>"
+    title="<%= v.color || 'Color' %>"
+    aria-label="Select <%= v.color || 'color' %>">
 </button>
                                 <% }); %>
                             </div>
@@ -296,19 +298,17 @@
                 </div>
                 <div class="footer-col">
                     <h4>Help</h4>
-                    <a href="/returns">Returns</a>
-                    <a href="/size-guide">Sizing Guide</a>
-                    <a href="/contact">Contact Us</a>
+                    <a href="/auth/terms">Returns & Terms</a>
+                    <a href="/auth/privacy">Privacy</a>
+                    <a href="mailto:info@arni.com">Contact Us</a>
                 </div>
                 <div class="footer-col">
                     <h4>Connect</h4>
-                    <a href="#">Instagram</a>
-                    <a href="#">Facebook</a>
-                    <a href="#">Twitter</a>
+                    <a href="mailto:info@arni.com">Email ARNI</a>
                 </div>
             </div>
             <div class="footer-bottom">
-                <span>© 2025 ARNI. All rights reserved.</span>
+                <span>© <%= new Date().getFullYear() %> ARNI. All rights reserved.</span>
                 <span>info@arni.com</span>
             </div>
         </div>

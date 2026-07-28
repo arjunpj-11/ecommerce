@@ -4,6 +4,9 @@ document.addEventListener("DOMContentLoaded", function () {
   initCategoryDropdown();
   initRevealAnimations();
   initWalletEnterSubmit();
+  document
+    .getElementById("addMoneyButton")
+    ?.addEventListener("click", addMoneyToWallet);
 });
 
 function initBackgroundCanvas() {

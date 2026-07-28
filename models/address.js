@@ -7,6 +7,16 @@ const addressSchema = new mongoose.Schema({
     ref: "User",
     required: [true, "User reference is required"],
   },
+  name: {
+    type: String,
+    trim: true,
+    maxlength: 100,
+  },
+  phone: {
+    type: String,
+    trim: true,
+    match: [/^[+]?[0-9]{10,15}$/, "Enter a valid phone number"],
+  },
   street: {
     type: String,
     required: [true, "Street address is required"],
@@ -25,6 +35,8 @@ const addressSchema = new mongoose.Schema({
   postalCode: {
     type: String,
     required: [true, "Postal code is required"],
+    trim: true,
+    match: [/^[0-9]{6}$/, "Enter a valid 6-digit postal code"],
   },
   country: {
     type: String,

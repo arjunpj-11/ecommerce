@@ -1,8 +1,28 @@
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".color-btn").forEach((button) => {
-    const color = button.dataset.colorValue || "#d1d5db";
-    button.style.backgroundColor = color;
+    button.style.backgroundColor = resolveColorValue(button.dataset.colorValue);
   });
+
+  function resolveColorValue(value) {
+    const rawValue = String(value || "").trim();
+    if (!rawValue) return "#d1d5db";
+    if (window.CSS?.supports?.("color", rawValue)) return rawValue;
+
+    const normalized = rawValue
+      .toLowerCase()
+      .replace(
+        /\b(pure|onyx|forest|midnight|royal|deep|soft|classic|vintage)\b/g,
+        "",
+      )
+      .trim();
+    if (window.CSS?.supports?.("color", normalized)) return normalized;
+
+    const hash = [...rawValue].reduce(
+      (total, character) => total + character.charCodeAt(0),
+      0,
+    );
+    return `hsl(${hash % 360} 42% 48%)`;
+  }
   // =====================
   // SAFE CATEGORY DATA
   // =====================
@@ -325,6 +345,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const toast = document.createElement("div");
     toast.className = `toast ${type}`;
     toast.textContent = message;
+    toast.setAttribute("role", type === "error" ? "alert" : "status");
+    toast.setAttribute("aria-live", type === "error" ? "assertive" : "polite");
     document.body.appendChild(toast);
 
     setTimeout(() => {

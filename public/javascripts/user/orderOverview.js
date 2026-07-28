@@ -6,7 +6,26 @@ document.addEventListener("DOMContentLoaded", function () {
   initCategoryDropdown();
   initRevealAnimations();
   initTimelineAnimation();
+  initOrderActions();
 });
+
+function initOrderActions() {
+  document.addEventListener("click", (event) => {
+    const control = event.target.closest("[data-order-action]");
+    if (!control) return;
+
+    const action = control.dataset.orderAction;
+    if (action === "copy") {
+      copyOrderId();
+    } else if (action === "cancel") {
+      cancelOrder(control.dataset.orderId);
+    } else if (action === "retry-payment") {
+      retryPayment(control.dataset.orderId);
+    } else if (action === "refund") {
+      requestRefund(control.dataset.orderId, control.dataset.paymentMethod);
+    }
+  });
+}
 
 const path = window.location.pathname;
 const segments = path.split("/");
@@ -346,11 +365,6 @@ function retryPayment(orderId) {
         },
         theme: {
           color: "#106ebe",
-        },
-        modal: {
-          ondismiss: function () {
-            console.log("Payment window closed");
-          },
         },
       };
 

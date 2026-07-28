@@ -27,6 +27,7 @@
   <title>Checkout - ARNI</title>
 
   <link rel="stylesheet" href="/stylesheets/user/checkout.css" />
+  <link rel="stylesheet" href="/stylesheets/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
 
@@ -220,7 +221,7 @@
 
           <div class="address-list"></div>
 
-          <button class="btn-outline add-address-btn" type="button" onclick="showAddAddressModal()">
+          <button class="btn-outline add-address-btn" type="button" data-checkout-action="open-address">
             <i class="fas fa-plus"></i>
             Add New Address
           </button>
@@ -306,7 +307,7 @@
 
   <div id="addressModal" class="modal" aria-hidden="true">
     <div class="modal-content">
-      <button class="modal-close" type="button" onclick="closeAddressModal()" aria-label="Close modal">
+      <button class="modal-close" type="button" data-checkout-action="close-address" aria-label="Close modal">
         <i class="fas fa-times"></i>
       </button>
 
@@ -325,7 +326,7 @@
             Save Address
           </button>
 
-          <button type="button" class="btn-outline" onclick="closeAddressModal()">
+          <button type="button" class="btn-outline" data-checkout-action="close-address">
             Cancel
           </button>
         </div>
@@ -355,9 +356,7 @@
       <div class="footer-section">
         <h3>Follow Us</h3>
         <div class="social-links">
-          <a href="#">Instagram</a>
-          <a href="#">Facebook</a>
-          <a href="#">Twitter</a>
+          <a href="mailto:info@arni.com">Email ARNI</a>
         </div>
       </div>
     </div>

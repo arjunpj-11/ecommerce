@@ -37,16 +37,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const value = emailOrPhone.value.trim();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^[+]?[0-9]{10,15}$/;
 
     if (!value) {
-      setError(emailOrPhone, "Email or phone number is required.");
+      setError(emailOrPhone, "Email address is required.");
       emailOrPhoneError = true;
       return false;
     }
 
-    if (!emailRegex.test(value) && !phoneRegex.test(value)) {
-      setError(emailOrPhone, "Enter a valid email or phone number.");
+    if (!emailRegex.test(value)) {
+      setError(emailOrPhone, "Enter a valid email address.");
       emailOrPhoneError = true;
       return false;
     }
@@ -72,7 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!isValid) {
         event.preventDefault();
-        showToast("Please enter a valid email or phone number.", "error");
+        showToast("Please enter a valid email address.", "error");
+        emailOrPhone.focus();
       }
     });
   }
@@ -89,6 +89,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const toast = document.createElement("div");
     toast.className = `toast ${type}`;
     toast.textContent = message;
+    toast.setAttribute("role", type === "error" ? "alert" : "status");
+    toast.setAttribute("aria-live", type === "error" ? "assertive" : "polite");
 
     toastContainer.appendChild(toast);
 

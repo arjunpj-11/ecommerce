@@ -44,8 +44,8 @@ exports.getAllOrders = async (req, res) => {
 
     // Render the orders page with the fetched data
     res.render("../views/pages/user/orders", {
-      user: userId,
-      orders: orders,
+      user,
+      orders,
       pagination: {
         currentPage: page,
         totalPages: totalPages,

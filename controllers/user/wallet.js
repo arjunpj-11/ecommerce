@@ -1,6 +1,6 @@
 const Wallet = require("../../models/wallet");
 const MainCategory = require("../../models/mainCategory");
-const SubCategory = require("../../models/subCategory");
+const User = require("../../models/user");
 
 const walletController = {
   // GET wallet page with transactions
@@ -34,9 +34,14 @@ const walletController = {
 
       // Only keep the last 10 transactions
       wallet.transactions = wallet.transactions.slice(-10);
+      const user = await User.findById(req.session.userId).select("-password");
 
       // Render the wallet page with wallet information and categories
-      res.render("../views/pages/user/wallet", { wallet, categoriesWithSubs });
+      res.render("../views/pages/user/wallet", {
+        user,
+        wallet,
+        categoriesWithSubs,
+      });
     } catch (error) {
       console.error("Error fetching wallet:", error);
       res.status(500).json({ message: "Internal server error" }); // Handle server error

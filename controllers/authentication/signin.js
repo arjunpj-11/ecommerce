@@ -16,42 +16,46 @@ exports.getSignInPage = (req, res) => {
 // 👉 **POST: Handle Email-or-Phone Sign-in**
 exports.handleSignInAuth = async (req, res) => {
   try {
-    req.session.value = req.body.emailOrPhone; // Store email or phone in session
-    req.session.username = req.body.name; // Store username in session
-    req.session.password = req.body.password; // Store password in session
+    const rawValue = String(req.body.emailOrPhone || "").trim();
+    const username = String(req.body.name || "").trim();
+    const password = String(req.body.password || "");
+    const value = rawValue.toLowerCase();
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const strongPassword =
+      password.length >= 8 &&
+      /[A-Z]/.test(password) &&
+      /[a-z]/.test(password) &&
+      /\d/.test(password) &&
+      /[^A-Za-z0-9]/.test(password);
 
-    // Determine if the input is an email or phone number
-    if (isNaN(req.session.value)) {
-      req.session.email = req.session.value; // Store email in session
-      req.session.phone = null; // Clear phone
-    } else {
-      req.session.phone = req.session.value; // Store phone in session
-      req.session.email = null; // Clear email
+    if (!username || !emailPattern.test(value) || !strongPassword) {
+      return res.status(400).send("invalid");
     }
 
-    // Check if the user already exists
+    req.session.value = value;
+    req.session.username = username;
+    req.session.password = password;
+
+    req.session.email = value;
+    req.session.phone = null;
+
     const user = await User.findOne({ email: req.session.email });
     if (user) {
-      return res.send("already"); // Indicate user already exists
+      return res.send("already");
     }
 
-    // Generate and send OTP
-    req.session.otp = await generateRandomOTP(); // Generate OTP
-    emailOtp(req.session.otp, req.session.value); // Send OTP to email or phone number
+    req.session.otp = await generateRandomOTP();
+    req.session.otpExpiresAt = Date.now() + 10 * 60 * 1000;
+    req.session.otpAttempts = 0;
+    const delivery = await emailOtp(req.session.otp, req.session.value);
+    if (!delivery.success) {
+      throw new Error("OTP email delivery failed.");
+    }
 
-    // Clear OTP after 10 hours
-    setTimeout(
-      () => {
-        delete req.session.otp; // Clear OTP from session
-        delete req.session.enteredOtp; // Clear entered OTP from session
-      },
-      1000 * 60 * 60 * 10,
-    ); // 10 hours expiration
-
-    res.send("done"); // Indicate successful OTP generation
+    res.send("done");
   } catch (err) {
     console.error("Error during sign-in:", err.message);
-    res.status(500).send("Internal server error. Please try again later."); // Return error message
+    res.status(500).send("error");
   }
 };
 

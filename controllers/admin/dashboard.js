@@ -366,6 +366,7 @@ exports.logout = async (req, res) => {
   try {
     req.session.destroy((err) => {
       if (err) throw err;
+      res.clearCookie("arni.sid");
       res.json({ success: true, redirect: "/auth/login" });
     });
   } catch (error) {

@@ -736,9 +736,15 @@ const USERS_DATA = [
 // ═══════════════════════════════════════════════════════════════════════════════
 
 async function runSeed() {
-  const mongoURI = process.env.MongoDB_url;
+  if (!process.argv.includes("--fresh")) {
+    err("Refusing to erase data without the explicit --fresh flag.");
+    info("Run `node seed.js --fresh` only when a full reset is intended.");
+    process.exit(1);
+  }
+
+  const mongoURI = process.env.MONGO_URI || process.env.MongoDB_url;
   if (!mongoURI) {
-    err("No MongoDB_url found in environment!");
+    err("No MONGO_URI or MongoDB_url found in environment.");
     process.exit(1);
   }
 

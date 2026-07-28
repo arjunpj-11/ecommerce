@@ -17,24 +17,21 @@ async function sendEmail(status, email, orderId) {
       },
     });
 
-    // Mail options
     const mailOptions = {
-      from: process.env.EMAIL_USER, // Sender's email address
-      to: email, // Recipient's email address
-      subject: "order status", // Email subject
-      text: `your order ${orderId} has been ${status}`, // OTP message
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Your ARNI order status",
+      text: `Your order ${orderId} has been ${status}.`,
     };
 
-    // Send OTP email
-    const info = await transporter.sendMail(mailOptions);
-    console.log("✅ mail  sent successfully:", info.response);
+    await transporter.sendMail(mailOptions);
 
-    return { success: true, message: "email sent successfully" };
+    return { success: true, message: "Email sent successfully" };
   } catch (error) {
     console.error("❌ Error sending mail:", error.message);
     return {
       success: false,
-      message: "Failed to send Email",
+      message: "Failed to send email",
       error: error.message,
     };
   }

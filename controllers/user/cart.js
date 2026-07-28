@@ -195,7 +195,7 @@ exports.updateQuantity = async (req, res) => {
       res.status(404).json({ error: "Item not found in cart" });
     }
   } catch (error) {
-    console.log(error);
+    console.error("Error updating cart quantity:", error);
     res.status(500).json({ error: "Server error" });
   }
 };

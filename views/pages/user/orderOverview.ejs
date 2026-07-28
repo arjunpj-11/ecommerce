@@ -15,7 +15,7 @@
     safeUser.profileImage ||
     safeUser.avatarUrl ||
     safeUser.image ||
-    '/images/avatars/avatar-1.png';
+    '/images/avatars/avatar-1.svg';
 
   const orderDate = safeOrder.orderDate
     ? new Date(safeOrder.orderDate)
@@ -52,6 +52,7 @@
   <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="/stylesheets/user/profile.css" />
   <link rel="stylesheet" href="/stylesheets/user/orderOverview.css" />
+  <link rel="stylesheet" href="/stylesheets/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
 
@@ -215,7 +216,7 @@
               <div class="order-id-row">
                 <h3 class="order-title">Order #<%= safeOrder.orderId || '' %></h3>
 
-                <button class="copy-order-btn" type="button" onclick="copyOrderId()">
+                <button class="copy-order-btn" type="button" data-order-action="copy">
                   <i class="fas fa-copy"></i>
                   Copy
                 </button>
@@ -385,12 +386,12 @@
                   safeOrder.status !== 'Cancelled' &&
                   safeOrder.status !== 'Returned'
                 ) { %>
-                  <button class="btn-danger-theme" type="button" onclick="cancelOrder('<%= safeOrder.orderId %>')">
+                  <button class="btn-danger-theme" type="button" data-order-action="cancel" data-order-id="<%= safeOrder.orderId %>">
                     <i class="fas fa-ban"></i>
                     Cancel Order
                   </button>
                 <% } else if (safeOrder.status === 'Payment Failed') { %>
-                  <button class="btn-primary" type="button" onclick="retryPayment('<%= safeOrder.orderId %>')">
+                  <button class="btn-primary" type="button" data-order-action="retry-payment" data-order-id="<%= safeOrder.orderId %>">
                     <i class="fas fa-rotate-right"></i>
                     Retry Payment
                   </button>
@@ -401,7 +402,7 @@
                   safeOrder.status !== 'Returned' &&
                   safeOrder.previousStatus == 'null'
                 ) { %>
-                  <button class="btn-primary" type="button" onclick="requestRefund('<%= safeOrder.orderId %>', '<%= safeOrder.paymentMethod %>')">
+                  <button class="btn-primary" type="button" data-order-action="refund" data-order-id="<%= safeOrder.orderId %>" data-payment-method="<%= safeOrder.paymentMethod %>">
                     <i class="fas fa-money-bill-transfer"></i>
                     Request Refund
                   </button>
@@ -450,9 +451,7 @@
       <div class="footer-section">
         <h3>Follow Us</h3>
         <div class="social-links">
-          <a href="#">Instagram</a>
-          <a href="#">Facebook</a>
-          <a href="#">Twitter</a>
+          <a href="mailto:info@arni.com">Email ARNI</a>
         </div>
       </div>
     </div>

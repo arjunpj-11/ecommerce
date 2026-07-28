@@ -1,3 +1,37 @@
-<h1><%= message %></h1>
-<h2><%= error.status %></h2>
-<pre><%= error.stack %></pre>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title><%= error.status === 404 ? 'Page not found' : 'Something went wrong' %> - ARNI</title>
+    <link rel="stylesheet" href="/stylesheets/error.css" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+  <body>
+    <main class="error-page">
+      <section class="error-card" aria-labelledby="error-title">
+        <a class="brand" href="/" aria-label="ARNI home">ARNI</a>
+        <p class="status"><%= error.status || 500 %></p>
+        <h1 id="error-title">
+          <%= error.status === 404 ? 'This page has left the collection.' : 'We hit an unexpected snag.' %>
+        </h1>
+        <p class="message">
+          <%= error.status === 404
+            ? 'The link may be outdated, or the page may have moved.'
+            : 'Your request could not be completed right now. Please try again in a moment.' %>
+        </p>
+        <div class="actions">
+          <a class="primary-action" href="/">Return home</a>
+          <a class="secondary-action" href="/shop">Browse the shop</a>
+        </div>
+        <% if (error.stack) { %>
+          <details class="technical-details">
+            <summary>Developer details</summary>
+            <pre><%= error.stack %></pre>
+          </details>
+        <% } %>
+      </section>
+    </main>
+  </body>
+</html>

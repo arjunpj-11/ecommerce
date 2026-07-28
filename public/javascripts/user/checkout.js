@@ -1,5 +1,3 @@
-const RAZORPAY_KEY = "rzp_test_EoM9R5cEQq0ViU";
-
 document.addEventListener("DOMContentLoaded", () => {
   const navbar = document.getElementById("navbar");
   const searchToggle = document.querySelector(".search-toggle");
@@ -34,11 +32,21 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeColorCircles();
   initializeReveal();
   initializeCheckout();
+  initializeCheckoutActions();
   setupFormSubmissionHandlers();
 
-  window.showAddAddressModal = showAddAddressModal;
-  window.closeAddressModal = closeAddressModal;
-  window.selectAddress = selectAddress;
+  function initializeCheckoutActions() {
+    document.addEventListener("click", (event) => {
+      const control = event.target.closest("[data-checkout-action]");
+      if (!control) return;
+
+      if (control.dataset.checkoutAction === "open-address") {
+        showAddAddressModal();
+      } else if (control.dataset.checkoutAction === "close-address") {
+        closeAddressModal();
+      }
+    });
+  }
 
   function initializeNavbar() {
     if (!navbar) return;
@@ -607,10 +615,10 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error("Failed to create order");
       }
 
-      const { order, userInfo } = await response.json();
+      const { order, userInfo, keyId } = await response.json();
 
       const options = {
-        key: RAZORPAY_KEY,
+        key: keyId,
         amount: order.amount,
         currency: order.currency,
         name: "ARNI",
@@ -625,12 +633,8 @@ document.addEventListener("DOMContentLoaded", () => {
           await handlePaymentCompletion(orderData, paymentResponse);
         },
         modal: {
-          ondismiss: async function () {
-            await handlePaymentCompletion(orderData, {
-              razorpay_order_id: order.id,
-              razorpay_payment_id: null,
-              razorpay_signature: null,
-            });
+          ondismiss: function () {
+            showToast("Payment cancelled. Your cart is unchanged.", "info");
           },
         },
       };
@@ -682,8 +686,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const placeOrderBtn = document.getElementById("placeOrderBtn");
 
     try {
-      const totalAmount = getTotalAmount();
-
       if (placeOrderBtn) {
         placeOrderBtn.disabled = true;
         placeOrderBtn.innerHTML =
@@ -698,7 +700,6 @@ document.addEventListener("DOMContentLoaded", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: totalAmount,
           shippingAddressId: orderData.shippingAddressId,
         }),
       });
@@ -883,6 +884,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const toast = document.createElement("div");
     toast.className = `toast ${type}`;
     toast.textContent = message;
+    toast.setAttribute("role", type === "error" ? "alert" : "status");
+    toast.setAttribute("aria-live", type === "error" ? "assertive" : "polite");
 
     toastContainer.appendChild(toast);
 

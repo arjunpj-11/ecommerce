@@ -9,7 +9,6 @@ const mongoose = require("mongoose");
 const getProductsByMainCategory = async (req, res, next) => {
   try {
     const sub = req.query.sub; // Get subcategory ID from query parameters
-    console.log("Subcategory ID:", sub);
 
     if (!sub) {
       return res.status(400).json({ error: "Subcategory ID is required" }); // Check if subcategory ID is provided
@@ -76,8 +75,6 @@ const getProductsByMainCategory = async (req, res, next) => {
         $sort: { "productDetails.price": 1 }, // Sort by price
       },
     ]);
-
-    console.log("Found variants:", variants.length);
 
     // Transform the data to ensure all required fields are present
     const processedCards = variants.map((card) => ({

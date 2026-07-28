@@ -25,7 +25,6 @@ router.get(
 
       req.session.username = req.user.displayName;
       req.session.email = req.user.emails?.[0]?.value || ""; // Ensure email exists
-      console.log(req.session.username, req.session.email);
 
       if (!req.session.email) {
         req.session.error = "No email found from Facebook authentication.";
@@ -33,8 +32,6 @@ router.get(
       }
 
       const user = await User.findOne({ email: req.session.email });
-
-      console.log("User found:", user);
 
       if (user) {
         const isBlocked = await User.findOne({

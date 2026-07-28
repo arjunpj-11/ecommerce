@@ -7,10 +7,11 @@
   <% if (isNaN(value)) { %>
     <title>Email Already in Use - ARNI</title>
   <% } else { %>
-    <title>Phone Number Already in Use - ARNI</title>
+    <title>Email Already in Use - ARNI</title>
   <% } %>
 
   <link rel="stylesheet" href="/stylesheets/authentication/already.css" />
+  <link rel="stylesheet" href="/stylesheets/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
 
@@ -36,10 +37,10 @@
           This email address is already associated with an ARNI account. Please log in instead.
         </p>
       <% } else { %>
-        <h1>Phone Number Already in Use</h1>
+        <h1>Email Already in Use</h1>
 
         <p class="already-message">
-          This phone number is already associated with an ARNI account. Please log in instead.
+          This email address is already associated with an ARNI account. Please log in instead.
         </p>
       <% } %>
 

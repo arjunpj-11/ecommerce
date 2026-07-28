@@ -3,6 +3,7 @@ const Product = require("../../models/product");
 const Variant = require("../../models/variant");
 const MainCategory = require("../../models/mainCategory");
 const mongoose = require("mongoose");
+const User = require("../../models/user");
 
 // GET user's wishlist
 exports.getWishlist = async (req, res) => {
@@ -35,9 +36,11 @@ exports.getWishlist = async (req, res) => {
         select: "name price brand description", // Select specific fields
       },
     });
+    const user = await User.findById(req.session.userId).select("-password");
 
     if (!wishlist) {
       return res.render("pages/user/wishlist", {
+        user,
         wishlistItems: [],
         message: "No items in wishlist",
         categoriesWithSubs,
@@ -58,6 +61,7 @@ exports.getWishlist = async (req, res) => {
     }));
 
     res.render("pages/user/wishlist", {
+      user,
       wishlistItems,
       message: wishlistItems.length ? "" : "Your wishlist is empty",
       categoriesWithSubs,

@@ -94,24 +94,4 @@ const orderSchema = new mongoose.Schema({
   couponDiscountApplied: { type: Number, default: 0 },
 });
 
-// Use findOneAndUpdate with upsert for atomic orderId generation
-orderSchema.statics.generateOrderId = async function () {
-  const orders = await this.find({}, "orderId").lean();
-  let maxNumber = 100000;
-
-  for (const ord of orders) {
-    if (ord && ord.orderId) {
-      const parts = ord.orderId.split("/");
-      if (parts.length === 2) {
-        const num = parseInt(parts[1], 10);
-        if (!isNaN(num) && num > maxNumber) {
-          maxNumber = num;
-        }
-      }
-    }
-  }
-
-  return `order/${maxNumber + 1}`;
-};
-
 module.exports = mongoose.model("Order", orderSchema);

@@ -40,6 +40,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const toast = document.createElement("div");
     toast.className = `toast ${type}`;
     toast.textContent = message;
+    toast.setAttribute("role", type === "error" ? "alert" : "status");
+    toast.setAttribute("aria-live", type === "error" ? "assertive" : "polite");
     document.body.appendChild(toast);
 
     setTimeout(() => {
@@ -80,13 +82,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const value = emailOrPhone.value.trim();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^[+]?[0-9]{10,15}$/;
 
     if (value === "") {
-      setError(emailOrPhone, "Email or Phone Number is required");
+      setError(emailOrPhone, "Email address is required");
       state.emailOrPhoneError = true;
-    } else if (!emailRegex.test(value) && !phoneRegex.test(value)) {
-      setError(emailOrPhone, "Invalid email or phone number format");
+    } else if (!emailRegex.test(value)) {
+      setError(emailOrPhone, "Enter a valid email address");
       state.emailOrPhoneError = true;
     } else {
       clearError(emailOrPhone);
@@ -223,12 +224,19 @@ document.addEventListener("DOMContentLoaded", () => {
       state.passwordConfirmError
     ) {
       showToast("Please fix validation errors before submitting.", "error");
+      const firstInvalid = [
+        [state.fullNameError, fullName],
+        [state.emailOrPhoneError, emailOrPhone],
+        [state.passwordError, password],
+        [state.passwordConfirmError, passwordConfirm],
+      ].find(([hasError]) => hasError)?.[1];
+      firstInvalid?.focus();
       return;
     }
 
     const formData = {
       emailOrPhone: emailOrPhone.value.trim(),
-      password: password.value.trim(),
+      password: password.value,
       name: fullName.value.trim(),
     };
 
