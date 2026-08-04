@@ -54,7 +54,7 @@ body {
 .logo img {
   width: 80px;
   height: 80px;
-  margin: auto;
+  margin:auto;
 }
 
 .logo-text {
@@ -505,7 +505,7 @@ body {
   :root {
     font-size: 15px;
   }
-
+  
   .stats-container {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -518,24 +518,24 @@ body {
     width: var(--sidebar-width);
     box-shadow: none;
   }
-
+  
   .sidebar.mobile-visible,
   .sidebar.active {
     transform: translateX(0);
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   }
-
+  
   .main-content {
     margin-left: 0;
     padding: 1.5rem;
     /* Reset right padding for mobile */
     padding-right: 1.5rem;
   }
-
+  
   .hamburger-btn {
     display: flex;
   }
-
+  
   .toggle-sidebar-btn {
     display: none;
   }
@@ -545,39 +545,39 @@ body {
   :root {
     font-size: 14px;
   }
-
+  
   .header {
     flex-direction: column;
     align-items: flex-start;
   }
-
+  
   .header-actions {
     width: 100%;
     justify-content: space-between;
   }
-
+  
   .period-filters {
     width: 100%;
     justify-content: space-between;
   }
-
+  
   .date-range {
     flex-direction: column;
     align-items: flex-start;
   }
-
+  
   .date-input-group {
     width: 100%;
   }
-
+  
   .date-input {
     max-width: none;
   }
-
+  
   .apply-date-btn {
     width: 100%;
   }
-
+  
   /* Adjust table for small screens */
   .table-container {
     border-radius: 0.375rem;
@@ -589,37 +589,37 @@ body {
   :root {
     font-size: 13px;
   }
-
+  
   .stats-container {
     grid-template-columns: 1fr;
   }
-
+  
   .header-actions {
     flex-direction: column;
   }
-
+  
   .btn {
     width: 100%;
   }
-
+  
   .sales-report-container {
     padding: 1rem;
   }
-
+  
   .modal-content {
     padding: 1.5rem;
   }
-
+  
   .format-options {
     flex-direction: column;
   }
-
+  
   /* Enhanced table responsiveness for very small screens */
   .table-container {
     max-width: 100%;
     overflow-x: auto; /* Explicitly ensure horizontal scroll on very small screens */
   }
-
+  
   .sales-table th,
   .sales-table td {
     padding: 0.75rem;
@@ -629,12 +629,8 @@ body {
 
 /* Animation & Transitions */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .fade-in {
@@ -649,7 +645,7 @@ body {
 }
 
 .loading::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 50%;
   left: 50%;
@@ -663,9 +659,7 @@ body {
 }
 
 @keyframes spin {
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 .btn-disabled {
@@ -689,7 +683,7 @@ body {
 }
 
 .loading-overlay::after {
-  content: "";
+  content: '';
   width: 50px;
   height: 50px;
   border: 3px solid var(--text-light);

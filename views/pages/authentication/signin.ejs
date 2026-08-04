@@ -3,103 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up - ARNI</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <title>Sign Up</title>
   <link rel="stylesheet" href="/stylesheets/authentication/signin.css">
-  <link rel="stylesheet" href="/stylesheets/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
-  <canvas id="backgroundCanvas" aria-hidden="true"></canvas>
-
-  <main class="auth-page">
-    <section class="auth-shell" aria-label="Sign up form">
-      <div class="auth-brand-panel">
-        <a href="/" class="brand-logo" aria-label="ARNI Home">
-          <img src="/images/common/logo.png" alt="ARNI Logo">
-          <span>ARNI</span>
-        </a>
-
-        <div class="brand-copy">
-          <p class="eyebrow">Join the collection</p>
-          <h1>Create your ARNI account</h1>
-          <p>Get early access to new arrivals, exclusive offers, wishlist syncing, and faster checkout.</p>
-        </div>
-
-        <div class="brand-image-card">
-          <img src="/images/authentication/signin image.jpg" alt="Fashion model wearing ARNI style">
-          <div class="image-glow"></div>
-        </div>
+  <canvas id="backgroundCanvas"></canvas>
+  <div class="login-container">
+    <div class="login-box">
+      <!-- Logo Section -->
+      <div class="logo-section">
+        <img src="/images/common/logo.png" alt="Logo">
       </div>
 
+      <!-- Image Section -->
+      <div class="image-section">
+        <img src="/images/authentication/signin image.jpg" alt="Sign Up Image">
+      </div>
+
+      <!-- Form Section -->
       <div class="form-section">
-        <div class="form-header">
-          <p class="eyebrow">Start now</p>
-          <h2>Sign Up</h2>
-          <p>Enter your details to create your account.</p>
-        </div>
+        <h2>Sign Up</h2>
+        <form id="form">
+          <!-- Name Input -->
+          <input type="text" name="name" placeholder="Full Name" required class="" value="<%= detail.username %>" id="fullName">
+          <p class="validation iValid" id="fullNameMessage"></p>
 
-        <form id="form" novalidate>
-          <div class="field-group">
-            <label for="fullName">Full Name</label>
-            <div class="input-wrap">
-              <i class="fas fa-user"></i>
-              <input
-                type="text"
-                name="name"
-                placeholder="Full Name"
-                value="<%= typeof detail !== 'undefined' && detail.username ? detail.username : '' %>"
-                id="fullName"
-                autocomplete="name"
-                required>
-            </div>
-            <p class="validation iValid" id="fullNameMessage"></p>
+          <!-- Email Input -->
+          <input type="text" name="emailOrPhone" placeholder="Email or Phone Number" id="emailOrPhone" class="" value="<%= detail.emailOrPhone %>" required>
+          <p class="validation iValid" id="emailOrPhoneMessage"></p>
+
+          <!-- Password Input -->
+          <div class="password-wrapper">
+            <input type="password" name="password" placeholder="Password" id="password" required>
+            <i class="fas fa-eye" id="togglePassword"></i>
           </div>
+          <p class="validation iValid" id="passwordMessage"></p>
 
-          <div class="field-group">
-            <label for="emailOrPhone">Email Address</label>
-            <div class="input-wrap">
-              <i class="fas fa-envelope"></i>
-              <input
-                type="text"
-                name="emailOrPhone"
-                placeholder="Email Address"
-                id="emailOrPhone"
-                value="<%= typeof detail !== 'undefined' && detail.emailOrPhone ? detail.emailOrPhone : '' %>"
-                autocomplete="email"
-                inputmode="email"
-                required>
-            </div>
-            <p class="validation iValid" id="emailOrPhoneMessage"></p>
+          <!-- Confirm Password Input -->
+          <div class="password-wrapper">
+            <input type="password" name="confirm-password" placeholder="Confirm Password" id="passwordConfirm" required>
+            <i class="fas fa-eye" id="togglePasswordConfirm"></i>
           </div>
+          <p class="validation iValid" id="passwordConfirmMessage"></p>
 
-          <div class="field-group">
-            <label for="password">Password</label>
-            <div class="input-wrap password-wrapper">
-              <i class="fas fa-lock input-icon"></i>
-              <input type="password" name="password" placeholder="Password" id="password" autocomplete="new-password" required>
-              <button type="button" class="toggle-password" id="togglePassword" aria-label="Show password">
-                <i class="fas fa-eye"></i>
-              </button>
-            </div>
-            <p class="validation iValid" id="passwordMessage"></p>
-          </div>
-
-          <div class="field-group">
-            <label for="passwordConfirm">Confirm Password</label>
-            <div class="input-wrap password-wrapper">
-              <i class="fas fa-shield-halved input-icon"></i>
-              <input type="password" name="confirm-password" placeholder="Confirm Password" id="passwordConfirm" autocomplete="new-password" required>
-              <button type="button" class="toggle-password" id="togglePasswordConfirm" aria-label="Show confirm password">
-                <i class="fas fa-eye"></i>
-              </button>
-            </div>
-            <p class="validation iValid" id="passwordConfirmMessage"></p>
-          </div>
-
-          <div class="password-criteria" aria-live="polite">
+          <!-- Password Criteria Checklist -->
+          <div class="password-criteria">
             <p>Password must meet the following criteria:</p>
             <ul>
               <li id="criteria-length">At least 8 characters</li>
@@ -112,12 +61,11 @@
 
           <div id="recaptcha-container"></div>
 
-          <button type="submit" class="submit-btn">
-            <span>Create Account</span>
-            <i class="fas fa-arrow-right"></i>
-          </button>
+          <!-- Submit Button -->
+          <button type="submit">Sign Up</button>
         </form>
 
+        <!-- Terms & Privacy Links -->
         <div class="form-links">
           <span>By signing up, you agree to our</span>
           <a href="/auth/terms">Terms of Service</a>
@@ -125,25 +73,24 @@
           <a href="/auth/privacy">Privacy Policy</a>
         </div>
 
-        <div class="divider"><span>Or sign up with</span></div>
-
+        <!-- Social Login Buttons -->
         <div class="social-login">
-          <a href="/api/google/auth/google" class="social-btn google">
-            <i class="fab fa-google"></i>
-            <span>Google</span>
-          </a>
-          <a href="/api/facebook/auth/facebook" class="social-btn facebook">
-            <i class="fab fa-facebook-f"></i>
-            <span>Facebook</span>
-          </a>
+          <p>Or sign up with</p>
+          <a href='/api/google/auth/google' class="btn"><button class="google">
+            <i class="fab fa-google"></i> Google
+          </button></a>
+          <a href="/api/facebook/auth/facebook" class="btn"><button class="facebook">
+            <i class="fab fa-facebook"></i> Facebook
+          </button></a>
         </div>
 
+        <!-- Link to Login Page -->
         <div class="login-link">
           <p>Already have an account? <a href="/auth/login">Log in here</a></p>
         </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </div>
 
   <script src="/javascripts/authentication/signin.js"></script>
 </body>

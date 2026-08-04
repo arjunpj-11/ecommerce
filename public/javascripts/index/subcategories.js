@@ -1,233 +1,188 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // =====================
-  // DATA FROM EJS
-  // =====================
-  const categoriesDataEl = document.getElementById("arni-categories-data");
-  let arniCategories = [];
 
-  try {
-    arniCategories = categoriesDataEl
-      ? JSON.parse(categoriesDataEl.textContent || "[]")
-      : [];
-  } catch (error) {
-    console.error("Failed to parse ARNI categories:", error);
-    arniCategories = [];
-  }
+// Background canvas animation
+const canvas = document.getElementById('backgroundCanvas');
+const ctx = canvas.getContext('2d');
+let mousePosition = { x: 0, y: 0 };
 
-  // =====================
-  // NAVBAR — background + hide on scroll down
-  // =====================
-  const navbar = document.getElementById("navbar");
-  let lastY = window.scrollY || 0;
+function setCanvasSize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+setCanvasSize();
+window.addEventListener('resize', setCanvasSize);
 
-  window.addEventListener(
-    "scroll",
-    () => {
-      const y = window.scrollY || 0;
-      navbar?.classList.toggle("scrolled", y > 20);
-
-      if (navbar) {
-        navbar.style.transform =
-          y > lastY && y > 140 ? "translateY(-100%)" : "translateY(0)";
-      }
-
-      lastY = y;
-    },
-    { passive: true },
-  );
-
-  // =====================
-  // SEARCH OVERLAY
-  // =====================
-  const searchToggle = document.querySelector(".search-toggle");
-  const searchOverlay = document.getElementById("searchOverlay");
-  const searchClose = document.getElementById("searchClose");
-
-  searchToggle?.addEventListener("click", (event) => {
-    event.preventDefault();
-    const open = searchOverlay?.classList.toggle("open");
-    if (open) searchOverlay?.querySelector(".search-input")?.focus();
-  });
-
-  searchClose?.addEventListener("click", () => {
-    searchOverlay?.classList.remove("open");
-  });
-
-  document.addEventListener("click", (event) => {
-    const target = event.target;
-    if (
-      searchOverlay?.classList.contains("open") &&
-      !searchOverlay.contains(target) &&
-      !searchToggle?.contains(target)
-    ) {
-      searchOverlay.classList.remove("open");
-    }
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      searchOverlay?.classList.remove("open");
-      closeDrawer();
-    }
-  });
-
-  // =====================
-  // MOBILE DRAWER
-  // =====================
-  const hamburger = document.getElementById("hamburger");
-  const mobileDrawer = document.getElementById("mobileDrawer");
-  const mobileOverlay = document.getElementById("mobileOverlay");
-  const drawerClose = document.getElementById("drawerClose");
-
-  function openDrawer() {
-    mobileDrawer?.classList.add("open");
-    mobileOverlay?.classList.add("visible");
-    hamburger?.classList.add("open");
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeDrawer() {
-    mobileDrawer?.classList.remove("open");
-    mobileOverlay?.classList.remove("visible");
-    hamburger?.classList.remove("open");
-    document.body.style.overflow = "";
-  }
-
-  hamburger?.addEventListener("click", () => {
-    mobileDrawer?.classList.contains("open") ? closeDrawer() : openDrawer();
-  });
-  mobileOverlay?.addEventListener("click", closeDrawer);
-  drawerClose?.addEventListener("click", closeDrawer);
-
-  // =====================
-  // CATEGORY DROPDOWN — desktop
-  // =====================
-  const navLinks = document.getElementById("navLinks");
-  let dropdownMenu = null;
-
-  function escapeHtml(value) {
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
-
-  function buildDropdown(categories) {
-    if (!dropdownMenu) {
-      dropdownMenu = document.createElement("div");
-      dropdownMenu.className = "cat-dropdown";
-      document.body.appendChild(dropdownMenu);
+class Particle {
+    constructor() {
+        this.reset();
     }
 
-    dropdownMenu.innerHTML = `
-            <div class="cat-dropdown-inner">
-                ${(categories || [])
-                  .map(
-                    (cat) => `
-                    <div class="cat-dropdown-col">
-                        <a href="/subcategories?main=${encodeURIComponent(cat._id || "")}" class="cat-dropdown-title">
-                            ${escapeHtml(cat.mainCategoryName || "Category")}
-                        </a>
-                        <ul>
-                            ${(cat.subcategories || [])
-                              .map(
-                                (sub) => `
-                                <li>
-                                    <a href="/products?sub=${encodeURIComponent(sub._id || "")}">
-                                        ${escapeHtml(sub.subCategoryName || "Subcategory")}
-                                    </a>
-                                </li>
-                            `,
-                              )
-                              .join("")}
-                        </ul>
-                    </div>
-                `,
-                  )
-                  .join("")}
-            </div>
-        `;
-  }
+    reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.speedY = Math.random() * 1 - 0.5;
+        this.life = 0;
+        this.maxLife = Math.random() * 200 + 100;
+        const colors = [
+            'hsla(45, 100%, 50%, 0.2)',  // Gold
+            'hsla(280, 70%, 40%, 0.2)',  // Deep Purple
+            'hsla(350, 70%, 40%, 0.2)'   // Dark Red
+        ];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+    }
 
-  function openDropdown(anchor) {
-    if (!arniCategories.length) return;
-    buildDropdown(arniCategories);
-    const rect = anchor.getBoundingClientRect();
-    const dropdownWidth = Math.min(720, window.innerWidth - 24);
-    const left = Math.min(
-      Math.max(12, rect.left),
-      window.innerWidth - dropdownWidth - 12,
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.life++;
+
+        if (this.life >= this.maxLife ||
+            this.x < 0 || this.x > canvas.width ||
+            this.y < 0 || this.y > canvas.height) {
+            this.reset();
+        }
+    }
+
+    draw() {
+        const opacity = 1 - (this.life / this.maxLife);
+        ctx.fillStyle = this.color.replace('0.2', opacity * 0.2);
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+const particles = Array.from({ length: 100 }, () => new Particle());
+
+function animate() {
+    ctx.fillStyle = 'rgba(18, 18, 18, 0.1)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+    });
+
+    const mouseGradient = ctx.createRadialGradient(
+        mousePosition.x, mousePosition.y, 0,
+        mousePosition.x, mousePosition.y, 150
     );
+    mouseGradient.addColorStop(0, 'rgba(255, 215, 0, 0.1)');
+    mouseGradient.addColorStop(1, 'rgba(18, 18, 18, 0)');
+    ctx.fillStyle = mouseGradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    if (dropdownMenu) {
-      dropdownMenu.style.top = `${rect.bottom + window.scrollY + 10}px`;
-      dropdownMenu.style.left = `${left}px`;
-      dropdownMenu.style.maxWidth = `${dropdownWidth}px`;
-      dropdownMenu.classList.add("open");
+    requestAnimationFrame(animate);
+}
+
+window.addEventListener('mousemove', (e) => {
+    mousePosition = { x: e.clientX, y: e.clientY };
+});
+
+animate();
+
+// Scroll animations for elements
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+// Animate sections on scroll
+document.querySelectorAll('.section-title, .category, .product-card, .blog-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'all 0.6s ease-out';
+    observer.observe(el);
+});
+
+// Navbar scroll effect
+var navbar = document.querySelector('.navbar');
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
     }
-  }
+});
 
-  function closeDropdown() {
-    dropdownMenu?.classList.remove("open");
-  }
 
-  navLinks?.addEventListener("mouseover", (event) => {
-    const link = event.target.closest?.('a[data-category="true"]');
-    if (link) openDropdown(link);
-  });
+// Search functionality
+const searchIcon = document.querySelector('.nav-right a:nth-child(2)');
+var navbar = document.querySelector('.nav-container');
+let searchBar = null;
 
-  navLinks?.addEventListener("click", (event) => {
-    const link = event.target.closest?.('a[data-category="true"]');
-    if (link) {
-      event.preventDefault();
-      dropdownMenu?.classList.contains("open")
-        ? closeDropdown()
-        : openDropdown(link);
+searchIcon.addEventListener('click', (e) => {
+    e.preventDefault();
+    
+    if (searchBar) {
+        // If search bar exists, remove it
+        searchBar.remove();
+        searchBar = null;
+        return;
     }
-  });
+    
+    // Create search bar container
+    searchBar = document.createElement('div');
+    searchBar.className = 'search-container';
+    
+    // Create search form
+    const searchForm = document.createElement('form');
+    searchForm.className = 'search-form';
+    searchForm.action = '/search';
+    searchForm.method = 'GET';
+    
+    // Create search input
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.name = 'search';
+    searchInput.placeholder = 'Search products...';
+    searchInput.className = 'search-input';
+    
+    // Create submit button
+    const submitButton = document.createElement('button');
+    submitButton.type = 'submit';
+    submitButton.className = 'search-submit';
+    submitButton.innerHTML = '🔍';
+    
+    // Create close button
+    const closeButton = document.createElement('button');
+    closeButton.type = 'button';
+    closeButton.className = 'search-close';
+    closeButton.innerHTML = '✕';
+    closeButton.onclick = () => {
+        searchBar.remove();
+        searchBar = null;
+    };
+    
+    // Assemble the search bar
+    searchForm.appendChild(searchInput);
+    searchForm.appendChild(submitButton);
+    searchForm.appendChild(closeButton);
+    searchBar.appendChild(searchForm);
+    
+    // Insert search bar after navbar
+    navbar.appendChild(searchBar);
+    
+    // Focus the input
+    searchInput.focus();
+});
 
-  document.addEventListener("mouseover", (event) => {
-    if (
-      dropdownMenu?.classList.contains("open") &&
-      !event.target.closest?.(".cat-dropdown") &&
-      !event.target.closest?.('[data-category="true"]')
-    ) {
-      closeDropdown();
+// Close search bar when clicking outside
+document.addEventListener('click', (e) => {
+    if (searchBar && 
+        !searchBar.contains(e.target) && 
+        !searchIcon.contains(e.target)) {
+        searchBar.remove();
+        searchBar = null;
     }
-  });
-
-  window.addEventListener("resize", closeDropdown);
-  window.addEventListener("scroll", closeDropdown, { passive: true });
-
-  // =====================
-  // SCROLL REVEAL
-  // =====================
-  const revealEls = document.querySelectorAll(
-    ".section-header, .subcategory-card, .empty-state, .footer-brand, .footer-col",
-  );
-
-  revealEls.forEach((el, index) => {
-    el.classList.add("reveal");
-    el.style.transitionDelay = `${(index % 4) * 70}ms`;
-  });
-
-  if ("IntersectionObserver" in window) {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" },
-    );
-
-    revealEls.forEach((el) => observer.observe(el));
-  } else {
-    revealEls.forEach((el) => el.classList.add("visible"));
-  }
 });

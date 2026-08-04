@@ -1,373 +1,165 @@
-<!-- views/user/cart.ejs -->
-<%
-  const safeCategories = typeof categoriesWithSubs !== 'undefined' && Array.isArray(categoriesWithSubs)
-    ? categoriesWithSubs
-    : [];
-
-  const safeItems = typeof items !== 'undefined' && Array.isArray(items)
-    ? items
-    : [];
-
-  const safeCoupons = typeof coupons !== 'undefined' && Array.isArray(coupons)
-    ? coupons
-    : [];
-
-  const safeTotalAmount = typeof totalAmount !== 'undefined'
-    ? totalAmount
-    : 0;
-%>
-
+<!-- views/cart.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>Shopping Cart - ARNI</title>
-
-  <link rel="stylesheet" href="/stylesheets/user/cart.css" />
-  <link rel="stylesheet" href="/stylesheets/style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - ARNI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheets/user/cart.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-
 <body>
-  <canvas id="backgroundCanvas"></canvas>
+    <canvas id="backgroundCanvas"></canvas>
 
-  <header class="navbar" id="navbar">
-    <div class="nav-inner">
-      <a href="/" class="logo">ARNI</a>
-
-      <nav class="nav-links" id="navLinks">
-        <a href="/" class="nav-link">Home</a>
-        <a href="/shop" class="nav-link">Shop</a>
-
-        <% if (safeCategories.length > 0) { %>
-          <a href="/shop" class="nav-link has-dropdown" data-category="true">
-            Categories
-            <i class="fas fa-chevron-down dropdown-arrow"></i>
-          </a>
-        <% } %>
-      </nav>
-
-      <div class="nav-actions">
-        <button class="icon-btn search-toggle" type="button" aria-label="Search">
-          <i class="fas fa-search"></i>
-        </button>
-
-        <a href="/users/cart" class="icon-btn cart-btn active" aria-label="Cart">
-          <i class="fas fa-shopping-bag"></i>
-          <% if (safeItems.length > 0) { %>
-            <span class="cart-count"><%= safeItems.length %></span>
-          <% } %>
-        </a>
-
-        <a href="/users/pI" class="icon-btn profile-btn" aria-label="Profile">
-          <i class="fas fa-user"></i>
-        </a>
-
-        <button class="hamburger" id="hamburger" type="button" aria-label="Menu">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-      </div>
-    </div>
-
-    <div class="search-overlay" id="searchOverlay">
-      <form class="search-form" action="/search" method="GET">
-        <input
-          type="text"
-          name="search"
-          placeholder="Search for products, styles, brands..."
-          class="search-input"
-        />
-
-        <button type="submit" class="search-submit" aria-label="Submit search">
-          <i class="fas fa-search"></i>
-        </button>
-
-        <button type="button" class="search-close" id="searchClose" aria-label="Close search">
-          <i class="fas fa-times"></i>
-        </button>
-      </form>
-    </div>
-  </header>
-
-  <div class="mobile-overlay" id="mobileOverlay"></div>
-
-  <aside class="mobile-drawer" id="mobileDrawer">
-    <button class="drawer-close" id="drawerClose" type="button" aria-label="Close menu">
-      <i class="fas fa-times"></i>
-    </button>
-
-    <div class="drawer-logo">ARNI</div>
-
-    <nav class="drawer-nav">
-      <a href="/">Home</a>
-      <a href="/shop">Shop</a>
-      <a href="/users/cart">Cart</a>
-      <a href="/users/pI">Profile</a>
-
-      <% safeCategories.forEach(function(category) { %>
-        <a href="/subcategories?main=<%= category._id %>">
-          <%= category.mainCategoryName %>
-        </a>
-      <% }); %>
-    </nav>
-  </aside>
-
-  <main class="main-content">
-    <section class="cart-hero">
-      <p class="section-eyebrow">Your Bag</p>
-      <h1>Shopping Cart</h1>
-      <p>
-        Review your selected products, update quantities, apply coupons, and continue to checkout.
-      </p>
-    </section>
-
-    <% if (safeItems.length === 0) { %>
-      <section class="empty-cart">
-        <div class="empty-icon">
-          <i class="fas fa-shopping-bag"></i>
-        </div>
-
-        <h2>Your cart is empty</h2>
-        <p>Looks like you have not added anything to your cart yet.</p>
-
-        <a href="/shop" class="checkout-btn">
-          <i class="fas fa-arrow-right"></i>
-          Continue Shopping
-        </a>
-      </section>
-    <% } else { %>
-      <section class="cart-layout">
-        <div class="cart-items">
-          <% safeItems.forEach(item => { %>
-            <article
-              class="cart-item <%= !item.inStock ? 'out-of-stock-item' : '' %>"
-              data-variant-id="<%= item.variantId %>"
-              data-unit-price="<%= item.discountPrice || item.price %>"
-              data-size="<%= item.size %>"
-            >
-              <a href="/overview/<%= item.variantId %>" class="product-image-wrap">
-                <img
-                  src="<%= item.images && item.images[0] ? item.images[0] : '/images/common/placeholder.png' %>"
-                  alt="<%= item.name %>"
-                  class="product-image"
-                  loading="lazy"
-                />
-              </a>
-
-              <div class="product-details">
-                <div class="product-title-row">
-                  <h3><%= item.name %></h3>
-
-                  <a href="/overview/<%= item.variantId %>" class="overview-link">
-                    View Details
-                    <i class="fas fa-arrow-right"></i>
-                  </a>
-                </div>
-
-                <div class="product-meta">
-                  <span>
-                    Color:
-                    <span
-                      class="color-circle"
-                      data-color-value="<%= item.color || '#d1d5db' %>"
-                      aria-label="Selected color"
-                    ></span>
-                  </span>
-
-                  <span>
-                    Size:
-                    <strong class="item-size"><%= item.size %></strong>
-                  </span>
-                </div>
-
-                <% if (!item.inStock) { %>
-                  <p class="stock-error">
-                    <i class="fas fa-triangle-exclamation"></i>
-                    Requested quantity not available. Only <%= item.availableStock %> in stock.
-                  </p>
-                <% } else if (item.availableStock < 5) { %>
-                  <p class="stock-warning">
-                    <i class="fas fa-clock"></i>
-                    Only <%= item.availableStock %> left in stock!
-                  </p>
-                <% } %>
-
-                <button
-                  type="button"
-                  class="remove-link"
-                  data-cart-action="remove"
-                  data-variant-id="<%= item.variantId %>"
-                >
-                  <i class="fas fa-trash"></i>
-                  Remove
-                </button>
-              </div>
-
-              <div class="item-price">
-                ₹<%= Number(item.discountPrice || item.price).toFixed(2) %>
-              </div>
-
-              <div class="quantity-controls">
-                <button
-                  class="quantity-btn"
-                  type="button"
-                  data-cart-action="quantity"
-                  data-variant-id="<%= item.variantId %>"
-                  data-size="<%= item.size %>"
-                  data-change="-1"
-                  <%= !item.inStock ? 'disabled' : '' %>
-                  aria-label="Decrease quantity"
-                >
-                  <i class="fas fa-minus"></i>
-                </button>
-
-                <input
-                  type="text"
-                  value="<%= item.quantity %>"
-                  class="quantity-input"
-                  id="quantity-<%= item.variantId %>"
-                  data-size="<%= item.size %>"
-                  readonly
-                  <%= !item.inStock ? 'disabled' : '' %>
-                />
-
-                <button
-                  class="quantity-btn"
-                  type="button"
-                  data-cart-action="quantity"
-                  data-variant-id="<%= item.variantId %>"
-                  data-size="<%= item.size %>"
-                  data-change="1"
-                  <%= !item.inStock ? 'disabled' : '' %>
-                  aria-label="Increase quantity"
-                >
-                  <i class="fas fa-plus"></i>
-                </button>
-              </div>
-            </article>
-          <% }); %>
-        </div>
-
-        <aside class="cart-summary-card">
-          <h2>Order Summary</h2>
-
-          <div class="coupon-section">
-            <div class="coupon-input-row">
-              <input
-                type="text"
-                id="couponInput"
-                class="coupon-input"
-                placeholder="Enter coupon code"
-                autocomplete="off"
-              />
-
-              <button type="button" class="redeem-btn" data-cart-action="apply-coupon">
-                Apply
-              </button>
-            </div>
-
-            <button type="button" class="show-coupons-btn" id="showCouponsBtn">
-              <i class="fas fa-ticket"></i>
-              View Available Coupons
-            </button>
-
-            <div class="coupon-suggestions" id="couponSuggestions">
-              <div class="coupon-suggestions-header">
-                <h4>Available Coupons</h4>
-                <button type="button" id="closeCouponsBtn" aria-label="Close coupons">
-                  <i class="fas fa-times"></i>
-                </button>
-              </div>
-
-              <% if (safeCoupons.length > 0) { %>
-                <% safeCoupons.forEach(coupon => { %>
-                  <button
-                    type="button"
-                    class="coupon-item"
-                    data-cart-action="select-coupon"
-                    data-coupon-code="<%= coupon.couponCode %>"
-                  >
-                    <span class="coupon-code"><%= coupon.couponCode %></span>
-                    <span class="coupon-name"><%= coupon.couponName %></span>
-                    <span class="coupon-details">
-                      ₹<%= coupon.discount %> off on orders above ₹<%= coupon.minAmount %>
-                      <small>Valid until <%= new Date(coupon.validity).toLocaleDateString() %></small>
-                    </span>
-                  </button>
+     <!-- Navbar -->
+     <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">ARNI</a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/shop">Shop</a>
+                <% categoriesWithSubs.forEach(function(category) { %>
+                    <a href="/subcategories?main=<%= category._id %>" 
+                       data-category="true"
+                       data-categories="<%= JSON.stringify(categoriesWithSubs) %>">
+                        <%= category.mainCategoryName.split(' ')
+                            .map((word, index) => index === 0 ? 
+                                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : 
+                                word.toLowerCase())
+                            .join(' ') %>
+                    </a>
                 <% }); %>
-              <% } else { %>
-                <div class="no-coupons">No active coupons available</div>
-              <% } %>
             </div>
-          </div>
-
-          <div class="summary">
-            <div class="summary-row">
-              <span>Subtotal</span>
-              <span id="subtotalAmount">₹<%= Number(safeTotalAmount).toFixed(2) %></span>
+            <div class="nav-right">
+                <a href="/users/pI">
+                    <i class="fas fa-user-circle"></i> Profile
+                </a>
+                <a href="/users/cart">🛒</a>
             </div>
-
-            <div class="summary-row">
-              <span>Shipping fee</span>
-              <span id="shippingAmount">₹20.00</span>
-            </div>
-
-            <div class="summary-row">
-              <span>Discount</span>
-              <span id="couponStatus">No discount applied</span>
-            </div>
-
-            <div class="summary-row total-row">
-              <strong>Total</strong>
-              <strong id="totalAmount">₹<%= Number(safeTotalAmount + 20).toFixed(2) %></strong>
-            </div>
-          </div>
-
-          <button class="checkout-btn full" type="button" data-cart-action="checkout">
-            Proceed to Checkout
-            <i class="fas fa-arrow-right"></i>
-          </button>
-        </aside>
-      </section>
-    <% } %>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-section footer-brand">
-        <h3>ARNI</h3>
-        <p>Fashion for everyone. Curated with intention.</p>
-      </div>
-
-      <div class="footer-section">
-        <h3>Quick Links</h3>
-        <a href="/">Home</a>
-        <a href="/shop">Shop</a>
-        <a href="/users/cart">Cart</a>
-      </div>
-
-      <div class="footer-section">
-        <h3>Contact Us</h3>
-        <p>Email: info@arni.com</p>
-      </div>
-
-      <div class="footer-section">
-        <h3>Follow Us</h3>
-        <div class="social-links">
-          <a href="mailto:info@arni.com">Email ARNI</a>
         </div>
-      </div>
+    </nav>
+
+    <div class="main-content">
+        <% if (items.length === 0) { %>
+            <div class="empty-cart">
+                <h2 class="one">Your cart is empty</h2>
+                <a href="/shop" class="checkout-btn">Continue Shopping</a>
+            </div>
+        <% } else { %>
+            <% items.forEach(item => { %>
+                <div class="cart-item <%= !item.inStock ? 'out-of-stock-item' : '' %>" data-variant-id="<%= item.variantId %>">
+                    <img src="<%= item.images[0] %>" alt="<%= item.name %>" class="product-image">
+                    <div class="product-details">
+                        <h3>
+                            <%= item.name %>
+                            <a href="/overview/<%= item.variantId %>" class="overview-link">View Details</a>
+                        </h3>
+                        <p>
+                            Color: <span class="color-circle" style="background-color: <%= item.color %>;"></span>
+                            Size: <span id="size"><%= item.size %></span>
+                        </p>
+                        
+                        <% if (!item.inStock) { %>
+                            <p class="stock-error">
+                                Requested quantity not available. Only <%= item.availableStock %> in stock.
+                            </p>
+                        <% } else if (item.availableStock < 5) { %>
+                            <p class="stock-warning">Only <%= item.availableStock %> left in stock!</p>
+                        <% } %>
+                        
+                        <a href="#" class="remove-link" onclick="removeItem(event, '<%= item.variantId %>')">Remove</a>
+                    </div>
+                    <div class="item-price">₹<%= (item.discountPrice || item.price).toFixed(2) %></div>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" onclick="updateQuantity('<%= item.variantId %>', -1, '<%= item.size %>')"
+                                <%= !item.inStock ? 'disabled' : '' %>>-</button>
+                        <input type="text" value="<%= item.quantity %>" class="quantity-input" 
+                               id="quantity-<%= item.variantId %>"
+                               <%= !item.inStock ? 'disabled' : '' %>>
+                        <button class="quantity-btn" onclick="updateQuantity('<%= item.variantId %>', 1, '<%= item.size %>')"
+                                <%= !item.inStock ? 'disabled' : '' %>>+</button>
+                    </div>
+                </div>
+            <% }); %>
+
+            <div class="coupon-section">
+                <input type="text" placeholder="Enter voucher code" class="coupon-input" id="couponInput">
+                <button class="redeem-btn" onclick="applyCoupon()">Apply</button>
+                <button class="show-coupons-btn" onclick="toggleCoupons()">Show Available Coupons</button>
+                
+                <div class="coupon-suggestions" id="couponSuggestions">
+                    <h4>Available Coupons</h4>
+                    <% if (coupons && coupons.length > 0) { %>
+                        <% coupons.forEach(coupon => { %>
+                            <div class="coupon-item" onclick="selectCoupon('<%= coupon.couponCode %>')">
+                                <div class="coupon-code"><%= coupon.couponCode %></div>
+                                <div><%= coupon.couponName %></div>
+                                <div class="coupon-details">
+                                    ₹<%= coupon.discount %> off on orders above ₹<%= coupon.minAmount %>
+                                    <br>
+                                    <small>Valid until <%= new Date(coupon.validity).toLocaleDateString() %></small>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <div class="no-coupons">No active coupons available</div>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="summary">
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>₹<%= totalAmount.toFixed(2) %></span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping fee</span>
+                    <span>₹20.00</span>
+                </div>
+                <div class="summary-row">
+                    <span>Discount</span>
+                    <span id="couponStatus">No discount applied</span>
+                </div>
+                <div class="summary-row">
+                    <strong>TOTAL</strong>
+                    <strong id="totalAmount">₹<%= (totalAmount + 20).toFixed(2) %></strong>
+                </div>
+            </div>
+
+            <button class="checkout-btn" onclick="proceedToCheckout()">
+                Proceed to Checkout
+            </button>
+        <% } %>
     </div>
-  </footer>
-
-  <script id="arni-categories-data" type="application/json">
-    <%- JSON.stringify(safeCategories || []) %>
-  </script>
-
-  <script src="/javascripts/user/cart.js"></script>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About ARNI</h3>
+                <p>Fashion for everyone</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="/">Home</a>
+                <a href="/shop">Shop</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p>Email: info@arni.com</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#">Instagram</a>
+                    <a href="#">Facebook</a>
+                    <a href="#">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="/javascripts/user/cart.js"></script>
 </body>
 </html>
