@@ -1,15 +1,15 @@
 // routes/otpRoutes.js
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-const otpController = require('../../controllers/authentication/forgetPasswordOtp');
+const otpController = require("../../controllers/authentication/forgetPasswordOtp");
 
 // GET home page
-router.get('/', otpController.getOtpPage);
+router.get("/", otpController.getOtpPage);
 
 // POST verify OTP
-router.post('/verify-otp', otpController.verifyOtp);
+router.post("/verify-otp", otpController.verifyOtp);
 
 // POST resend OTP
-router.post('/resendOtp', otpController.resendOtp);
+router.post("/resendOtp", otpController.resendOtp);
 
 module.exports = router;

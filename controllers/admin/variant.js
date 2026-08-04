@@ -1,5 +1,5 @@
-const Variant = require('../../models/variant');
-const cloudinary = require('../../config/cloudinary');
+const Variant = require("../../models/variant");
+const cloudinary = require("../../config/cloudinary");
 
 // Helper functions
 const isValidUrl = (string) => {
@@ -12,38 +12,38 @@ const isValidUrl = (string) => {
 };
 
 const isCloudinaryUrl = (url) => {
-  return isValidUrl(url) && url.includes('cloudinary.com');
+  return isValidUrl(url) && url.includes("cloudinary.com");
 };
 
 const uploadToCloudinary = async (base64String) => {
   try {
     const result = await cloudinary.uploader.upload(base64String, {
-      folder: 'variants',
-      resource_type: 'auto'
+      folder: "variants",
+      resource_type: "auto",
     });
     return result.secure_url;
   } catch (error) {
-    console.error('Cloudinary upload error:', error);
-    throw new Error('Failed to upload image to Cloudinary');
+    console.error("Cloudinary upload error:", error);
+    throw new Error("Failed to upload image to Cloudinary");
   }
 };
 
 const processImages = async (images) => {
   const processedImages = [];
-  
+
   for (const image of images) {
     try {
-      if (image.type === 'url' && isCloudinaryUrl(image.url)) {
+      if (image.type === "url" && isCloudinaryUrl(image.url)) {
         processedImages.push(image.url);
-      } else if (image.type === 'base64') {
+      } else if (image.type === "base64") {
         const cloudinaryUrl = await uploadToCloudinary(image.url);
         processedImages.push(cloudinaryUrl);
       } else {
-        console.warn('Invalid image format:', image.type);
+        console.warn("Invalid image format:", image.type);
         continue;
       }
     } catch (error) {
-      console.error('Error processing image:', error);
+      console.error("Error processing image:", error);
       continue;
     }
   }
@@ -54,7 +54,7 @@ const processImages = async (images) => {
 // GET route to render the variant page
 exports.getVariant = async (req, res, next) => {
   req.session.productId = req.query.id; // Store product ID in session
-  res.render('../views/pages/admin/variant'); // Render the variant page
+  res.render("../views/pages/admin/variant"); // Render the variant page
 };
 
 // GET route to fetch variants for a product
@@ -63,7 +63,7 @@ exports.getVariants = async (req, res, next) => {
     const variants = await Variant.find({ productId: req.session.productId });
     res.json(variants); // Return the list of variants
   } catch (error) {
-    console.error('Error fetching variants:', error);
+    console.error("Error fetching variants:", error);
     next(error); // Forward error to the next middleware
   }
 };
@@ -81,13 +81,13 @@ exports.createVariant = async (req, res, next) => {
       images: processedImages,
       sizes,
       tags,
-      productId
+      productId,
     });
 
     const savedVariant = await variant.save(); // Save the new variant
     res.status(201).json(savedVariant); // Return the created variant
   } catch (error) {
-    console.error('Error creating variant:', error);
+    console.error("Error creating variant:", error);
     next(error); // Forward error to the next middleware
   }
 };
@@ -100,7 +100,7 @@ exports.updateVariant = async (req, res, next) => {
 
     const existingVariant = await Variant.findById(id);
     if (!existingVariant) {
-      return res.status(404).json({ error: 'Variant not found' });
+      return res.status(404).json({ error: "Variant not found" });
     }
 
     const processedImages = await processImages(images); // Process images
@@ -111,14 +111,14 @@ exports.updateVariant = async (req, res, next) => {
         color,
         images: processedImages,
         sizes,
-        tags
+        tags,
       },
-      { new: true }
+      { new: true },
     );
 
     res.json(updatedVariant); // Return the updated variant
   } catch (error) {
-    console.error('Error updating variant:', error);
+    console.error("Error updating variant:", error);
     next(error); // Forward error to the next middleware
   }
 };
@@ -127,24 +127,24 @@ exports.updateVariant = async (req, res, next) => {
 exports.deleteVariant = async (req, res, next) => {
   try {
     const { id } = req.params;
-    
+
     const variant = await Variant.findById(id);
     if (!variant) {
-      return res.status(404).json({ error: 'Variant not found' });
+      return res.status(404).json({ error: "Variant not found" });
     }
 
     // Delete images from Cloudinary
     for (const imageUrl of variant.images) {
       if (isCloudinaryUrl(imageUrl)) {
-        const publicId = imageUrl.split('/').pop().split('.')[0];
+        const publicId = imageUrl.split("/").pop().split(".")[0];
         await cloudinary.uploader.destroy(`variants/${publicId}`);
       }
     }
 
     await Variant.findByIdAndDelete(id); // Delete the variant
-    res.json({ message: 'Variant deleted successfully' }); // Return success message
+    res.json({ message: "Variant deleted successfully" }); // Return success message
   } catch (error) {
-    console.error('Error deleting variant:', error);
+    console.error("Error deleting variant:", error);
     next(error); // Forward error to the next middleware
   }
 };

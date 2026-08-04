@@ -1,16 +1,10 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 
-const google = require('./api/google')
-const facebook = require('./api/facebook')
-const razorpay = require('./api/razropay')
+const google = require("./api/google");
+const facebook = require("./api/facebook");
 
-
-
-router.use('/google',google)
-router.use('/facebook',facebook)
-router.use('/razorpay',razorpay)
-
-
+router.use("/google", google);
+router.use("/facebook", facebook);
 
 module.exports = router;

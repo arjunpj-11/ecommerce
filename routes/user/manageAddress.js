@@ -1,21 +1,29 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const addressController = require('../../controllers/user/manageAddress');
-const isAuthenticated = require('../../middlewares/userLoginCheck');
+const addressController = require("../../controllers/user/manageAddress");
+const isAuthenticated = require("../../middlewares/userLoginCheck");
 
 // Get all addresses for a user
-router.get('/', isAuthenticated, addressController.getAllAddresses);
+router.get("/", isAuthenticated, addressController.getAllAddresses);
 
 // Create Address
-router.post('/addresses', isAuthenticated, addressController.createAddress);
+router.post("/addresses", isAuthenticated, addressController.createAddress);
 
 // Update Address
-router.put('/addresses/:id', isAuthenticated, addressController.updateAddress);
+router.put("/addresses/:id", isAuthenticated, addressController.updateAddress);
 
 // Delete Address
-router.delete('/addresses/:id', isAuthenticated, addressController.deleteAddress);
+router.delete(
+  "/addresses/:id",
+  isAuthenticated,
+  addressController.deleteAddress,
+);
 
 // Set Primary Address
-router.patch('/addresses/:id/primary', isAuthenticated, addressController.setPrimaryAddress);
+router.patch(
+  "/addresses/:id/primary",
+  isAuthenticated,
+  addressController.setPrimaryAddress,
+);
 
 module.exports = router;

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title">
+  <title id="title">Teal ARNI avatar</title>
+  <rect width="160" height="160" rx="80" fill="#def1ef"/>
+  <circle cx="80" cy="61" r="29" fill="#3f817a"/>
+  <path d="M29 145c5-34 23-51 51-51s46 17 51 51" fill="#3f817a"/>
+</svg>
