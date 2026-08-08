@@ -9,6 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.css" rel="stylesheet">
    
+    <link rel="stylesheet" href="/stylesheets/responsive.css">
 </head>
 <body> 
     <div class="loader-container ">
@@ -55,7 +56,7 @@
                     <div class="cat-modal__container">
                         <div class="cat-modal__header">
                             <h2>Create Category</h2>
-                            <button class="cat-modal__close-btn" onclick="catModal.close()" id="catModalCloseBtn">✕</button>
+                            <button type="button" class="cat-modal__close-btn" id="catModalCloseBtn">✕</button>
                         </div>
                         <div class="cat-modal__content">
                             <form id="catCreateForm" class="cat-form" >
@@ -74,7 +75,7 @@
                                 <div class="cat-crop__preview" id="catCropPreview"></div>
                                 <input type="hidden" id="catCroppedData" name="croppedImage">
                                 <div class="cat-modal__btn-group">
-                                    <button type="button" class="cat-btn cat-btn--cancel" onclick="catModal.close()">Cancel</button>
+                                    <button type="button" class="cat-btn cat-btn--cancel">Cancel</button>
                                     <button type="submit" class="cat-btn cat-btn--submit">Create</button>
                                 </div>
                             </form>
@@ -104,5 +105,6 @@
     <script src="/javascripts/admin/mainCategory.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.all.min.js"></script>
 
+    <script src="/javascripts/responsive.js"></script>
 </body>
 </html>

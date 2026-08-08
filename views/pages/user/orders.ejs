@@ -48,6 +48,7 @@
             background-color: #ca8a04;
         }
     </style>
+    <link rel="stylesheet" href="/stylesheets/responsive.css">
 </head>
 <body>
     <canvas id="backgroundCanvas"></canvas>
@@ -55,7 +56,7 @@
     <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="#" class="logo">ARNI</a>
+            <a href="/" class="logo">ARNI</a>
             <div class="nav-links">
                 <a href="/">Home</a>
                 <a href="/shop">Shop</a>
@@ -119,6 +120,14 @@
             <div class="content-area">
                 <div class="page active" id="orders">
                     <h2 class="page-header">My Orders</h2>
+                    <% if (!orders || orders.length === 0) { %>
+                        <div class="empty-state" role="status">
+                            <div class="empty-state-icon" aria-hidden="true"><i class="fas fa-box-open"></i></div>
+                            <h2>No orders yet</h2>
+                            <p>When you place an order, its delivery progress, payment status, and available actions will appear here.</p>
+                            <a href="/shop" class="empty-state-action">Explore products</a>
+                        </div>
+                    <% } else { %>
                     <div style="overflow-y: auto;">
                         <table class="orders-table">
                             <thead>
@@ -134,23 +143,24 @@
                             <tbody>
                                 <% orders.forEach((order, index) => { %>
                                     <tr>
-                                        <td>
-                                            <div style="display: flex; gap: 1rem; align-items: center;">
+                                        <td data-label="Product">
+                                            <div class="order-product" style="display: flex; gap: 1rem; align-items: center;">
                                                 <img src="<%= order.image %>" alt="Product" class="order-image">
                                                 <span><%= order.name %></span>
                                             </div>
                                         </td>
-                                        <td>₹<%= (order.price * order.quantity).toFixed(2) %></td>
-                                        <td><%= order.status %></td>
-                                        <td>
-                                            <% if (order.status !== 'Cancelled' && order.status !== 'Returned') { %>
-                                                <button class="lets-go-button" data-order-id="<%= order._id %>">Let's Go</button>
-                                            <% } %>
+                                        <td data-label="Total">₹<%= (order.price * order.quantity).toFixed(2) %></td>
+                                        <td data-label="Status">
+                                            <span class="order-status <%= String(order.status).toLowerCase().replace(/\s+/g, '-') %>"><%= order.status %></span>
+                                        </td>
+                                        <td data-label="Action">
+                                            <a href="/users/orderOverview/<%= order._id %>" class="lets-go-button" data-order-id="<%= order._id %>">View order</a>
                                         </td>
                                     </tr>
                                 <% }) %>
                             </tbody>
                         </table>
+                         <% if (pagination.totalPages > 1) { %>
                          <!-- Pagination -->
                          <div class="pagination-container">
                             <div class="pagination-controls">
@@ -210,7 +220,9 @@
                                 Page <%= pagination.currentPage %> of <%= pagination.totalPages %>
                             </div>
                         </div>
+                        <% } %>
                     </div>
+                    <% } %>
                 </div>
             </div>
         </div>
@@ -246,5 +258,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script src="/javascripts/user/orders.js"></script>
+    <script src="/javascripts/responsive.js"></script>
 </body>
 </html>

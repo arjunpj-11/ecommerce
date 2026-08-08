@@ -1,288 +1,183 @@
-![Arni E-Commerce Preview](./social-preview.jpeg)
+![Arni — end-to-end e-commerce learning project](./social-preview.jpeg)
 
-# Arni – Full-Stack E-Commerce Web Application
+# Arni — My First End-to-End E-Commerce Project
 
-Arni is the first complete full-stack web application I built.
+> A server-rendered commerce application built to understand how customer and administrative workflows fit together across a complete purchase lifecycle.
 
-I developed it while learning full-stack development at Brototype. Before this project, I had worked with frontend and backend concepts separately, but Arni was the first project where I connected everything and built a complete application from beginning to end.
+[![Live application](https://img.shields.io/badge/Live-arni.arjunpj.online-0f766e)](https://arni.arjunpj.online)
+[![Source](https://img.shields.io/badge/GitHub-arjunpj--11%2FArni-1f2937)](https://github.com/arjunpj-11/Arni)
 
-The application includes the main features expected from an e-commerce platform, including product browsing, cart and checkout flows, online payments, coupons, orders, returns, a wallet system, and an admin dashboard.
+Arni was my first major full-stack project. I built it while learning MERN-stack development at Brototype to connect the concepts I had studied separately—browser interactions, server-side application logic, database modelling, authentication, payments, inventory, and operational workflows—inside one working e-commerce application.
 
-The frontend is rendered using EJS, while Node.js, Express.js, and MongoDB handle the backend and data management.
+Arni is a completed learning project, not a commercial product or client engagement. Its purpose was to establish my full-stack development foundation by building a substantial application from end to end.
 
----
+## What the Project Covers
 
-## Why I Built It
+### Customer experience
 
-The main purpose of Arni was to understand how a complete full-stack application works in practice: how browser interactions reach controllers, how business rules shape database operations, and how authentication, payments, inventory, and order state fit together.
+- Account registration with email OTP verification, login, logout, password recovery, and Google/Facebook sign-in
+- Product discovery through categories, subcategories, search, product details, colour variants, and size-level availability
+- Cart and wishlist management with quantity and stock validation
+- Saved addresses, primary-address selection, coupon application, and checkout
+- Cash on delivery, wallet payment, and Razorpay order creation and signature verification
+- Order history and detail views, cancellation requests, return/refund requests, and wallet transaction history
 
-Building it gave me hands-on experience with:
+### Administration
 
-- Designing separate customer and administrator workflows
-- Structuring a large Express application with routes, controllers, models, and views
-- Maintaining authenticated sessions and protected routes
-- Modelling products, variants, inventory, carts, orders, coupons, refunds, and wallets
-- Integrating Razorpay, Cloudinary, email OTPs, and social authentication
-- Handling validation, responsive interfaces, errors, and user feedback across a multi-step purchase journey
-
----
-
-## Main Features
-
-### User Features
-
-- User registration and login
-- Session-based authentication
-- Home page with featured products
-- Product search
-- Category and subcategory browsing
-- Product listing and product details
-- Product variant selection
-- Shopping-cart management
-- Address management
-- Checkout flow
-- Razorpay payment integration
-- Cash-on-delivery support, where available
-- Coupon and discount application
-- Order placement and order history
-- Order cancellation
-- Product return requests
-- User profile management
-- Wallet system
-
-### Admin Features
-
-- Separate admin authentication
-- Sales and order dashboard
-- User management
-- Order management
-- Product management
-- Product variant management
-- Category and subcategory management
-- Coupon management
-- Offer management
-- Banner management
-- Sales analytics
-
----
-
-## Application Workflow
-
-### User Flow
-
-1. Create an account or log in
-2. Browse or search for products
-3. View product information and available variants
-4. Add products to the cart
-5. Add or select a delivery address
-6. Apply a coupon, when available
-7. Complete the checkout
-8. Pay through Razorpay or another supported method
-9. View and manage placed orders
-10. Request cancellation or return when applicable
-
-### Admin Flow
-
-1. Log in to the admin dashboard
-2. Add and manage products
-3. Manage product variants and stock
-4. Create categories and subcategories
-5. Configure coupons, offers, and banners
-6. View users and customer orders
-7. Update order status
-8. Monitor sales information through the dashboard
-
----
-
-## Tech Stack
-
-| Layer              | Technology                   |
-| ------------------ | ---------------------------- |
-| Server             | Node.js                      |
-| Backend Framework  | Express.js                   |
-| Frontend Rendering | EJS                          |
-| Database           | MongoDB                      |
-| Payment Gateway    | Razorpay                     |
-| Authentication     | Session-based authentication |
-| Architecture       | MVC-style project structure  |
-| Project Setup      | Express Generator            |
-
----
-
-## Project Structure
-
-```text
-Arni/
-├── bin/             # Server startup configuration
-├── config/          # Database and application configuration
-├── controllers/     # Application and business logic
-├── models/          # MongoDB schemas
-├── public/          # CSS, JavaScript, images, and static files
-├── routes/          # User and admin routes
-├── views/           # EJS templates
-├── app.js           # Express application setup
-├── package.json
-└── README.md
-```
-
-The project follows an MVC-style structure to keep routes, application logic, database models, and user-interface templates separated.
-
----
+- Separate session-protected administrator routes
+- Dashboard summaries for sales, revenue, users, products, and orders
+- Product, image, colour-variant, size-stock, category, and subcategory management
+- Coupon, banner, user, and order management
+- Controlled order-status transitions, inventory reconciliation, and wallet refunds
+- Date-filtered sales reporting with CSV and PDF exports
 
 ## Key Technical Work
 
-### Authentication and Sessions
+### Authentication and authorization
 
-The application uses session-based authentication for both users and administrators.
+Express sessions are stored in MongoDB when a database connection is configured. Customer and administrator middleware protect their respective routes, while blocked-account checks apply across authenticated customer journeys. Registration and password recovery use time-limited email OTPs with attempt limits; Passport provides Google and Facebook sign-in.
 
-Sessions are used to keep users logged in and protect routes that should only be accessed by authenticated users.
+### Products and inventory
 
-### Product and Variant Management
+Mongoose models represent products, categories, subcategories, and colour variants. Each variant holds size-level stock, pricing, and Cloudinary-hosted image URLs. Cart and checkout operations validate requested quantities against the selected variant and size.
 
-Administrators can create products and manage their related information, including categories, subcategories, variants, pricing, images, and availability.
+### Cart, checkout, and order lifecycle
 
-### Cart and Checkout
+The cart identifies an item by variant and size, recalculates totals, invalidates stale coupons when contents change, and blocks invalid or over-stock quantities. Checkout supports saved addresses and creates per-item orders inside MongoDB transactions where the deployment supports them. Order transitions cover pending, processing, shipped, delivered, cancelled, refund-requested, returned, and payment-failure states.
 
-Users can add products to the cart, update quantities, remove items, choose an address, apply coupons, and complete the checkout process.
+### Payments, wallet, coupons, and returns
 
-### Razorpay Integration
+- Razorpay orders are created on the server and successful callbacks are verified with an HMAC signature before paid orders are persisted.
+- Wallet payments debit the stored balance and record a transaction.
+- Coupon eligibility, expiry, minimum order value, and prior usage are checked before applying a discount.
+- Paid cancellations and approved refunds credit the customer's wallet and restore inventory where appropriate.
+- Administrators can approve or reject refund requests.
 
-Razorpay is integrated into the checkout flow to support online payments.
+### Reliability and security work
 
-The application handles payment creation, payment verification, and order confirmation.
+The Express application uses Helmet, compression, request-size limits, rate limiting on authentication/API routes, secure session-cookie settings in production, and centralized error handling. Automated checks compile server/browser JavaScript and EJS templates; the integration suite exercises public routes, authentication, cart, address, wallet, checkout, cancellation, refund, inventory, admin authorization, and reporting behaviour against QA fixtures.
 
-### Coupons and Offers
+## Architecture
 
-Administrators can create and manage coupons and offers. Eligible users can apply them during checkout to receive discounts.
+Arni follows an MVC-style, feature-grouped Express structure:
 
-### Orders, Cancellations, and Returns
+```text
+Arni/
+├── bin/              # HTTP server entry point
+├── config/           # External service configuration
+├── controllers/      # Customer, admin, authentication, and storefront logic
+├── middlewares/      # Authentication, block-status, and error handling
+├── models/           # Mongoose schemas for commerce data
+├── public/           # Browser JavaScript, styles, images, and social metadata asset
+├── routes/           # Feature-grouped Express routers
+├── scripts/          # Static verification and QA fixture tooling
+├── test/             # Node/Supertest integration coverage
+├── utilities/        # OTP, email, and identifier helpers
+├── views/            # Server-rendered EJS pages and partials
+├── app.js            # Express application composition
+└── seed.js           # Development/QA data seeding
+```
 
-Users can view their order history and request cancellations or returns based on the current order status.
+A typical request moves through an Express route and authentication middleware to a feature controller, which applies workflow rules through Mongoose models and then returns either an EJS page or JSON for browser-side interactions.
 
-Administrators can review orders and update their progress.
+## Technology Stack
 
-### Wallet System
+| Area | Technology |
+| --- | --- |
+| Runtime and server | Node.js, Express.js |
+| User interface | EJS, JavaScript, CSS |
+| Database and sessions | MongoDB, Mongoose, connect-mongo |
+| Authentication | bcryptjs, Express sessions, Passport, email OTP |
+| Payments | Razorpay, wallet, cash on delivery |
+| Media | Cloudinary |
+| Reporting | json2csv, PDFKit |
+| Validation and security | Helmet, express-rate-limit |
+| Verification | Node test runner, Supertest, EJS compilation checks |
 
-The application includes a wallet system that can be used for eligible refunds and future purchases.
-
-### Admin Dashboard
-
-The admin dashboard provides controls for products, users, categories, coupons, banners, offers, and orders, along with an overview of sales activity.
-
----
-
-## Installation and Setup
+## Local Setup
 
 ### Prerequisites
 
-Make sure the following are installed:
-
-- Node.js
+- A current Node.js LTS release
 - npm
-- MongoDB, either locally or through MongoDB Atlas
+- MongoDB (local or Atlas)
+- Razorpay test credentials for the online-payment flow
+- Cloudinary and email credentials for media upload and OTP delivery
 
-### 1. Clone the Repository
+### Installation
 
 ```bash
-git clone https://github.com/arjunpj-11/Arni
+git clone https://github.com/arjunpj-11/Arni.git
 cd Arni
-```
-
-### 2. Install Dependencies
-
-```bash
 npm install
 ```
 
-### 3. Configure Environment Variables
-
-Create a `.env` file in the root directory:
+Create a `.env` file in the repository root:
 
 ```env
-MONGO_URI=your_mongodb_connection_string
-SESSION_SECRET=your_session_secret
-RAZORPAY_KEY_ID=your_razorpay_key_id
-RAZORPAY_SECRET=your_razorpay_secret
+MongoDB_url=mongodb_connection_string
+SESSION_SECRET=session_secret
 PORT=3000
+
+RAZORPAY_KEY_ID=razorpay_test_key_id
+RAZORPAY_KEY_SECRET=razorpay_test_key_secret
+
+CLOUDINARY_CLOUD_NAME=cloudinary_cloud_name
+CLOUDINARY_API_KEY=cloudinary_api_key
+CLOUDINARY_API_SECRET=cloudinary_api_secret
+
+EMAIL_USER=otp_sender_email
+EMAIL_PASS=otp_sender_app_password
+
+GOOGLE_CLIENT_ID=google_client_id
+GOOGLE_CLIENT_SECRET=google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:3000/api/google/auth/google/callback
+
+FACEBOOK_APP_ID=facebook_app_id
+FACEBOOK_APP_SECRET=facebook_app_secret
+FACEBOOK_CALLBACK_URL=http://localhost:3000/api/facebook/auth/facebook/callback
 ```
 
-Do not commit real credentials or secrets to the repository.
+The application also accepts `MONGO_URI` as the database variable. OAuth variables are only required when testing those providers.
 
-### 4. Start the Application
+Start the server:
 
 ```bash
 npm start
 ```
 
-Open the application in your browser:
+Then open [http://localhost:3000](http://localhost:3000).
 
-```text
-http://localhost:3000
+## Verification
+
+Run the dependency-free source and template checks:
+
+```bash
+npm test
 ```
 
----
+The database-backed integration suite requires QA data in a non-production database:
+
+```bash
+npm run test:fixtures
+npm run test:integration
+```
+
+`test:fixtures` replaces matching QA records, so use it only with a disposable development or test database.
 
 ## What I Learned
 
-Arni was an important project in my development journey because it was the first time I built and connected all the major parts of a full-stack application.
+Arni taught me how a full-stack application behaves as a system rather than as a set of isolated screens. I learned to model connected commerce data, separate routes and controllers, maintain session-based access rules, coordinate inventory with order state, verify payments, handle refunds, render data-driven pages, and debug multi-step workflows that cross the browser, server, and database.
 
-Through this project, I gained practical experience with:
+Most importantly, it gave me the practical foundation to approach later projects with stronger ideas about modularity, validation, testing, security, and production delivery—without rewriting Arni's history as professional employment or a commercial product.
 
-- Node.js and Express.js
-- MongoDB schemas and database operations
-- EJS server-side rendering
-- MVC-style application structure
-- User and admin authentication
-- Session management
-- Frontend and backend integration
-- Payment-gateway integration
-- Cart and checkout logic
-- Coupon and discount calculations
-- Order-management workflows
-- Debugging a large application
-- Organizing code into reusable modules
+## Links
 
-This project gave me the foundation I needed to move into React, TypeScript, modern frontend development, and larger projects such as Imminiq.
+- **Live:** [arni.arjunpj.online](https://arni.arjunpj.online)
+- **GitHub:** [github.com/arjunpj-11/Arni](https://github.com/arjunpj-11/Arni)
 
----
+## Repository Metadata
 
-## Project Scope
-
-Arni is a portfolio-grade, end-to-end e-commerce application built as a learning project. It includes a complete purchase workflow, a separate administration surface, responsive server-rendered pages, payment and media integrations, and modular MVC-style organization.
-
-Before use as a real commercial store, the deployment should also include a persistent production session store, centralized monitoring, backups, payment-provider production credentials, and a formal security review.
-
----
-
-## Possible Improvements
-
-- Product reviews and ratings
-- Real-time order notifications
-- Live delivery tracking
-- Broader automated unit and integration test coverage
-- Centralized logs and operational monitoring
-- REST API for a React or Next.js frontend
-- Better product recommendation features
-- Improved reporting and sales analytics
-
----
-
-## Repository Purpose
-
-This repository is shared to showcase my first complete full-stack project and document what I learned while building it.
-
----
-
-> Arni was the project that helped me understand how frontend, backend, databases, authentication, payments, and business logic come together inside a complete application.
-
-This project is licensed under the MIT License.
-
----
-
-## 👨‍💻 Author
-
-**Arjun PJ** — https://github.com/arjunpj-11
-
----
-
-> 💡 Built as a full-stack implementation of a real-world e-commerce platform to explore scalable architecture, payment integration, and admin management systems.
+- **GitHub tagline:** From first full-stack build to complete commerce workflow.
+- **Repository description:** My first end-to-end full-stack learning project: an Express, EJS, and MongoDB e-commerce app with customer/admin workflows, Razorpay, inventory, wallets, coupons, orders, returns, and reporting.
+- **Suggested topics:** `nodejs`, `express`, `mongodb`, `mongoose`, `ejs`, `javascript`, `razorpay`, `ecommerce`, `full-stack`, `mern-learning-project`, `portfolio-project`

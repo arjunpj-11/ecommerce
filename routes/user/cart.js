@@ -4,6 +4,7 @@ var cartController = require("../../controllers/user/cart");
 const isAuthenticated = require("../../middlewares/userLoginCheck");
 
 router.post("/add", isAuthenticated, cartController.addToCart);
+router.get("/status", isAuthenticated, cartController.getItemStatus);
 router.get("/", isAuthenticated, cartController.getCart);
 router.post("/update-quantity", isAuthenticated, cartController.updateQuantity);
 router.delete("/remove-item", isAuthenticated, cartController.removeItem);

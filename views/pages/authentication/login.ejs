@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Page</title>
+  <title>Sign in - ARNI</title>
   <link rel="stylesheet" href="/stylesheets/authentication/login.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheets/responsive.css">
 </head>
 <body>
   <canvas id="backgroundCanvas"></canvas>
@@ -13,25 +14,26 @@
   <div class="login-container">
     <div class="login-box">
       <div class="logo-section">
-        <img src="/images/common/logo.png" alt="Logo">
+        <img src="/images/common/logo.png" alt="ARNI">
       </div>
       <div class="image-section">
         <img src="/images/authentication/signin image.jpg" alt="Login Image">
       </div>
       <div class="form-section">
-        <h2>Login</h2>
+        <h2>Welcome back</h2>
+        <p class="auth-intro">Sign in to continue to your ARNI account.</p>
         <form id="form">
           <% if (emailError) { %>
-            <input type="text" name="emailOrPhone" placeholder="Email or Phone Number" id="emailOrPhone" value="<%= detail.emailOrPhone %>" required>
+            <input type="text" name="emailOrPhone" placeholder="Email or Phone Number" id="emailOrPhone" value="<%= detail.emailOrPhone %>" autocomplete="username" required>
             <p class="validation iValid" id="emailOrPhoneMessage"><%=emailError%></p>
           <% } else { %>
-            <input type="text" name="emailOrPhone" placeholder="Email or Phone Number" id="emailOrPhone" value="<%= detail.emailOrPhone %>" required>
+            <input type="text" name="emailOrPhone" placeholder="Email or Phone Number" id="emailOrPhone" value="<%= detail.emailOrPhone %>" autocomplete="username" required>
             <p class="validation iValid" id="emailOrPhoneMessage"></p>
           <% } %>
         
           <!-- Password Input -->
           <div class="password-wrapper">
-            <input type="password" name="password" placeholder="Password" id="password" required>
+            <input type="password" name="password" placeholder="Password" id="password" autocomplete="current-password" required>
             <i class="fas fa-eye" id="togglePassword"></i>
           </div>
           <p class="validation iValid" id="passwordMessage"><%=error%></p>
@@ -47,17 +49,18 @@
         </div>
         
         <div class="social-login">
-          <p>Or sign up with</p>
-          <a href='/api/google/auth/google' class="btn"><button class="google">
+          <p>Or continue with</p>
+          <a href='/api/google/auth/google' class="btn google">
             <i class="fab fa-google"></i> Google
-          </button></a>
-          <a href="/api/facebook/auth/facebook" class="btn"><button class="facebook">
+          </a>
+          <a href="/api/facebook/auth/facebook" class="btn facebook">
             <i class="fab fa-facebook"></i> Facebook
-          </button></a>
+          </a>
         </div>
       </div>
     </div>
   </div>
   <script src="/javascripts/authentication/login.js"></script>
+    <script src="/javascripts/responsive.js"></script>
 </body>
 </html>

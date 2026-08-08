@@ -92,6 +92,12 @@ const orderSchema = new mongoose.Schema({
     default: null,
   },
   couponDiscountApplied: { type: Number, default: 0 },
+  shippingFee: { type: Number, min: 0, default: 20 },
+  cancellationReason: {
+    type: String,
+    trim: true,
+    maxlength: 300,
+  },
 });
 
 module.exports = mongoose.model("Order", orderSchema);

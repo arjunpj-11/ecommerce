@@ -200,18 +200,20 @@ exports.getCheckoutPage = async (req, res) => {
     const cart = await Cart.findOne({ user: userId });
     const wallet = await Wallet.findOne({ user: userId });
 
-    if (!cart) {
-      return res.render("../views/pages/user/checkout", {
-        items: [],
-        discount: 0,
-        walletBalance: wallet ? wallet.balance : 0,
-      });
+    if (!cart || cart.items.length === 0) {
+      return res.redirect("/users/cart");
     }
 
     const cartItems = await Promise.all(
       cart.items.map(async (item) => {
         const variant = await Variant.findById(item.variantId);
-        const product = await Product.findById(variant.productId);
+        const product = variant
+          ? await Product.findById(variant.productId)
+          : null;
+
+        if (!variant || !product) {
+          return null;
+        }
 
         const inStock = variant.sizes[item.size] >= item.quantity;
         const availableStock = variant.sizes[item.size] || 0;
@@ -232,6 +234,11 @@ exports.getCheckoutPage = async (req, res) => {
         };
       }),
     );
+    const availableCartItems = cartItems.filter(Boolean);
+
+    if (availableCartItems.length !== cart.items.length) {
+      return res.redirect("/users/cart");
+    }
 
     const categoriesWithSubs = await MainCategory.aggregate([
       {
@@ -247,7 +254,7 @@ exports.getCheckoutPage = async (req, res) => {
         },
       },
     ]);
-    const subtotal = calculateTotal(cartItems);
+    const subtotal = calculateTotal(availableCartItems);
     let discount = 0;
 
     if (cart.couponApplied) {
@@ -262,7 +269,7 @@ exports.getCheckoutPage = async (req, res) => {
     }
 
     res.render("../views/pages/user/checkout", {
-      items: cartItems,
+      items: availableCartItems,
       totalAmount: subtotal,
       discount,
       walletBalance: wallet ? wallet.balance : 0,
@@ -279,6 +286,12 @@ exports.createAddress = async (req, res) => {
     const { street, city, state, postalCode, country, phone, name } = req.body;
     const userId = req.session.userId;
 
+    if (!street || !city || !state || !postalCode) {
+      return res.status(400).json({
+        error: "Street, city, state, and postal code are required.",
+      });
+    }
+
     const addressCount = await Address.countDocuments({ userId });
     const isPrimary = addressCount === 0;
 
@@ -289,7 +302,7 @@ exports.createAddress = async (req, res) => {
       city,
       state,
       postalCode,
-      country,
+      country: country || "India",
       phone,
       isPrimary,
     });
@@ -436,6 +449,9 @@ async function executeOrderTransaction({
 }
 
 async function loadOrderContext(userId, shippingAddressId, session = null) {
+  if (!mongoose.isValidObjectId(shippingAddressId)) {
+    throw new Error("Invalid shipping address.");
+  }
   const sessionQuery = (query) => (session ? query.session(session) : query);
   const [user, cart, shippingAddress] = await Promise.all([
     sessionQuery(User.findById(userId)),
@@ -512,7 +528,10 @@ async function createOrdersFromContext(
       : 0;
   const orderIds = [];
 
-  for (const { cartItem, variant, product } of context.items) {
+  for (const [
+    itemIndex,
+    { cartItem, variant, product },
+  ] of context.items.entries()) {
     const stockField = `sizes.${cartItem.size}`;
     const updatedVariant = await Variant.findOneAndUpdate(
       {
@@ -553,6 +572,7 @@ async function createOrdersFromContext(
       paymentStatus: payment.status,
       paymentDetails: payment.details || null,
       couponApplied: context.cart.couponApplied || null,
+      shippingFee: itemIndex === 0 ? 20 : 0,
     });
     await order.save({ session });
     orderIds.push(order._id);

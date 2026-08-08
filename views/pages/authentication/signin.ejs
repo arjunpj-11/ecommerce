@@ -6,6 +6,7 @@
   <title>Sign Up</title>
   <link rel="stylesheet" href="/stylesheets/authentication/signin.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheets/responsive.css">
 </head>
 <body>
   <canvas id="backgroundCanvas"></canvas>
@@ -13,7 +14,7 @@
     <div class="login-box">
       <!-- Logo Section -->
       <div class="logo-section">
-        <img src="/images/common/logo.png" alt="Logo">
+        <img src="/images/common/logo.png" alt="ARNI">
       </div>
 
       <!-- Image Section -->
@@ -23,26 +24,27 @@
 
       <!-- Form Section -->
       <div class="form-section">
-        <h2>Sign Up</h2>
+        <h2>Create your account</h2>
+        <p class="auth-intro">Join ARNI to save favourites, track orders, and check out faster.</p>
         <form id="form">
           <!-- Name Input -->
-          <input type="text" name="name" placeholder="Full Name" required class="" value="<%= detail.username %>" id="fullName">
+          <input type="text" name="name" placeholder="Full Name" required class="" value="<%= detail.username %>" id="fullName" autocomplete="name">
           <p class="validation iValid" id="fullNameMessage"></p>
 
           <!-- Email Input -->
-          <input type="text" name="emailOrPhone" placeholder="Email or Phone Number" id="emailOrPhone" class="" value="<%= detail.emailOrPhone %>" required>
+          <input type="text" name="emailOrPhone" placeholder="Email or Phone Number" id="emailOrPhone" class="" value="<%= detail.emailOrPhone %>" autocomplete="username" required>
           <p class="validation iValid" id="emailOrPhoneMessage"></p>
 
           <!-- Password Input -->
           <div class="password-wrapper">
-            <input type="password" name="password" placeholder="Password" id="password" required>
+            <input type="password" name="password" placeholder="Password" id="password" autocomplete="new-password" required>
             <i class="fas fa-eye" id="togglePassword"></i>
           </div>
           <p class="validation iValid" id="passwordMessage"></p>
 
           <!-- Confirm Password Input -->
           <div class="password-wrapper">
-            <input type="password" name="confirm-password" placeholder="Confirm Password" id="passwordConfirm" required>
+            <input type="password" name="confirm-password" placeholder="Confirm Password" id="passwordConfirm" autocomplete="new-password" required>
             <i class="fas fa-eye" id="togglePasswordConfirm"></i>
           </div>
           <p class="validation iValid" id="passwordConfirmMessage"></p>
@@ -76,12 +78,12 @@
         <!-- Social Login Buttons -->
         <div class="social-login">
           <p>Or sign up with</p>
-          <a href='/api/google/auth/google' class="btn"><button class="google">
+          <a href='/api/google/auth/google' class="btn google">
             <i class="fab fa-google"></i> Google
-          </button></a>
-          <a href="/api/facebook/auth/facebook" class="btn"><button class="facebook">
+          </a>
+          <a href="/api/facebook/auth/facebook" class="btn facebook">
             <i class="fab fa-facebook"></i> Facebook
-          </button></a>
+          </a>
         </div>
 
         <!-- Link to Login Page -->
@@ -93,5 +95,6 @@
   </div>
 
   <script src="/javascripts/authentication/signin.js"></script>
+    <script src="/javascripts/responsive.js"></script>
 </body>
 </html>

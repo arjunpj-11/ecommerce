@@ -117,6 +117,7 @@ async function getTopCategories() {
     ]);
 
     const maxSales = Math.max(...categories.map((cat) => cat.totalSales));
+    if (!Number.isFinite(maxSales) || maxSales <= 0) return [];
     return categories.map((cat) => ({
       ...cat,
       percentage: Math.round((cat.totalSales / maxSales) * 100),

@@ -7,6 +7,13 @@ const mongoose = require("mongoose");
 // GET variant with product details
 const getVariantWithProductDetails = async (req, res) => {
   try {
+    if (!mongoose.isValidObjectId(req.params.variantId)) {
+      return res.status(404).render("error", {
+        message: "Product option not found",
+        error: { status: 404, stack: "" },
+      });
+    }
+
     // Fetch the variant by ID and join with product details
     const variantData = await Variant.aggregate([
       {
@@ -25,7 +32,10 @@ const getVariantWithProductDetails = async (req, res) => {
     ]);
 
     if (!variantData || variantData.length === 0) {
-      return res.status(404).send("Variant not found"); // Handle case where variant is not found
+      return res.status(404).render("error", {
+        message: "Product option not found",
+        error: { status: 404, stack: "" },
+      });
     }
 
     const currentVariant = variantData[0];
@@ -124,6 +134,10 @@ const getVariantWithProductDetails = async (req, res) => {
 // GET variant data
 const getVariantData = async (req, res) => {
   try {
+    if (!mongoose.isValidObjectId(req.params.variantId)) {
+      return res.status(404).json({ error: "Variant not found" });
+    }
+
     // Fetch the variant by ID and join with product details
     const variantData = await Variant.aggregate([
       {

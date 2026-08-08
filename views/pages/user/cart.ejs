@@ -8,8 +8,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/stylesheets/user/cart.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheets/responsive.css">
 </head>
-<body>
+<body data-coupon-applied="<%= appliedCoupon ? 'true' : 'false' %>">
+    <div id="toastRegion" class="toast-region" aria-live="polite"></div>
     <canvas id="backgroundCanvas"></canvas>
 
      <!-- Navbar -->
@@ -43,12 +45,17 @@
     <div class="main-content">
         <% if (items.length === 0) { %>
             <div class="empty-cart">
+                <div class="empty-state-icon" aria-hidden="true"><i class="fas fa-shopping-bag"></i></div>
                 <h2 class="one">Your cart is empty</h2>
-                <a href="/shop" class="checkout-btn">Continue Shopping</a>
+                <p>Add something you love and it will appear here, ready for checkout.</p>
+                <a href="/shop" class="empty-state-action">Continue shopping</a>
             </div>
         <% } else { %>
             <% items.forEach(item => { %>
-                <div class="cart-item <%= !item.inStock ? 'out-of-stock-item' : '' %>" data-variant-id="<%= item.variantId %>">
+                <div class="cart-item <%= !item.inStock ? 'out-of-stock-item' : '' %>"
+                     data-variant-id="<%= item.variantId %>"
+                     data-size="<%= item.size %>"
+                     data-price="<%= item.discountPrice || item.price %>">
                     <img src="<%= item.images[0] %>" alt="<%= item.name %>" class="product-image">
                     <div class="product-details">
                         <h3>
@@ -57,7 +64,7 @@
                         </h3>
                         <p>
                             Color: <span class="color-circle" style="background-color: <%= item.color %>;"></span>
-                            Size: <span id="size"><%= item.size %></span>
+                            Size: <span class="item-size"><%= item.size %></span>
                         </p>
                         
                         <% if (!item.inStock) { %>
@@ -68,31 +75,35 @@
                             <p class="stock-warning">Only <%= item.availableStock %> left in stock!</p>
                         <% } %>
                         
-                        <a href="#" class="remove-link" onclick="removeItem(event, '<%= item.variantId %>')">Remove</a>
+                        <button type="button" class="remove-link" data-cart-action="remove">Remove</button>
                     </div>
                     <div class="item-price">₹<%= (item.discountPrice || item.price).toFixed(2) %></div>
                     <div class="quantity-controls">
-                        <button class="quantity-btn" onclick="updateQuantity('<%= item.variantId %>', -1, '<%= item.size %>')"
+                        <button type="button" class="quantity-btn" aria-label="Decrease quantity" data-cart-action="decrease"
                                 <%= !item.inStock ? 'disabled' : '' %>>-</button>
-                        <input type="text" value="<%= item.quantity %>" class="quantity-input" 
-                               id="quantity-<%= item.variantId %>"
+                        <input type="text" value="<%= item.quantity %>" class="quantity-input"
+                               aria-label="Quantity" readonly inputmode="numeric"
                                <%= !item.inStock ? 'disabled' : '' %>>
-                        <button class="quantity-btn" onclick="updateQuantity('<%= item.variantId %>', 1, '<%= item.size %>')"
+                        <button type="button" class="quantity-btn" aria-label="Increase quantity" data-cart-action="increase"
                                 <%= !item.inStock ? 'disabled' : '' %>>+</button>
                     </div>
                 </div>
             <% }); %>
 
             <div class="coupon-section">
-                <input type="text" placeholder="Enter voucher code" class="coupon-input" id="couponInput">
-                <button class="redeem-btn" onclick="applyCoupon()">Apply</button>
-                <button class="show-coupons-btn" onclick="toggleCoupons()">Show Available Coupons</button>
+                <label class="sr-only" for="couponInput">Coupon code</label>
+                <input type="text" placeholder="Enter coupon code" class="coupon-input" id="couponInput"
+                       value="<%= appliedCoupon ? appliedCoupon.couponCode : '' %>"
+                       <%= appliedCoupon ? 'disabled' : '' %>>
+                <button type="button" class="redeem-btn" data-cart-action="apply-coupon" <%= appliedCoupon ? 'disabled' : '' %>>Apply</button>
+                <button type="button" class="clear-coupon-btn" data-cart-action="clear-coupon" <%= appliedCoupon ? '' : 'hidden' %>>Remove coupon</button>
+                <button type="button" class="show-coupons-btn" data-cart-action="toggle-coupons" aria-expanded="false" aria-controls="couponSuggestions">Show Available Coupons</button>
                 
                 <div class="coupon-suggestions" id="couponSuggestions">
                     <h4>Available Coupons</h4>
                     <% if (coupons && coupons.length > 0) { %>
                         <% coupons.forEach(coupon => { %>
-                            <div class="coupon-item" onclick="selectCoupon('<%= coupon.couponCode %>')">
+                            <button type="button" class="coupon-item" data-cart-action="select-coupon" data-coupon-code="<%= coupon.couponCode %>">
                                 <div class="coupon-code"><%= coupon.couponCode %></div>
                                 <div><%= coupon.couponName %></div>
                                 <div class="coupon-details">
@@ -100,7 +111,7 @@
                                     <br>
                                     <small>Valid until <%= new Date(coupon.validity).toLocaleDateString() %></small>
                                 </div>
-                            </div>
+                            </button>
                         <% }); %>
                     <% } else { %>
                         <div class="no-coupons">No active coupons available</div>
@@ -108,10 +119,10 @@
                 </div>
             </div>
 
-            <div class="summary">
+            <div class="summary" data-shipping="20">
                 <div class="summary-row">
                     <span>Subtotal</span>
-                    <span>₹<%= totalAmount.toFixed(2) %></span>
+                    <span id="subtotalAmount">₹<%= totalAmount.toFixed(2) %></span>
                 </div>
                 <div class="summary-row">
                     <span>Shipping fee</span>
@@ -119,15 +130,15 @@
                 </div>
                 <div class="summary-row">
                     <span>Discount</span>
-                    <span id="couponStatus">No discount applied</span>
+                    <span id="couponStatus"><%= appliedCoupon ? `−₹${Number(appliedCoupon.discount).toFixed(2)}` : 'No discount applied' %></span>
                 </div>
                 <div class="summary-row">
                     <strong>TOTAL</strong>
-                    <strong id="totalAmount">₹<%= (totalAmount + 20).toFixed(2) %></strong>
+                    <strong id="totalAmount">₹<%= Math.max(0, totalAmount + 20 - (appliedCoupon ? Number(appliedCoupon.discount) : 0)).toFixed(2) %></strong>
                 </div>
             </div>
 
-            <button class="checkout-btn" onclick="proceedToCheckout()">
+            <button type="button" class="checkout-btn" data-cart-action="checkout">
                 Proceed to Checkout
             </button>
         <% } %>
@@ -161,5 +172,6 @@
     </footer>
     
     <script src="/javascripts/user/cart.js"></script>
+    <script src="/javascripts/responsive.js"></script>
 </body>
 </html>

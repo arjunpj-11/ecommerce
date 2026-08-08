@@ -6,6 +6,7 @@
   <title>Enter OTP</title>
   <link rel="stylesheet" href="/stylesheets/authentication/signinotp.css"> <!-- Link to CSS stylesheet -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> <!-- Link to Font Awesome -->
+    <link rel="stylesheet" href="/stylesheets/responsive.css">
 </head>
 <body>
   <canvas id="backgroundCanvas"></canvas>
@@ -46,12 +47,12 @@
         <!-- OTP Form -->
         <form action="/auth/otp/verify-otp" method="post"> <!-- Form to verify OTP -->
           <div class="otp-inputs">
-            <input type="number" id="otp1" maxlength="1" name="otp1" required> <!-- OTP input field -->
-            <input type="number" id="otp2" maxlength="1" name="otp2" required> <!-- OTP input field -->
-            <input type="number" id="otp3" maxlength="1" name="otp3" required> <!-- OTP input field -->
-            <input type="number" id="otp4" maxlength="1" name="otp4" required> <!-- OTP input field -->
-            <input type="number" id="otp5" maxlength="1" name="otp5" required> <!-- OTP input field -->
-            <input type="number" id="otp6" maxlength="1" name="otp6" required> <!-- OTP input field -->
+            <input type="text" inputmode="numeric" pattern="[0-9]*" id="otp1" maxlength="1" name="otp1" autocomplete="one-time-code" required> <!-- OTP input field -->
+            <input type="text" inputmode="numeric" pattern="[0-9]*" id="otp2" maxlength="1" name="otp2" required> <!-- OTP input field -->
+            <input type="text" inputmode="numeric" pattern="[0-9]*" id="otp3" maxlength="1" name="otp3" required> <!-- OTP input field -->
+            <input type="text" inputmode="numeric" pattern="[0-9]*" id="otp4" maxlength="1" name="otp4" required> <!-- OTP input field -->
+            <input type="text" inputmode="numeric" pattern="[0-9]*" id="otp5" maxlength="1" name="otp5" required> <!-- OTP input field -->
+            <input type="text" inputmode="numeric" pattern="[0-9]*" id="otp6" maxlength="1" name="otp6" required> <!-- OTP input field -->
           </div>
           <button type="submit">Verify OTP</button> <!-- Submit button -->
         </form>
@@ -59,7 +60,7 @@
         <!-- OTP-related Links -->
         <div class="form-links">
           <span>Didn't receive the OTP? </span>
-          <a onclick="resend()" id ="resendBtn" class="resend-otp" disabled>Resend OTP</a> <!-- Link to resend OTP -->
+          <button type="button" id="resendBtn" class="resend-otp" disabled>Resend OTP</button>
           <span id="timer" class="timer"></span> <!-- Timer display -->
         </div>
         
@@ -71,5 +72,6 @@
     </div>
   </div>
   <script src="/javascripts/authentication/signinotp.js"></script> <!-- Link to JavaScript file -->
+    <script src="/javascripts/responsive.js"></script>
 </body>
 </html>

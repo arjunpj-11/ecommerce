@@ -1,8 +1,89 @@
 body {
+  margin: 0;
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font:
+    16px system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  background: #121212;
+  color: #f3f4f6;
 }
 
 a {
-  color: #00B7FF;
+  color: #eab308;
+}
+
+.error-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: radial-gradient(circle at top, #29220c, #121212 48%);
+}
+.error-card {
+  width: min(620px, 100%);
+  padding: clamp(24px, 6vw, 56px);
+  border: 1px solid rgba(234, 179, 8, 0.25);
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.55);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.4);
+  text-align: center;
+}
+.error-logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+.error-code {
+  margin: 28px 0 4px;
+  color: #eab308;
+  font-size: clamp(3rem, 12vw, 6rem);
+  font-weight: 800;
+  line-height: 1;
+}
+.error-card h1 {
+  margin: 0 0 12px;
+  font-size: clamp(1.5rem, 5vw, 2.25rem);
+}
+.error-card > p:not(.error-code) {
+  color: #cbd5e1;
+  line-height: 1.65;
+}
+.error-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+.primary-action,
+.secondary-action {
+  min-height: 44px;
+  padding: 11px 18px;
+  border-radius: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.primary-action {
+  background: #eab308;
+  color: #111;
+  text-decoration: none;
+}
+.secondary-action {
+  border: 1px solid #64748b;
+  background: transparent;
+  color: #fff;
+}
+.error-details {
+  margin-top: 30px;
+  text-align: left;
+  color: #94a3b8;
+}
+.error-details pre {
+  max-width: 100%;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }

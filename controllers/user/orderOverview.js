@@ -2,13 +2,11 @@ const Order = require("../../models/order");
 const Wallet = require("../../models/wallet");
 const User = require("../../models/user");
 const Refund = require("../../models/refund");
-const express = require("express");
-const router = express.Router();
 const PDFDocument = require("pdfkit");
 const MainCategory = require("../../models/mainCategory");
-const SubCategory = require("../../models/subCategory");
 const Variant = require("../../models/variant");
 const Razorpay = require("razorpay");
+const mongoose = require("mongoose");
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -16,6 +14,10 @@ const razorpay = new Razorpay({
 });
 
 async function findOwnedOrder(req, orderId) {
+  if (!mongoose.isValidObjectId(orderId)) {
+    return { user: null, order: null };
+  }
+
   const user = await User.findById(req.session.userId).select(
     "userId username email profileImage",
   );
@@ -32,6 +34,11 @@ exports.generateInvoice = async (req, res) => {
   try {
     const { order } = await findOwnedOrder(req, req.params.orderId);
     if (!order) return res.status(404).send("Order not found");
+    if (order.status !== "Delivered") {
+      return res.status(400).send("Invoice is available after delivery");
+    }
+
+    const shippingFee = order.shippingFee ?? 20;
 
     const doc = new PDFDocument();
     res.setHeader("Content-Type", "application/pdf");
@@ -55,12 +62,14 @@ exports.generateInvoice = async (req, res) => {
     doc.text(`Size: ${order.size}`);
     doc.text(`Quantity: ${order.quantity}`);
     doc.text(`Price per item: ₹${order.price.toFixed(2)}`);
-    doc.text("Shipping: ₹20.00");
+    doc.text(`Shipping: ₹${shippingFee.toFixed(2)}`);
     doc.moveDown();
 
     doc.fontSize(14);
     doc.text(
-      `Total Amount: ₹${(order.price * order.quantity + 20).toFixed(2)}`,
+      `Total Amount: ₹${(order.price * order.quantity + shippingFee).toFixed(
+        2,
+      )}`,
       { bold: true },
     );
 
@@ -80,8 +89,15 @@ exports.retryPayment = async (req, res) => {
 
     const { order } = await findOwnedOrder(req, req.params.orderId);
     if (!order) return res.status(404).json({ success: false });
+    if (order.status !== "Payment Failed") {
+      return res.status(400).json({
+        success: false,
+        message: "Only failed payments can be retried.",
+      });
+    }
 
-    const amount = (order.price * order.quantity + 20) * 100; // Amount in paise
+    const amount =
+      (order.price * order.quantity + (order.shippingFee ?? 20)) * 100;
     const razorpayOrder = await razorpay.orders.create({
       amount,
       currency: "INR",
@@ -108,12 +124,19 @@ exports.verifyRetryPayment = async (req, res) => {
   try {
     const { razorpay_payment_id, razorpay_order_id, orderId } = req.body;
 
+    if (!razorpay_payment_id || !razorpay_order_id || !orderId) {
+      return res.status(400).json({ success: false });
+    }
+
     const { order } = await findOwnedOrder(req, orderId);
     if (!order) return res.status(404).json({ success: false });
+    if (order.status !== "Payment Failed") {
+      return res.status(400).json({ success: false });
+    }
 
     const payment = await razorpay.payments.fetch(razorpay_payment_id);
     const expectedAmount = Math.round(
-      (order.price * order.quantity + 20) * 100,
+      (order.price * order.quantity + (order.shippingFee ?? 20)) * 100,
     );
     const retryOrderId = order.paymentDetails?.retryOrderId;
 
@@ -190,6 +213,20 @@ exports.createRefundRequest = async (req, res) => {
       });
     }
 
+    const reason = String(req.body.reason || "").trim();
+    if (reason.length < 5) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide a refund reason of at least 5 characters.",
+      });
+    }
+    if (order.status !== "Delivered") {
+      return res.status(400).json({
+        success: false,
+        message: "A refund can be requested after the order is delivered.",
+      });
+    }
+
     const existingRequest = await Refund.findOne({ order: order._id });
     if (existingRequest) {
       return res.status(400).json({
@@ -202,14 +239,14 @@ exports.createRefundRequest = async (req, res) => {
       order: order._id,
       user: session,
       amount: order.price * order.quantity,
-      reason: req.body.reason,
+      reason,
       status: "pending",
     });
 
     await refundRequest.save();
 
     order.previousStatus = order.status;
-    order.reasonForRefund = req.body.reason;
+    order.reasonForRefund = reason;
     order.status = "Refund Requested";
     await order.save();
 
@@ -227,74 +264,97 @@ exports.createRefundRequest = async (req, res) => {
 
 // Cancel a specific order
 exports.cancelOrder = async (req, res) => {
+  const reason = String(req.body.reason || "").trim();
+  if (reason.length < 5) {
+    return res.status(400).json({
+      success: false,
+      message: "Please provide a cancellation reason of at least 5 characters.",
+    });
+  }
+  if (reason.length > 300) {
+    return res.status(400).json({
+      success: false,
+      message: "Cancellation reason must be 300 characters or fewer.",
+    });
+  }
+
+  const session = await mongoose.startSession();
   try {
     const userId = req.session.userId;
-    const order = await Order.findOne({ _id: req.params.orderId });
-    if (!order) {
+    const { user, order: ownedOrder } = await findOwnedOrder(
+      req,
+      req.params.orderId,
+    );
+    if (!ownedOrder || !user) {
       return res
         .status(404)
         .json({ success: false, message: "Order not found" });
     }
 
-    if (
-      order.status === "Delivered" ||
-      order.status === "Cancelled" ||
-      order.status === "Returned"
-    ) {
+    if (!["Pending", "Processing"].includes(ownedOrder.status)) {
       return res
         .status(400)
         .json({ success: false, message: "Order cannot be cancelled" });
     }
 
-    // Restore inventory quantity
-    if (order.variant && order.size && order.quantity) {
-      const updateQuery = {};
-      updateQuery[`sizes.${order.size}`] = order.quantity;
-      await Variant.findByIdAndUpdate(order.variant, { $inc: updateQuery });
-    }
-
     let message = "Order cancelled successfully";
+    await session.withTransaction(async () => {
+      const order = await Order.findOne({
+        _id: ownedOrder._id,
+        userId: user.userId,
+        status: { $in: ["Pending", "Processing"] },
+      }).session(session);
+      if (!order) throw new Error("ORDER_STATUS_CHANGED");
 
-    // Refund money to Wallet if paid
-    if (order.paymentStatus === "Paid" && userId) {
-      const refundAmount = order.price * order.quantity;
-      let wallet = await Wallet.findOne({ user: userId });
-      if (!wallet) {
-        wallet = new Wallet({
-          user: userId,
-          balance: refundAmount,
-          transactions: [
-            {
-              type: "credited",
-              amount: refundAmount,
-              reason: `Refund for cancelled order ${order.orderId}`,
-            },
-          ],
-        });
-      } else {
-        wallet.balance += refundAmount;
-        wallet.transactions.push({
-          type: "credited",
-          amount: refundAmount,
-          reason: `Refund for cancelled order ${order.orderId}`,
-        });
+      if (order.variant && order.size && order.quantity) {
+        await Variant.findByIdAndUpdate(
+          order.variant,
+          { $inc: { [`sizes.${order.size}`]: order.quantity } },
+          { session },
+        );
       }
-      await wallet.save();
-      order.paymentStatus = "Refunded";
-      message = `Order cancelled successfully and ₹${refundAmount} refunded to your wallet`;
-    }
 
-    order.status = "Cancelled";
-    if (req.body.reason) {
-      order.cancellationReason = req.body.reason;
-    }
-    await order.save();
+      if (order.paymentStatus === "Paid") {
+        const refundAmount =
+          order.price * order.quantity + (order.shippingFee ?? 20);
+        const wallet = await Wallet.findOneAndUpdate(
+          { user: userId },
+          {
+            $inc: { balance: refundAmount },
+            $push: {
+              transactions: {
+                type: "credited",
+                amount: refundAmount,
+                reason: `Refund for cancelled order ${order.orderId}`,
+                timestamp: new Date(),
+              },
+            },
+          },
+          { new: true, upsert: true, setDefaultsOnInsert: true, session },
+        );
+        if (!wallet) throw new Error("WALLET_REFUND_FAILED");
+        order.paymentStatus = "Refunded";
+        message = `Order cancelled successfully and ₹${refundAmount.toFixed(2)} refunded to your wallet`;
+      }
+
+      order.status = "Cancelled";
+      order.cancellationReason = reason;
+      await order.save({ session });
+    });
 
     res.json({ success: true, message });
   } catch (error) {
     console.error("Error cancelling order overview:", error);
+    if (error.message === "ORDER_STATUS_CHANGED") {
+      return res.status(409).json({
+        success: false,
+        message: "Order status changed. Refresh the page and try again.",
+      });
+    }
     res
       .status(500)
       .json({ success: false, message: "Server error while cancelling order" });
+  } finally {
+    await session.endSession();
   }
 };

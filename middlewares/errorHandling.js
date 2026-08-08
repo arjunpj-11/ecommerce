@@ -1,7 +1,10 @@
 // errorHandler.js
 const errorHandler = (err, req, res, next) => {
   const status = err.status || err.statusCode || 500;
-  const message = err.message || "An internal server error occurred";
+  const message =
+    status >= 500
+      ? "Something went wrong on our side. Please try again shortly."
+      : err.message || "We could not complete that request.";
 
   if (status >= 500) {
     console.error("Unhandled Error:", err);
@@ -20,7 +23,10 @@ const errorHandler = (err, req, res, next) => {
     return res.status(status).json({
       success: false,
       message: message,
-      error: process.env.NODE_ENV === "development" ? err.stack : undefined,
+      error:
+        process.env.NODE_ENV === "development" && status < 500
+          ? err.stack
+          : undefined,
     });
   }
 
